@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+            --bg: #030712;
+            --card-bg: rgba(30, 41, 59, 0.5);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            display: flex;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            position: fixed;
+            left: 0;
+        }
+
+        .side-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            margin-bottom: 50px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .nav-item {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            cursor: pointer;
+            color: var(--text-dim);
+            text-decoration: none;
+        }
+
+        .nav-item:hover { color: var(--accent); transform: scale(1.1); }
+
+        .main-container {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .error-code {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 8rem;
+            margin: 0;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .error-msg {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .btn-home {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-home:hover {
+            filter: brightness(1.2);
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="sidebar">
+    <img src="https://pbs.twimg.com/profile_images/1780625141765980161/kS709t-b_400x400.jpg" class="side-logo" alt="logo">
+    <a href="index.html" class="nav-item" title="Home">🏠</a>
+    <div class="nav-item" style="opacity: 0.3; cursor: not-allowed;">🤖</div>
+    <div class="nav-item" style="opacity: 0.3; cursor: not-allowed;">⚙️</div>
+</nav>
+
+<div class="main-container">
+    <h1 class="error-code">404</h1>
+    <p class="error-msg">error 404 couldnt find ur page ur looking for</p>
+    <a href="index.html" class="btn-home">Back to Safety</a>
+</div>
+
+</body>
+</html>
