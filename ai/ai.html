@@ -1,1 +1,1098 @@
-shutdown a while worry
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="os-title">Crunch' OS</title>
+    <link id="favicon" rel="icon" type="image/x-icon" href="https://lucide.dev/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --accent: #00f2ff;
+            --bg-dark: #0a0a0c;
+            --glass: rgba(20, 20, 25, 0.75);
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --desktop-bg: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+            --spotify-green: #1DB954;
+        }
+
+        /* Themes */
+        body.theme-crimson { --accent: #ff4d4d; }
+        body.theme-emerald { --accent: #10b981; }
+        body.theme-gold { --accent: #f59e0b; }
+        body.theme-void { --accent: #ffffff; }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%; overflow: hidden;
+            font-family: 'Inter', sans-serif; background: #000; color: white;
+            user-select: none;
+        }
+
+        .desktop {
+            background: radial-gradient(circle at top right, rgba(26, 26, 46, 0.8) 0%, #000 100%), var(--desktop-bg);
+            background-size: cover; background-position: center; background-blend-mode: multiply;
+            height: 100vh; width: 100vw; position: relative; overflow: hidden;
+        }
+
+        .glass {
+            background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .window {
+            position: absolute; min-width: 320px; min-height: 240px;
+            display: flex; flex-direction: column; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: width 0.2s, height 0.2s, top 0.2s, left 0.2s, transform 0.1s, opacity 0.2s;
+        }
+
+        .window.maximized {
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: calc(100vh - 3.5rem) !important;
+            border-radius: 0; border: none;
+        }
+
+        .window.minimized {
+            opacity: 0; transform: scale(0.8) translateY(200px); pointer-events: none;
+        }
+
+        .window-header {
+            padding: 0 0 0 15px; display: flex; justify-content: space-between;
+            align-items: center; background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: default; height: 35px;
+        }
+
+        .terminal-font { font-family: 'Fira Code', monospace; }
+        .app-icon-shadow { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+
+        .taskbar-item { transition: all 0.2s; position: relative; }
+        .taskbar-item:hover { background: var(--glass-light); transform: translateY(-2px); }
+        .taskbar-item.running::after {
+            content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 4px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent);
+        }
+
+        #start-menu { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s; }
+        #start-menu.hidden-menu { transform: translate(-50%, 20px) scale(0.95); opacity: 0; pointer-events: none; }
+
+        #boot-screen {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .crunch-logo {
+            font-size: 3rem; font-weight: 800; letter-spacing: -2px;
+            background: linear-gradient(45deg, var(--accent), #0066ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; scale: 1; } 50% { opacity: 0.8; scale: 0.98; } }
+
+        #notification-area { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            background: var(--glass); border-left: 4px solid var(--accent);
+            padding: 12px 20px; border-radius: 8px; width: 300px;
+            animation: slideInRight 0.3s ease forwards;
+        }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .settings-nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--accent);
+        }
+
+        .win-ctrl {
+            width: 45px; height: 35px; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s; color: white;
+        }
+        .win-ctrl:hover { background: rgba(255, 255, 255, 0.1); }
+        .win-ctrl-close:hover { background: #e81123 !important; }
+
+        /* Spotify specific styles */
+        .spotify-sidebar-item:hover { color: white; }
+        .spotify-sidebar-item.active { color: white; border-left: 4px solid var(--spotify-green); }
+        .song-row:hover { background: rgba(255,255,255,0.1); }
+        .album-drop-zone.drag-over { border: 2px dashed var(--spotify-green); background: rgba(29, 185, 84, 0.1); }
+    </style>
+</head>
+<body class="theme-default">
+
+    <div id="boot-screen">
+        <div class="crunch-logo mb-8">CRUNCH OS</div>
+        <div class="relative w-64 h-2 bg-gray-900 rounded-full overflow-hidden shadow-[0_0_20px_rgba(0,242,255,0.2)]">
+            <div id="boot-progress" class="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 w-0 transition-all duration-100"></div>
+        </div>
+        <div class="mt-4 text-xs text-cyan-300/50 terminal-font">Unblocking everything at once</div>
+    </div>
+
+    <div id="notification-area"></div>
+
+    <div class="desktop" id="desktop" oncontextmenu="showContextMenu(event)">
+        
+        <div class="p-6 flex flex-col flex-wrap content-start h-[calc(100vh-4rem)] gap-4" id="desktop-icons"></div>
+
+        <div class="fixed bottom-4 left-1/2 -translate-x-1/2 h-14 glass rounded-2xl flex items-center px-3 gap-2 z-[9000] shadow-2xl">
+            <button onclick="toggleStartMenu()" class="p-2.5 hover:bg-white/10 rounded-xl text-cyan-400 transition-colors group relative">
+                <i data-lucide="ghost" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
+            </button>
+            <div class="h-8 w-[1px] bg-white/10 mx-1"></div>
+            <div id="taskbar-apps" class="flex gap-2"></div>
+            <div class="h-8 w-[1px] bg-white/10 mx-1"></div>
+            <div class="flex items-center gap-4 px-3 text-xs font-medium text-gray-300 cursor-default">
+                <div class="text-right leading-tight">
+                    <div id="clock-time" class="font-bold text-white">12:00 PM</div>
+                    <div id="clock-date" class="text-[10px] text-gray-400">Jan 1, 2026</div>
+                </div>
+                <div class="flex gap-3 text-gray-400">
+                    <i data-lucide="wifi" class="w-4"></i>
+                    <i data-lucide="volume-2" class="w-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="start-menu" class="fixed bottom-20 left-1/2 -translate-x-1/2 w-[420px] h-[550px] glass rounded-3xl z-[9001] hidden-menu p-6 flex flex-col">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-600 shadow-lg flex items-center justify-center text-xl font-bold">C</div>
+                <div>
+                    <div class="font-bold text-lg">Crunch User</div>
+                    <div class="text-xs text-gray-400">Administrator</div>
+                </div>
+            </div>
+            <div class="relative mb-6">
+                <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
+                <input type="text" placeholder="Search apps, files, and settings..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 outline-none focus:border-cyan-500/50 transition-colors text-sm">
+            </div>
+            <div class="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">Pinned Apps</div>
+            <div class="grid grid-cols-4 gap-4 overflow-y-auto flex-grow p-1" id="start-menu-grid"></div>
+            <div class="mt-auto pt-4 border-t border-white/10 flex justify-between text-gray-400">
+                <button onclick="location.reload()" class="p-2 hover:bg-white/10 rounded-lg flex gap-2 items-center text-xs"><i data-lucide="power" class="w-4"></i> Restart</button>
+                <button class="p-2 hover:bg-white/10 rounded-lg flex gap-2 items-center text-xs"><i data-lucide="lock" class="w-4"></i> Lock</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CLOAK_PRESETS = {
+            none: { title: "Crunch' OS On Top", icon: "https://lucide.dev/favicon.ico" },
+            drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
+            ixl: { title: "IXL | Personalized Learning", icon: "https://www.ixl.com/favicon.ico" },
+            schoology: { title: "Home | Schoology", icon: "https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico" },
+            powerschool: { title: "Powerschool - Login", icon: "https://www.powerschool.com/favicon.ico" },
+            skyward: { title: "Skyward - Student Access", icon: "https://www.skyward.com/favicon.ico" },
+            google: { title: "Google", icon: "https://www.google.com/favicon.ico" }
+        };
+
+        const DEFAULT_APPS = {
+            browser: { name: 'Web Browser', icon: 'globe', color: 'text-blue-400', bg: 'bg-blue-400/20', url: 'https://doggy-af841.web.app/', pinned: true },
+            terminal: { name: 'Terminal', icon: 'terminal-square', color: 'text-green-400', bg: 'bg-green-400/20', pinned: true },
+            music: { name: 'Spotify Music', icon: 'music', color: 'text-green-500', bg: 'bg-green-500/20', pinned: true },
+            gameshub: { name: 'Games Hub', icon: 'gamepad-2', color: 'text-purple-400', bg: 'bg-purple-400/20', pinned: true },
+            files: { name: 'File Explorer', icon: 'folder-open', color: 'text-yellow-400', bg: 'bg-yellow-400/20', pinned: true },
+            htmlviewer: { name: 'HTML Viewer', icon: 'code-2', color: 'text-orange-400', bg: 'bg-orange-400/20', pinned: true },
+            custominstaller: { name: 'Install Custom', icon: 'plus-square', color: 'text-pink-400', bg: 'bg-pink-400/20', pinned: true },
+            settings: { name: 'Settings', icon: 'settings', color: 'text-gray-300', bg: 'bg-gray-300/20', pinned: true },
+            snake: { name: 'Snake Game', icon: 's', color: 'text-green-500', bg: 'bg-green-500/10', hidden: true },
+            zombie: { name: 'Zombie Defense', icon: 'skull', color: 'text-red-500', bg: 'bg-red-500/10', hidden: true },
+        };
+
+        let APPS = { ...DEFAULT_APPS };
+        let openWindows = [];
+        let zIndexCounter = 100;
+        let windowCleanupCallbacks = {};
+
+        window.onload = initSystem;
+
+        function initSystem() {
+            loadCustomApps();
+            loadSettings();
+            lucide.createIcons();
+            startClock();
+            renderStartMenu();
+            renderDesktopIcons();
+            simulateBootProcess();
+        }
+
+        function loadCustomApps() {
+            const saved = localStorage.getItem('crunch_custom_apps');
+            if(saved) {
+                const customApps = JSON.parse(saved);
+                APPS = { ...DEFAULT_APPS, ...customApps };
+            }
+        }
+
+        function loadSettings() {
+            const theme = localStorage.getItem('crunch_theme') || 'default';
+            const bg = localStorage.getItem('crunch_bg') || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop';
+            const cloak = localStorage.getItem('crunch_cloak') || 'none';
+            
+            document.body.className = `theme-${theme}`;
+            document.documentElement.style.setProperty('--desktop-bg', `url('${bg}')`);
+            applyCloak(cloak);
+        }
+
+        function simulateBootProcess() {
+            const progress = document.getElementById('boot-progress');
+            let width = 5;
+            const interval = setInterval(() => {
+                width += Math.random() > 0.7 ? Math.random() * 15 : Math.random() * 2; 
+                progress.style.width = width + '%';
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('boot-screen').style.opacity = 0;
+                        setTimeout(() => {
+                             document.getElementById('boot-screen').remove();
+                             sendNotification('Crunch OS V2.1', 'Use Web Browser for a proxy!', 'settings');
+                        }, 500);
+                    }, 600);
+                }
+            }, 50);
+        }
+
+        function launchApp(appKey) {
+            const app = APPS[appKey];
+            if(!app) return;
+
+            const id = 'win-' + Date.now();
+            zIndexCounter++;
+            
+            const win = document.createElement('div');
+            win.id = id;
+            win.className = 'window glass';
+            const offset = (openWindows.length % 10) * 20;
+            win.style.left = (100 + offset) + 'px';
+            win.style.top = (80 + offset) + 'px';
+            win.style.zIndex = zIndexCounter;
+            
+            win.style.width = (appKey === 'browser' || appKey === 'settings' || appKey === 'custominstaller' || appKey === 'music') ? '900px' : '600px';
+            win.style.height = (appKey === 'browser' || appKey === 'settings' || appKey === 'custominstaller' || appKey === 'music') ? '600px' : '400px';
+
+            win.innerHTML = `
+                <div class="window-header ondrag-handle" ondblclick="toggleMaximize('${id}')">
+                    <div class="flex items-center gap-3 text-sm font-medium text-gray-200 pointer-events-none">
+                        <i data-lucide="${app.icon}" class="w-4 h-4 ${app.color}"></i>
+                        ${app.name}
+                    </div>
+                    <div class="flex">
+                        <button onclick="minimizeWindow('${id}')" class="win-ctrl"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="toggleMaximize('${id}')" class="win-ctrl"><i data-lucide="square" class="w-3 h-3" id="max-btn-${id}"></i></button>
+                        <button onclick="closeWindow('${id}')" class="win-ctrl win-ctrl-close"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+                <div class="flex-grow overflow-hidden relative bg-black/20" id="content-${id}"></div>
+            `;
+
+            document.getElementById('desktop').appendChild(win);
+            document.getElementById(`content-${id}`).innerHTML = getAppContent(appKey, id);
+
+            openWindows.push({ id, appKey, state: 'normal', savedDims: {} });
+            
+            setupDraggable(id);
+            focusWindow(id);
+            updateTaskbar();
+            lucide.createIcons();
+
+            if(appKey === 'settings') loadSettingsPage(id, 'appearance');
+            if(appKey === 'terminal') initTerminal(id);
+            if(appKey === 'music') initMusicApp(id);
+            if(appKey === 'snake') initSnakeGame(id);
+            if(appKey === 'zombie') initZombieGame(id);
+        }
+
+        function focusWindow(id) {
+            const win = document.getElementById(id);
+            if(!win) return;
+            zIndexCounter++;
+            win.style.zIndex = zIndexCounter;
+            win.classList.remove('minimized');
+            const winData = openWindows.find(w => w.id === id);
+            if(winData) winData.state = 'normal';
+            updateTaskbar();
+        }
+
+        function minimizeWindow(id) {
+             const win = document.getElementById(id);
+             win.classList.add('minimized');
+             const winData = openWindows.find(w => w.id === id);
+             if(winData) winData.state = 'minimized';
+             updateTaskbar();
+        }
+
+        function toggleMaximize(id) {
+            const win = document.getElementById(id);
+            const winData = openWindows.find(w => w.id === id);
+            
+            if (win.classList.contains('maximized')) {
+                win.classList.remove('maximized');
+                win.style.left = winData.savedDims.left;
+                win.style.top = winData.savedDims.top;
+                win.style.width = winData.savedDims.width;
+                win.style.height = winData.savedDims.height;
+                winData.state = 'normal';
+            } else {
+                winData.savedDims = { left: win.style.left, top: win.style.top, width: win.style.width, height: win.style.height };
+                win.classList.add('maximized');
+                winData.state = 'maximized';
+            }
+        }
+
+        function closeWindow(id) {
+            const win = document.getElementById(id);
+            win.style.opacity = '0';
+            win.style.transform = 'scale(0.9)';
+            if (windowCleanupCallbacks[id]) {
+                windowCleanupCallbacks[id]();
+                delete windowCleanupCallbacks[id];
+            }
+            setTimeout(() => {
+                win.remove();
+                openWindows = openWindows.filter(w => w.id !== id);
+                updateTaskbar();
+            }, 200);
+        }
+
+        function setupDraggable(id) {
+            const win = document.getElementById(id);
+            const handle = win.querySelector('.ondrag-handle');
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            handle.onmousedown = (e) => {
+                if(win.classList.contains('maximized')) return;
+                focusWindow(id);
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialLeft = win.offsetLeft;
+                initialTop = win.offsetTop;
+                win.style.transition = 'none';
+                
+                document.onmousemove = (e) => {
+                    if (!isDragging) return;
+                    win.style.left = (initialLeft + (e.clientX - startX)) + "px";
+                    win.style.top = (initialTop + (e.clientY - startY)) + "px";
+                };
+
+                document.onmouseup = () => {
+                    isDragging = false;
+                    document.onmousemove = null;
+                    win.style.transition = '';
+                };
+            };
+        }
+
+        function applyCloak(key) {
+            const preset = CLOAK_PRESETS[key] || CLOAK_PRESETS.none;
+            document.title = preset.title;
+            const link = document.getElementById('favicon');
+            link.href = preset.icon;
+            localStorage.setItem('crunch_cloak', key);
+        }
+
+        function changeTheme(theme) {
+            document.body.className = `theme-${theme}`;
+            localStorage.setItem('crunch_theme', theme);
+            sendNotification('System', `Theme changed to ${theme}`, 'palette');
+        }
+
+        function changeBackground(url) {
+            if(!url) return;
+            document.documentElement.style.setProperty('--desktop-bg', `url('${url}')`);
+            localStorage.setItem('crunch_bg', url);
+        }
+
+        function loadSettingsPage(winId, page) {
+            const content = document.getElementById(`settings-content-${winId}`);
+            if(!content) return;
+
+            document.querySelectorAll('.settings-nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.querySelector(`[data-page="${page}"]`);
+            if(activeNav) activeNav.classList.add('active');
+
+            let html = '';
+            if(page === 'appearance') {
+                html = `
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">System Accent</h3>
+                        <div class="flex gap-4">
+                            <button onclick="changeTheme('default')" class="w-10 h-10 rounded-full bg-cyan-400 border-2 border-white/20"></button>
+                            <button onclick="changeTheme('crimson')" class="w-10 h-10 rounded-full bg-red-500 border-2 border-white/20"></button>
+                            <button onclick="changeTheme('emerald')" class="w-10 h-10 rounded-full bg-emerald-500 border-2 border-white/20"></button>
+                            <button onclick="changeTheme('gold')" class="w-10 h-10 rounded-full bg-amber-500 border-2 border-white/20"></button>
+                            <button onclick="changeTheme('void')" class="w-10 h-10 rounded-full bg-white border-2 border-white/20"></button>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-2">Desktop Wallpaper</h3>
+                        <p class="text-xs text-gray-400 mb-4">Paste an image URL to change the background.</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="bg-input-${winId}" placeholder="https://..." class="bg-white/5 border border-white/10 p-2 rounded-lg flex-grow outline-none text-sm">
+                            <button onclick="changeBackground(document.getElementById('bg-input-${winId}').value)" class="bg-cyan-600 px-4 py-2 rounded-lg text-sm font-bold">Apply</button>
+                        </div>
+                    </div>
+                </div>`;
+            } else if(page === 'cloak') {
+                html = `
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold">Tab Cloaking</h3>
+                    <p class="text-xs text-gray-400">Change how this tab looks in your browser history and tab bar.</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        ${Object.keys(CLOAK_PRESETS).map(key => `
+                            <button onclick="applyCloak('${key}')" class="flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all text-left">
+                                <img src="${CLOAK_PRESETS[key].icon}" class="w-5 h-5">
+                                <span class="text-sm capitalize">${key}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>`;
+            } else if(page === 'custom-apps') {
+                const customKeys = Object.keys(APPS).filter(k => APPS[k].isCustom);
+                html = `
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold">Manage Custom Apps</h3>
+                    ${customKeys.length === 0 ? '<p class="text-gray-500 text-sm italic">No custom apps installed yet.</p>' : ''}
+                    <div class="space-y-2">
+                        ${customKeys.map(key => `
+                            <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg ${APPS[key].bg}"><i data-lucide="${APPS[key].icon}" class="w-4 h-4 ${APPS[key].color}"></i></div>
+                                    <span class="text-sm font-medium">${APPS[key].name}</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="deleteApp('${key}', '${winId}')" class="p-2 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }
+            
+            content.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function deleteApp(key, winId) {
+            if(!confirm("Are you sure you want to delete this app?")) return;
+            const saved = localStorage.getItem('crunch_custom_apps');
+            if(saved) {
+                let customApps = JSON.parse(saved);
+                delete customApps[key];
+                localStorage.setItem('crunch_custom_apps', JSON.stringify(customApps));
+                delete APPS[key];
+                renderDesktopIcons();
+                renderStartMenu();
+                loadSettingsPage(winId, 'custom-apps');
+                sendNotification('System', 'App removed successfully.', 'trash-2');
+            }
+        }
+
+        function getAppContent(appKey, winId) {
+            const app = APPS[appKey];
+            
+            if(app && app.isCustom) {
+                return `<iframe srcdoc='${app.html.replace(/'/g, "&apos;")}' class="w-full h-full border-none bg-white"></iframe>`;
+            }
+
+            switch(appKey) {
+                case 'settings':
+                    return `
+                    <div class="h-full flex divide-x divide-white/10">
+                        <div class="w-48 p-4 flex flex-col gap-1">
+                            <button onclick="loadSettingsPage('${winId}', 'appearance')" data-page="appearance" class="settings-nav-item flex items-center gap-3 p-2.5 rounded-lg text-sm transition-all text-gray-300 active"><i data-lucide="palette" class="w-4"></i> Appearance</button>
+                            <button onclick="loadSettingsPage('${winId}', 'cloak')" data-page="cloak" class="settings-nav-item flex items-center gap-3 p-2.5 rounded-lg text-sm transition-all text-gray-300"><i data-lucide="shield" class="w-4"></i> Cloaking</button>
+                            <button onclick="loadSettingsPage('${winId}', 'custom-apps')" data-page="custom-apps" class="settings-nav-item flex items-center gap-3 p-2.5 rounded-lg text-sm transition-all text-gray-300"><i data-lucide="package" class="w-4"></i> Custom Apps</button>
+                        </div>
+                        <div class="flex-grow p-8 overflow-auto" id="settings-content-${winId}"></div>
+                    </div>`;
+
+                case 'browser': 
+                    return `<iframe src="${APPS.browser.url}" class="w-full h-full border-none bg-white"></iframe>`;
+                
+                case 'music':
+                    return `
+                    <div class="h-full flex flex-col bg-black text-gray-400 font-sans">
+                        <div class="flex-grow flex overflow-hidden">
+                            <div class="w-60 bg-black p-6 flex flex-col gap-6">
+                                <div class="flex items-center gap-2 text-white font-bold text-xl">
+                                    <i data-lucide="music" class="text-green-500 w-8 h-8"></i> Spotify
+                                </div>
+                                <nav class="flex flex-col gap-4 text-sm font-bold">
+                                    <button onclick="switchMusicView('${winId}', 'home')" class="spotify-sidebar-item active flex items-center gap-4 transition-colors"><i data-lucide="home"></i> Home</button>
+                                    <button onclick="switchMusicView('${winId}', 'library')" class="spotify-sidebar-item flex items-center gap-4 transition-colors"><i data-lucide="library"></i> Your Library</button>
+                                    <button onclick="document.getElementById('audio-upload-${winId}').click()" class="spotify-sidebar-item flex items-center gap-4 transition-colors"><i data-lucide="plus-square"></i> Upload Song</button>
+                                    <input type="file" id="audio-upload-${winId}" accept="audio/mp3" class="hidden" multiple>
+                                </nav>
+                                <div class="h-[1px] bg-white/10"></div>
+                                <div class="flex flex-col gap-3 overflow-y-auto" id="album-nav-${winId}">
+                                    <button onclick="createNewAlbum('${winId}')" class="text-xs hover:text-white flex items-center gap-2"><i data-lucide="plus" class="w-3"></i> Create Album</button>
+                                    </div>
+                            </div>
+                            <div class="flex-grow bg-gradient-to-b from-[#1e1e1e] to-[#121212] p-8 overflow-y-auto" id="music-main-${winId}">
+                                <div id="view-home-${winId}">
+                                    <h1 class="text-3xl font-bold text-white mb-6">Good Day</h1>
+                                    <div class="grid grid-cols-2 gap-4 mb-8">
+                                        <div onclick="switchMusicView('${winId}', 'library')" class="bg-white/5 rounded-md flex items-center gap-4 hover:bg-white/10 cursor-pointer overflow-hidden">
+                                            <div class="w-20 h-20 bg-gradient-to-br from-indigo-700 to-blue-300 flex items-center justify-center shadow-lg"><i data-lucide="heart" class="text-white fill-white"></i></div>
+                                            <span class="text-white font-bold">Liked Songs</span>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-xl font-bold text-white mb-4">Your Library</h2>
+                                    <div id="library-grid-${winId}" class="grid grid-cols-4 gap-6"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-24 bg-[#181818] border-t border-white/5 px-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4 w-1/3">
+                                <div class="w-14 h-14 bg-white/5 rounded shadow-lg flex items-center justify-center" id="now-playing-img-${winId}"><i data-lucide="music" class="w-6"></i></div>
+                                <div class="overflow-hidden">
+                                    <div class="text-sm text-white font-medium truncate" id="now-playing-title-${winId}">Not Playing</div>
+                                    <div class="text-xs truncate" id="now-playing-album-${winId}">Crunch OS</div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center gap-2 w-1/3">
+                                <div class="flex items-center gap-6">
+                                    <button class="hover:text-white"><i data-lucide="shuffle" class="w-4"></i></button>
+                                    <button onclick="prevTrack('${winId}')" class="hover:text-white"><i data-lucide="skip-back" class="w-5 fill-current"></i></button>
+                                    <button onclick="togglePlay('${winId}')" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 transition-transform"><i data-lucide="play" id="play-icon-${winId}" class="w-5 fill-current ml-1"></i></button>
+                                    <button onclick="nextTrack('${winId}')" class="hover:text-white"><i data-lucide="skip-forward" class="w-5 fill-current"></i></button>
+                                    <button class="hover:text-white"><i data-lucide="repeat" class="w-4"></i></button>
+                                </div>
+                                <div class="flex items-center gap-2 w-full max-w-md">
+                                    <span class="text-[10px]" id="curr-time-${winId}">0:00</span>
+                                    <input type="range" id="seek-${winId}" class="flex-grow h-1 accent-green-500 bg-gray-600 rounded-lg appearance-none cursor-pointer" value="0">
+                                    <span class="text-[10px]" id="total-time-${winId}">0:00</span>
+                                </div>
+                            </div>
+                            <div class="w-1/3 flex justify-end items-center gap-3">
+                                <i data-lucide="volume-2" class="w-4"></i>
+                                <input type="range" class="w-24 h-1 accent-white" value="80">
+                            </div>
+                        </div>
+                        <audio id="audio-engine-${winId}"></audio>
+                    </div>`;
+
+                case 'htmlviewer':
+                    return `
+                    <div class="flex flex-col h-full bg-[#1e1e1e] terminal-font">
+                        <div class="flex-grow grid grid-cols-2 divide-x divide-white/10 overflow-hidden">
+                            <textarea id="code-input-${winId}" class="bg-black/40 p-4 text-orange-200/80 text-xs outline-none resize-none" placeholder="Paste HTML here..."></textarea>
+                            <iframe id="code-preview-${winId}" class="bg-white w-full h-full border-none"></iframe>
+                        </div>
+                        <div class="p-3 bg-black/50 border-t border-white/10 flex justify-end">
+                            <button onclick="runHtml('${winId}')" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-1.5 rounded-lg text-sm font-bold transition-all">RUN CODE</button>
+                        </div>
+                    </div>`;
+
+                case 'custominstaller':
+                    return `
+                    <div class="p-8 h-full bg-[#0d0d0f] flex flex-col gap-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-pink-400">Install Custom App</h2>
+                            <p class="text-gray-400 text-sm">Permanent shortcut for games/tools.</p>
+                        </div>
+                        <div class="flex flex-col gap-4 flex-grow">
+                            <input type="text" id="install-name-${winId}" placeholder="App Name" class="bg-white/5 border border-white/10 p-3 rounded-xl outline-none">
+                            <textarea id="install-code-${winId}" class="flex-grow bg-white/5 border border-white/10 p-4 rounded-xl font-mono text-xs outline-none resize-none" placeholder="HTML Code..."></textarea>
+                        </div>
+                        <button onclick="installApp('${winId}')" class="bg-pink-600 hover:bg-pink-500 text-white py-3 rounded-xl font-bold transition-all">INSTALL</button>
+                    </div>`;
+
+                case 'terminal': 
+                    return `
+                    <div class="bg-black text-green-400 p-4 h-full terminal-font text-sm overflow-auto" onclick="document.getElementById('term-input-${winId}').focus()">
+                        <div>Crunch OS [v2.1.0]</div>
+                        <div id="term-output-${winId}"></div>
+                        <div class="flex gap-2">
+                            <span class="text-cyan-400">$</span>
+                            <input type="text" class="bg-transparent outline-none flex-grow border-none text-green-400" id="term-input-${winId}" autocomplete="off">
+                        </div>
+                    </div>`;
+
+                 case 'gameshub':
+                    return `
+                    <div class="p-6 h-full overflow-auto bg-gradient-to-br from-[#1a1a2e] to-black">
+                        <h2 class="text-2xl font-bold mb-6">Arcade Center</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                             <div onclick="launchApp('snake')" class="bg-white/5 p-4 rounded-2xl border border-white/10 hover:border-green-500/50 cursor-pointer transition-all">
+                                 <h3 class="font-bold text-lg">Retro Snake</h3>
+                             </div>
+                             <div onclick="launchApp('zombie')" class="bg-white/5 p-4 rounded-2xl border border-white/10 hover:border-red-500/50 cursor-pointer transition-all">
+                                 <h3 class="font-bold text-lg">Plant Defense</h3>
+                             </div>
+                        </div>
+                    </div>`;
+
+                case 'snake':
+                case 'zombie':
+                    return `<div class="w-full h-full flex items-center justify-center bg-[#111] overflow-hidden"><canvas id="canvas-${winId}"></canvas></div>`;
+                
+                case 'files':
+                     return `<div class="p-8 text-gray-500">File system is restricted.</div>`;
+                default: return `<div class="p-8">App not found.</div>`;
+            }
+        }
+
+        function runHtml(winId) {
+            const code = document.getElementById(`code-input-${winId}`).value;
+            document.getElementById(`code-preview-${winId}`).srcdoc = code;
+        }
+
+        function installApp(winId) {
+            const name = document.getElementById(`install-name-${winId}`).value.trim();
+            const code = document.getElementById(`install-code-${winId}`).value.trim();
+            if(!name || !code) return;
+
+            const appKey = 'custom_' + Date.now();
+            const newApp = { name, icon: 'package', color: 'text-pink-300', bg: 'bg-pink-500/20', isCustom: true, html: code, pinned: true };
+
+            const saved = localStorage.getItem('crunch_custom_apps');
+            let customApps = saved ? JSON.parse(saved) : {};
+            customApps[appKey] = newApp;
+            localStorage.setItem('crunch_custom_apps', JSON.stringify(customApps));
+            
+            APPS[appKey] = newApp;
+            renderStartMenu();
+            renderDesktopIcons();
+            closeWindow(winId);
+            sendNotification('Installer', `${name} installed.`, 'check-circle');
+        }
+
+        function renderStartMenu() {
+            const grid = document.getElementById('start-menu-grid');
+            grid.innerHTML = '';
+            Object.keys(APPS).forEach(key => {
+                const app = APPS[key];
+                if(app.pinned && !app.hidden) {
+                    grid.innerHTML += `
+                        <button onclick="launchApp('${key}'); toggleStartMenu()" class="flex flex-col items-center gap-2 p-3 hover:bg-white/10 rounded-2xl transition-all">
+                            <div class="w-12 h-12 rounded-2xl ${app.bg} flex items-center justify-center">
+                                <i data-lucide="${app.icon}" class="${app.color} w-7 h-7"></i>
+                            </div>
+                            <span class="text-[11px] text-gray-300 text-center">${app.name}</span>
+                        </button>`;
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function renderDesktopIcons() {
+            const desk = document.getElementById('desktop-icons');
+            desk.innerHTML = '';
+            const keys = ['browser', 'music', 'gameshub', 'terminal', 'files', 'settings', 'custominstaller', ...Object.keys(APPS).filter(k => APPS[k].isCustom)];
+            keys.forEach(key => {
+                const app = APPS[key];
+                if(!app) return;
+                desk.innerHTML += `
+                    <div ondblclick="launchApp('${key}')" class="w-20 flex flex-col items-center gap-1 cursor-pointer group p-2 rounded-lg hover:bg-white/10">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center ${app.bg} group-hover:scale-105 transition-transform">
+                             <i data-lucide="${app.icon}" class="${app.color} w-9 h-9"></i>
+                        </div>
+                        <span class="text-[11px] text-center text-gray-100 drop-shadow-md font-medium">${app.name}</span>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function updateTaskbar() {
+            const container = document.getElementById('taskbar-apps');
+            container.innerHTML = '';
+            const activeKeys = [...new Set(openWindows.map(w => w.appKey))];
+            activeKeys.forEach(appKey => {
+                const app = APPS[appKey];
+                const win = openWindows.find(w => w.appKey === appKey);
+                container.innerHTML += `
+                    <button onclick="focusWindow('${win.id}')" class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-white/10 taskbar-item running">
+                        <i data-lucide="${app.icon}" class="w-6 h-6 ${app.color}"></i>
+                    </button>`;
+            });
+            lucide.createIcons();
+        }
+
+        function toggleStartMenu() {
+            document.getElementById('start-menu').classList.toggle('hidden-menu');
+        }
+
+        function sendNotification(title, message, icon = 'bell') {
+            const area = document.getElementById('notification-area');
+            const toast = document.createElement('div');
+            toast.className = 'toast flex items-start gap-3';
+            toast.innerHTML = `<i data-lucide="${icon}" class="text-cyan-400 w-5 h-5 mt-1"></i><div><div class="font-bold text-sm">${title}</div><div class="text-xs text-gray-300">${message}</div></div>`;
+            area.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 5000);
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock-time').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('clock-date').innerText = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+            }, 1000);
+        }
+
+        function showContextMenu(e) {
+            e.preventDefault();
+            const existing = document.querySelector('.context-menu');
+            if(existing) existing.remove();
+            const menu = document.createElement('div');
+            menu.className = 'context-menu glass fixed z-[9999] rounded-lg p-1 border border-white/10';
+            menu.style.left = e.clientX + 'px'; menu.style.top = e.clientY + 'px';
+            menu.innerHTML = `<div class="p-2 hover:bg-white/10 rounded-md cursor-pointer text-sm" onclick="location.reload()">Refresh Desktop</div>`;
+            document.body.appendChild(menu);
+            document.onclick = () => menu.remove();
+        }
+
+        // =========================================
+        // SPOTIFY STYLE MUSIC ENGINE
+        // =========================================
+
+        let musicStorage = {
+            library: JSON.parse(localStorage.getItem('crunch_music_lib')) || [],
+            albums: JSON.parse(localStorage.getItem('crunch_music_albums')) || []
+        };
+
+        function initMusicApp(winId) {
+            const input = document.getElementById(`audio-upload-${winId}`);
+            const audio = document.getElementById(`audio-engine-${winId}`);
+            const seek = document.getElementById(`seek-${winId}`);
+
+            input.addEventListener('change', async (e) => {
+                const files = Array.from(e.target.files);
+                for(const file of files) {
+                    const base64 = await fileToBase64(file);
+                    const track = { id: Date.now() + Math.random(), name: file.name, data: base64 };
+                    musicStorage.library.push(track);
+                }
+                saveMusicData();
+                renderMusicLibrary(winId);
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                const pct = (audio.currentTime / audio.duration) * 100;
+                seek.value = pct || 0;
+                document.getElementById(`curr-time-${winId}`).innerText = formatTime(audio.currentTime);
+                document.getElementById(`total-time-${winId}`).innerText = formatTime(audio.duration);
+            });
+
+            audio.onended = () => nextTrack(winId);
+
+            seek.oninput = () => {
+                const time = (seek.value / 100) * audio.duration;
+                audio.currentTime = time;
+            };
+
+            renderMusicLibrary(winId);
+            renderMusicAlbums(winId);
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+            });
+        }
+
+        function saveMusicData() {
+            localStorage.setItem('crunch_music_lib', JSON.stringify(musicStorage.library));
+            localStorage.setItem('crunch_music_albums', JSON.stringify(musicStorage.albums));
+        }
+
+        function renderMusicLibrary(winId) {
+            const grid = document.getElementById(`library-grid-${winId}`);
+            if(!grid) return;
+            grid.innerHTML = musicStorage.library.map(track => `
+                <div draggable="true" ondragstart="handleTrackDrag(event, '${track.id}')" class="bg-white/5 p-4 rounded-lg hover:bg-white/10 group transition-all cursor-pointer" onclick="playTrack('${winId}', '${track.id}')">
+                    <div class="aspect-square bg-[#282828] rounded-md mb-4 flex items-center justify-center relative shadow-xl">
+                        <i data-lucide="music" class="w-12 h-12 text-gray-600"></i>
+                        <div class="absolute bottom-2 right-2 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-black opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all shadow-lg">
+                            <i data-lucide="play" class="fill-current w-5"></i>
+                        </div>
+                    </div>
+                    <div class="text-white font-bold text-sm truncate">${track.name}</div>
+                    <div class="text-xs text-gray-400 mt-1">Track</div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderMusicAlbums(winId) {
+            const nav = document.getElementById(`album-nav-${winId}`);
+            if(!nav) return;
+            const staticBtn = `<button onclick="createNewAlbum('${winId}')" class="text-xs hover:text-white flex items-center gap-2 mb-2"><i data-lucide="plus" class="w-3"></i> Create Album</button>`;
+            nav.innerHTML = staticBtn + musicStorage.albums.map(album => `
+                <div ondragover="event.preventDefault(); this.classList.add('text-green-500')" 
+                     ondragleave="this.classList.remove('text-green-500')"
+                     ondrop="handleTrackDrop(event, '${winId}', '${album.id}')"
+                     onclick="openAlbum('${winId}', '${album.id}')"
+                     class="text-sm truncate hover:text-white cursor-pointer py-1 flex justify-between group">
+                    <span>${album.name}</span>
+                    <i data-lucide="trash-2" class="w-3 opacity-0 group-hover:opacity-100 text-red-400" onclick="deleteAlbum('${winId}', '${album.id}')"></i>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function handleTrackDrag(e, trackId) {
+            e.dataTransfer.setData('trackId', trackId);
+        }
+
+        function handleTrackDrop(e, winId, albumId) {
+            e.preventDefault();
+            const trackId = e.dataTransfer.getData('trackId');
+            const album = musicStorage.albums.find(a => a.id == albumId);
+            if(album && !album.tracks.includes(trackId)) {
+                album.tracks.push(trackId);
+                saveMusicData();
+                sendNotification('Music', 'Song added to album');
+            }
+        }
+
+        function createNewAlbum(winId) {
+            const name = prompt("Album Name:");
+            if(!name) return;
+            musicStorage.albums.push({ id: Date.now(), name, tracks: [] });
+            saveMusicData();
+            renderMusicAlbums(winId);
+        }
+
+        function deleteAlbum(winId, id) {
+            musicStorage.albums = musicStorage.albums.filter(a => a.id != id);
+            saveMusicData();
+            renderMusicAlbums(winId);
+            switchMusicView(winId, 'home');
+        }
+
+        function openAlbum(winId, albumId) {
+            const album = musicStorage.albums.find(a => a.id == albumId);
+            const main = document.getElementById(`music-main-${winId}`);
+            
+            let tracksHtml = album.tracks.map((tid, index) => {
+                const track = musicStorage.library.find(t => t.id == tid);
+                if(!track) return '';
+                return `
+                    <div class="song-row flex items-center gap-4 p-2 rounded-md group cursor-pointer" onclick="playTrack('${winId}', '${track.id}', '${albumId}')">
+                        <div class="w-8 text-right text-gray-500 group-hover:text-white">${index + 1}</div>
+                        <div class="flex-grow text-white text-sm font-medium">${track.name}</div>
+                        <div class="text-xs text-gray-500">3:45</div>
+                    </div>
+                `;
+            }).join('');
+
+            main.innerHTML = `
+                <div class="flex items-end gap-6 mb-8">
+                    <div class="w-52 h-52 bg-[#282828] shadow-2xl flex items-center justify-center"><i data-lucide="music" class="w-20 h-20 text-gray-600"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-white uppercase">Playlist</div>
+                        <h1 class="text-6xl font-black text-white mt-2 mb-6">${album.name}</h1>
+                        <div class="flex items-center gap-2 text-sm text-white font-bold">
+                            <span class="text-green-500">Crunch User</span> • ${album.tracks.length} songs
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-8 mb-8">
+                    <button class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-black hover:scale-105 transition-transform shadow-lg"><i data-lucide="play" class="fill-current ml-1"></i></button>
+                    <i data-lucide="heart" class="w-8 text-gray-400 hover:text-white cursor-pointer"></i>
+                    <i data-lucide="more-horizontal" class="w-8 text-gray-400 hover:text-white cursor-pointer"></i>
+                </div>
+                <div class="border-b border-white/10 pb-2 mb-4 flex text-xs font-bold uppercase tracking-widest text-gray-400">
+                    <div class="w-8 text-right mr-4">#</div>
+                    <div>Title</div>
+                </div>
+                <div class="flex flex-col">${tracksHtml || '<div class="text-gray-500 italic p-4">Drag songs from Library onto this album in the sidebar to add them.</div>'}</div>
+            `;
+            lucide.createIcons();
+        }
+
+        let currentQueue = [];
+        let currentIndex = -1;
+
+        function playTrack(winId, trackId, albumId = null) {
+            const track = musicStorage.library.find(t => t.id == trackId);
+            const audio = document.getElementById(`audio-engine-${winId}`);
+            const playIcon = document.getElementById(`play-icon-${winId}`);
+            
+            if(albumId) {
+                const album = musicStorage.albums.find(a => a.id == albumId);
+                currentQueue = album.tracks;
+                currentIndex = currentQueue.indexOf(trackId);
+            } else {
+                currentQueue = musicStorage.library.map(t => t.id);
+                currentIndex = currentQueue.indexOf(trackId);
+            }
+
+            audio.src = track.data;
+            audio.play();
+            
+            document.getElementById(`now-playing-title-${winId}`).innerText = track.name;
+            playIcon.setAttribute('data-lucide', 'pause');
+            lucide.createIcons();
+        }
+
+        function togglePlay(winId) {
+            const audio = document.getElementById(`audio-engine-${winId}`);
+            const icon = document.getElementById(`play-icon-${winId}`);
+            if(audio.paused) {
+                audio.play();
+                icon.setAttribute('data-lucide', 'pause');
+            } else {
+                audio.pause();
+                icon.setAttribute('data-lucide', 'play');
+            }
+            lucide.createIcons();
+        }
+
+        function nextTrack(winId) {
+            if(currentIndex < currentQueue.length - 1) {
+                currentIndex++;
+                playTrack(winId, currentQueue[currentIndex]);
+            }
+        }
+
+        function prevTrack(winId) {
+            if(currentIndex > 0) {
+                currentIndex--;
+                playTrack(winId, currentQueue[currentIndex]);
+            }
+        }
+
+        function formatTime(seconds) {
+            if(!seconds) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function switchMusicView(winId, view) {
+            if(view === 'home') {
+                const main = document.getElementById(`music-main-${winId}`);
+                main.innerHTML = `
+                    <div id="view-home-${winId}">
+                        <h1 class="text-3xl font-bold text-white mb-6">Good Day</h1>
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div onclick="switchMusicView('${winId}', 'library')" class="bg-white/5 rounded-md flex items-center gap-4 hover:bg-white/10 cursor-pointer overflow-hidden">
+                                <div class="w-20 h-20 bg-gradient-to-br from-indigo-700 to-blue-300 flex items-center justify-center shadow-lg"><i data-lucide="heart" class="text-white fill-white"></i></div>
+                                <span class="text-white font-bold">Liked Songs</span>
+                            </div>
+                        </div>
+                        <h2 class="text-xl font-bold text-white mb-4">Your Library</h2>
+                        <div id="library-grid-${winId}" class="grid grid-cols-4 gap-6"></div>
+                    </div>`;
+                renderMusicLibrary(winId);
+            }
+            if(view === 'library') {
+                renderMusicLibrary(winId);
+            }
+            lucide.createIcons();
+        }
+
+        function initTerminal(winId) {
+            const input = document.getElementById(`term-input-${winId}`);
+            const output = document.getElementById(`term-output-${winId}`);
+            input.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    output.innerHTML += `<div><span class="text-cyan-400">$</span> ${input.value}</div>`;
+                    if(input.value === 'help') output.innerHTML += `<div class="text-gray-400">Commands: help, clear, reboot</div>`;
+                    if(input.value === 'clear') output.innerHTML = '';
+                    input.value = '';
+                }
+            });
+        }
+
+        function initSnakeGame(winId) {
+            const canvas = document.getElementById(`canvas-${winId}`);
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400; canvas.height = 300;
+            let grid = 20, snake = [{x: 10, y: 10}], food = {x: 15, y: 10}, dx = 1, dy = 0, score = 0;
+            
+            const loop = setInterval(() => {
+                ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 400, 300);
+                
+                let head = {x: snake[0].x + dx, y: snake[0].y + dy};
+                if(head.x < 0) head.x = 19; if(head.x > 19) head.x = 0;
+                if(head.y < 0) head.y = 14; if(head.y > 14) head.y = 0;
+                
+                if(head.x === food.x && head.y === food.y) {
+                    score += 10;
+                    food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*15)};
+                } else snake.pop();
+                
+                if(snake.some(s => s.x === head.x && s.y === head.y)) {
+                    snake = [{x: 10, y: 10}]; dx = 1; dy = 0; score = 0;
+                }
+                snake.unshift(head);
+
+                ctx.fillStyle = '#f00'; ctx.fillRect(food.x*grid, food.y*grid, grid-2, grid-2);
+                ctx.fillStyle = '#0f0'; snake.forEach(s => ctx.fillRect(s.x*grid, s.y*grid, grid-2, grid-2));
+                ctx.fillStyle = '#fff'; ctx.fillText(`Score: ${score}`, 10, 20);
+            }, 100);
+
+            const handleKeys = (e) => {
+                if(e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
+                if(e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
+                if(e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
+                if(e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
+            };
+            window.addEventListener('keydown', handleKeys);
+            windowCleanupCallbacks[winId] = () => { clearInterval(loop); window.removeEventListener('keydown', handleKeys); };
+        }
+
+        function initZombieGame(winId) {
+            const canvas = document.getElementById(`canvas-${winId}`);
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400; canvas.height = 300;
+            let sun = 100, plants = [], zombies = [], projectiles = [];
+
+            canvas.onclick = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left)/40)*40;
+                const y = Math.floor((e.clientY - rect.top)/40)*40;
+                if(sun >= 50 && !plants.some(p => p.x === x && p.y === y)) {
+                    plants.push({x, y, timer: 0});
+                    sun -= 50;
+                }
+            };
+
+            const loop = setInterval(() => {
+                ctx.fillStyle = '#1a3300'; ctx.fillRect(0,0,400,300); // Lawn
+                for(let i=0; i<10; i++) for(let j=0; j<8; j++) {
+                    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.strokeRect(i*40, j*40, 40, 40);
+                }
+
+                sun += 0.2;
+                if(Math.random() < 0.015) zombies.push({x: 400, y: Math.floor(Math.random()*7)*40, hp: 5});
+
+                plants.forEach(p => {
+                    ctx.fillStyle = '#2ecc71'; ctx.fillRect(p.x+10, p.y+10, 20, 20);
+                    p.timer++;
+                    if(p.timer > 60) { projectiles.push({x: p.x+30, y: p.y+20}); p.timer = 0; }
+                });
+
+                zombies.forEach((z, i) => {
+                    ctx.fillStyle = '#9b59b6'; ctx.fillRect(z.x, z.y+5, 30, 30);
+                    z.x -= 0.5;
+                    if(z.x < 0) { alert('Zombies reached the house!'); zombies = []; plants = []; sun = 100; }
+                });
+
+                projectiles.forEach((p, pi) => {
+                    ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
+                    p.x += 4;
+                    zombies.forEach((z, zi) => {
+                        if(p.x > z.x && p.x < z.x+30 && p.y > z.y && p.y < z.y+30) {
+                            z.hp--; projectiles.splice(pi, 1);
+                            if(z.hp <= 0) zombies.splice(zi, 1);
+                        }
+                    });
+                });
+
+                ctx.fillStyle = 'white'; ctx.font = '12px Inter';
+                ctx.fillText(`Sun: ${Math.floor(sun)} (Cost: 50 per Plant)`, 10, 20);
+            }, 1000/60);
+            windowCleanupCallbacks[winId] = () => clearInterval(loop);
+        }
+    </script>
+</body>
+</html>
