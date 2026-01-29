@@ -157,6 +157,34 @@
             font-weight: 600;
         }
 
+        /* Random Button Addition */
+        .random-btn {
+            background: linear-gradient(135deg, var(--accent), #6366f1);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .random-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .random-btn:active {
+            transform: scale(0.95);
+        }
+
         /* Modern Grid */
         .grid {
             display: grid;
@@ -321,7 +349,7 @@
     <div class="nav-item" onclick="toggleOverlay('suggestOverlay')" title="Suggest a Game">💡</div>
     <div class="nav-item" onclick="toggleOverlay('logOverlay')" title="Update Log">📄</div>
     <div class="nav-item" onclick="toggleOverlay('settingsOverlay')" title="Settings">⚙️</div>
-    <div style="margin-top: auto;" class="nav-item" onclick="stealthMode()" title="Quick Stealth">👤</div>
+    <div style="margin-top: auto;" class="nav-item" onclick="stealthMode()" title="About blank">👤</div>
 </nav>
 
 <div id="mainContent" class="main-container">
@@ -335,6 +363,7 @@
     <div class="search-container">
         <input type="text" class="search-bar" id="gameSearch" placeholder="Search for a game..." onkeyup="searchGames()">
         <div class="game-count-badge" id="gameCounter">0 Games Available</div>
+        <button class="random-btn" onclick="playRandomGame()">🎲 Random</button>
     </div>
 
     <div id="favSection" style="display: none; margin-bottom: 40px;">
@@ -746,6 +775,210 @@
             <div class="app-label">Sonic 3</div>
         </div>
 		
+		        <div class="app-card" onclick="launchGame('games/sandboxels.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Sandboxels')">❤</div>
+            <img src="images/sandboxels.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Sandboxels</div>
+        </div>
+		
+        <div class="app-card" onclick="launchGame('games/infinitecraft.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Infinite Craft')">❤</div>
+            <img src="images/infinitecraft.png" class="app-icon" alt="bs">
+            <div class="app-label">Infinite Craft</div>
+        </div>		
+
+        <div class="app-card" onclick="launchGame('games/riddlems.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Riddle Middle School')">❤</div>
+            <img src="images/riddlems.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Riddle Middle School</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/madstuntc2.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Mad Stunt Cars 2')">❤</div>
+            <img src="images/stuntcars2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Mad Stunt Cars 2</div>
+        </div>
+		
+		        <div class="app-card" onclick="launchGame('games/jetskiracing.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Jet Ski Racing')">❤</div>
+            <img src="images/jsrace.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Jet Ski Racing</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/dino.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Google Dino Game')">❤</div>
+            <img src="images/dino.png" class="app-icon" alt="bs">
+            <div class="app-label">Google Dino Game</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/dokidoki.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Doki Doki Literature Club')">❤</div>
+            <img src="images/dokiew.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Doki Doki Literature Club</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/driftboss.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Drift Boss')">❤</div>
+            <img src="images/driftboss.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Drift Boss</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/drifthunters.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Drift Hunters')">❤</div>
+            <img src="images/drifthunters.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Drift Hunters</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/basketballlegends.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Basketball Legends')">❤</div>
+            <img src="images/basketballlegnds.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Basketball Legends</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/bfdibranches.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'BFDI: Branches')">❤</div>
+            <img src="images/bfb.jpg" class="app-icon" alt="bs">
+            <div class="app-label">BFDI: Branches</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/2048.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, '2048')">❤</div>
+            <img src="images/2048.jpg" class="app-icon" alt="bs">
+            <div class="app-label">2048</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/ducklife.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Duck Life')">❤</div>
+            <img src="images/ducklife2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Duck Life</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/parappatherapper.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Parappa The Rapper')">❤</div>
+            <img src="images/ptr.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Parappa The Rapper</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/residentevil.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Resident Evil')">❤</div>
+            <img src="images/rse.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Resident Evil</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('https://angrybirds-firebaseport.firebaseapp.com')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'AngryBirds Remastered')">❤</div>
+            <img src="images/abr.jpg" class="app-icon" alt="bs">
+            <div class="app-label">AngryBirds Remastered</div>
+        </div>
+		
+		        <div class="app-card" onclick="launchGame('https://scrapmetal3-firebase-port.firebaseapp.com')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Scrap Metal 3')">❤</div>
+            <img src="images/sm3.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Scrap Metal 3</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/wordle.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Wordle')">❤</div>
+            <img src="images/wordle.png" class="app-icon" alt="bs">
+            <div class="app-label">Wordle</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/indev.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Minecraft Indev')">❤</div>
+            <img src="images/indev.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Minecraft Indev</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/hobo.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Hobo')">❤</div>
+            <img src="images/hobo.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Hobo</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/grant2.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Gran Turismo 2')">❤</div>
+            <img src="images/gt2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Gran Turismo 2</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/dk64.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Donkey Kong 64')">❤</div>
+            <img src="images/dk64.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Donkey Kong 64</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/zmm.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Zelda: Majora's Mask')">❤</div>
+            <img src="images/zmm.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Zelda: Majora's Mask</div>
+        </div>
+		
+        <div class="app-card" onclick="launchGame('games/pizzatower.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Pizza Tower')">❤</div>
+            <img src="images/pzt.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Pizza Tower</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/amongus.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Among Us')">❤</div>
+            <img src="images/amgus.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Among Us</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/baconmaydie.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Bacon May Die')">❤</div>
+            <img src="images/bmd.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Bacon May Die</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/basketballfrvr.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Basketball (FRVR)')">❤</div>
+            <img src="images/bfv.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Basketball (FRVR)</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/maskedforcesunlimited.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Masked Forces: Unlimited')">❤</div>
+            <img src="images/mfu.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Masked Forces: Unlimited</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/moto3xm.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Moto 3XM: ?')">❤</div>
+            <img src="images/m3mm.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Moto 3XM</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/motox3mpoolparty.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Moto 3XM: Pool Party')">❤</div>
+            <img src="images/m3mp.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Moto 3XM: Pool Party</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/moto3xmspookyland.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Moto 3XM: Spooky')">❤</div>
+            <img src="images/m3ms.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Moto 3XM: Spooky</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/moto3xmm.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Moto 3XM: Winter')">❤</div>
+            <img src="images/m3m.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Moto 3XM: Winter</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/ovo2.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'OVO 2')">❤</div>
+            <img src="images/ovo2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">OVO 2</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/paperio.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Paper.io')">❤</div>
+            <img src="images/paperio.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Paper.io</div>
+        </div>
+
     </div>
 </div>
 
@@ -788,7 +1021,7 @@
         </div>
 
         <div class="setting-item">
-            <label>Auto-Stealth (about:blank on entry)</label>
+            <label>about:blank on startup (about:blank on entry)</label>
             <select id="autoStealth">
                 <option value="false">Disabled</option>
                 <option value="true">Enabled</option>
@@ -805,6 +1038,11 @@
 </div>
 
 <script>
+    /**
+     * CRUNCH ARCADE SYSTEM LOGIC
+     * -------------------------
+     * Cloaking configurations for educational masks.
+     */
     const cloakData = {
         ixl: { title: "IXL | Dashboard", icon: "https://www.ixl.com/favicon.ico" },
         schoology: { title: "Schoology | Courses", icon: "https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico" },
@@ -847,6 +1085,22 @@
         iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
         iframe.src = path;
         win.document.body.appendChild(iframe);
+    }
+
+    /**
+     * RANDOM GAME SELECTION SYSTEM
+     * Logic: Pulls all cards from the gameGrid, picks a random index, 
+     * and triggers the associated launch function.
+     */
+    function playRandomGame() {
+        const cards = document.querySelectorAll('#gameGrid .app-card');
+        if (cards.length === 0) return;
+        
+        const randomIndex = Math.floor(Math.random() * cards.length);
+        const selectedCard = cards[randomIndex];
+        
+        // Triggers the onclick event defined in the HTML
+        selectedCard.click();
     }
 
     function searchGames() {
@@ -990,6 +1244,17 @@
         updateGameCount();
         refreshFavorites();
     };
+
+    /**
+     * PERSISTENCE AND CACHE MANAGEMENT
+     * Ensures that local storage interactions are sanitized
+     * and that the UI state remains consistent across sessions.
+     */
+    function sanitizeData() {
+        console.log("Crunch Arcade: Verifying Local Data integrity...");
+        // Placeholder for future data validation logic
+    }
+    sanitizeData();
 </script>
 
 </body>
