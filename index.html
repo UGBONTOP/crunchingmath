@@ -14,85 +14,100 @@
             --border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
+
+            /* Light theme fallbacks */
+            --bg-light: #f7f7fb;
+            --card-bg-light: rgba(255,255,255,0.85);
+            --border-light: rgba(2,6,23,0.06);
+            --text-main-light: #0b1220;
+            --text-dim-light: #4b5563;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* GLOSSY UI BASE STYLING & TRANSITIONS */
+        * { box-sizing: border-box; transition: all 0.28s cubic-bezier(0.2, 0, 0.15, 1); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 
         body {
             margin: 0;
             min-height: 100vh;
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 40%);
             color: var(--text-main);
             overflow-x: hidden;
             display: flex;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* Side Navigation */
         .sidebar {
-            width: 80px;
+            width: 86px;
             height: 100vh;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.75), rgba(11,14,20,0.55));
+            backdrop-filter: blur(10px) saturate(120%);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 30px 0;
+            padding: 28px 0;
             position: fixed;
             left: 0;
             z-index: 100;
+            box-shadow: 0 8px 30px rgba(2,6,23,0.6) inset;
         }
 
         .side-logo {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 12px;
-            margin-bottom: 50px;
+            margin-bottom: 44px;
             border: 2px solid var(--accent);
-            box-shadow: 0 0 15px var(--accent-glow);
+            box-shadow: 0 8px 30px var(--accent-glow), 0 1px 0 rgba(255,255,255,0.04) inset;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+            padding: 6px;
+            object-fit: cover;
         }
 
         .nav-item {
-            font-size: 1.5rem;
-            margin: 20px 0;
+            font-size: 1.6rem;
+            margin: 18px 0;
             cursor: pointer;
             color: var(--text-dim);
             position: relative;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
         }
 
-        .nav-item:hover { color: var(--accent); transform: scale(1.1); }
+        .nav-item:hover {
+            color: var(--accent);
+            transform: translateY(-4px) scale(1.06);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            box-shadow: 0 6px 18px rgba(0,0,0,0.45), 0 0 18px var(--accent-glow);
+        }
 
         /* Main Content Area */
         .main-container {
-            margin-left: 80px;
-            width: calc(100% - 80px);
-            padding: 40px;
+            margin-left: 86px;
+            width: calc(100% - 86px);
+            padding: 44px;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 30px;
-        }
-
-        .title-group h1 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 2.5rem;
-            margin: 0;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #fff, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 26px;
         }
 
         .title-group p {
-            margin: 5px 0 0;
+            margin: 0;
             color: var(--text-dim);
             font-weight: 300;
             letter-spacing: 2px;
@@ -100,12 +115,24 @@
             font-size: 0.8rem;
         }
 
+        .title-group h1 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 2.6rem;
+            margin: 0;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent) 60%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 6px 30px rgba(139,92,246,0.08);
+        }
+
         /* Section Titles */
         .section-header {
             font-family: 'Syncopate', sans-serif;
             font-size: 0.9rem;
             color: var(--accent);
-            margin: 40px 0 20px 0;
+            margin: 36px 0 18px 0;
             letter-spacing: 3px;
             text-transform: uppercase;
             display: flex;
@@ -122,39 +149,44 @@
 
         /* Search Bar */
         .search-container {
-            margin-bottom: 40px;
+            margin-bottom: 36px;
             position: relative;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 18px;
         }
 
         .search-bar {
             width: 100%;
-            max-width: 400px;
-            background: var(--card-bg);
+            max-width: 520px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
             border: 1px solid var(--border);
-            padding: 15px 25px;
-            border-radius: 50px;
+            padding: 14px 22px;
+            border-radius: 999px;
             color: white;
             font-family: inherit;
             outline: none;
             font-size: 1rem;
+            box-shadow: 0 6px 20px rgba(2,6,23,0.6) inset, 0 8px 30px rgba(0,0,0,0.45);
         }
+
+        .search-bar::placeholder { color: rgba(255,255,255,0.45); }
 
         .search-bar:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
+            box-shadow: 0 0 26px var(--accent-glow), 0 6px 26px rgba(0,0,0,0.5) inset;
         }
 
         .game-count-badge {
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid var(--accent);
-            padding: 5px 15px;
+            background: linear-gradient(180deg, rgba(139,92,246,0.08), rgba(139,92,246,0.04));
+            border: 1px solid rgba(139,92,246,0.26);
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--accent);
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            box-shadow: 0 6px 18px rgba(139,92,246,0.06);
         }
 
         /* Random Button Addition */
@@ -162,53 +194,59 @@
             background: linear-gradient(135deg, var(--accent), #6366f1);
             color: white;
             border: none;
-            padding: 8px 18px;
+            padding: 10px 20px;
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.82rem;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.28);
             font-family: 'Outfit', sans-serif;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transform-origin: center;
         }
 
         .random-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 40px rgba(139, 92, 246, 0.32), 0 0 28px var(--accent-glow);
         }
 
-        .random-btn:active {
-            transform: scale(0.95);
-        }
+        .random-btn:active { transform: translateY(0) scale(0.98); }
 
         /* Modern Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 30px;
+            gap: 28px;
             perspective: 1000px;
         }
 
         .app-card {
-            background: var(--card-bg);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 15px;
+            border-radius: 20px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            transition: transform 0.28s cubic-bezier(0.2,0,0.18,1), box-shadow 0.28s;
+            box-shadow: 0 8px 22px rgba(2,6,23,0.6);
+            backdrop-filter: blur(6px) saturate(120%);
         }
 
         .app-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            top: -30%;
+            left: -30%;
+            width: 160%;
+            height: 160%;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 15%), linear-gradient(120deg, rgba(255,255,255,0.02), transparent 40%);
+            transform: rotate(8deg);
             pointer-events: none;
         }
 
@@ -217,51 +255,57 @@
             top: 10px;
             right: 10px;
             z-index: 5;
-            background: rgba(0,0,0,0.5);
+            background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(255,255,255,0.02));
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             border: 1px solid var(--border);
             transition: 0.2s;
+            color: rgba(255,255,255,0.8);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.6);
         }
 
         .fav-btn.active {
-            color: #ef4444;
-            border-color: #ef4444;
-            text-shadow: 0 0 10px #ef4444;
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+            text-shadow: 0 0 14px rgba(255,107,107,0.2);
+            box-shadow: 0 12px 30px rgba(255,107,107,0.08);
         }
 
         .app-icon {
             width: 100%;
             aspect-ratio: 1/1;
-            border-radius: 18px;
+            border-radius: 14px;
             margin-bottom: 12px;
             object-fit: cover;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+            border: 1px solid rgba(255,255,255,0.03);
+            background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.08));
         }
 
         .app-label {
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            letter-spacing: 0.2px;
         }
 
         .app-card:hover {
-            transform: translateY(-10px) rotateX(5deg);
-            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-12px) rotateX(4deg) scale(1.02);
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.06), rgba(255,255,255,0.01));
             border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(139, 92, 246, 0.2);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 0 28px rgba(139, 92, 246, 0.16);
         }
 
         /* Settings Overlay Overhaul */
-        #settingsOverlay, #logOverlay, #suggestOverlay {
+        #settingsOverlay, #logOverlay, #suggestOverlay, #proxyModal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -269,27 +313,27 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(18px) saturate(120%);
         }
 
         .settings-card {
-            background: #0f172a;
-            width: 400px;
-            padding: 40px;
-            border-radius: 32px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            width: 420px;
+            padding: 36px;
+            border-radius: 24px;
             border: 1px solid var(--accent);
-            box-shadow: 0 0 50px rgba(139, 92, 246, 0.2);
+            box-shadow: 0 20px 60px rgba(2,6,23,0.7);
         }
 
         .settings-card h2 {
             font-family: 'Syncopate', sans-serif;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            font-size: 1.22rem;
+            margin-bottom: 22px;
             text-align: center;
         }
 
         .setting-item {
-            margin-bottom: 25px;
+            margin-bottom: 18px;
         }
 
         .setting-item label {
@@ -301,43 +345,127 @@
             letter-spacing: 1px;
         }
 
-        select, textarea, .btn-primary {
+        select, textarea, .btn-primary, .theme-option {
             width: 100%;
-            background: rgba(255,255,255,0.05);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
             border: 1px solid var(--border);
             color: white;
-            padding: 14px;
+            padding: 12px 14px;
             border-radius: 12px;
             cursor: pointer;
             font-family: inherit;
             outline: none;
         }
 
+        select { height: 44px; }
+
         textarea {
             resize: none;
-            height: 100px;
+            height: 90px;
             cursor: text;
+            padding: 12px 14px;
         }
 
         .btn-primary {
-            background: var(--accent);
-            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent), #6b46ff);
+            font-weight: 700;
             margin-top: 10px;
             border: none;
+            color: white;
+            padding: 12px 14px;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(139,92,246,0.18);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
         .btn-primary:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-3px);
+            filter: brightness(1.07);
+            box-shadow: 0 18px 46px rgba(139,92,246,0.25);
         }
 
-        .blur-target { filter: blur(15px); transform: scale(0.98); }
+        .btn-primary.secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            box-shadow: none;
+        }
+
+        .blur-target { filter: blur(14px) saturate(90%); transform: scale(0.995); }
+
+        /* Proxy Modal specific */
+        .proxy-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            width: 520px;
+            padding: 28px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 30px 80px rgba(2,6,23,0.8);
+            text-align: left;
+        }
+
+        .proxy-card h3 {
+            font-family: 'Syncopate', sans-serif;
+            margin: 0 0 10px 0;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .proxy-card p {
+            color: var(--text-dim);
+            margin-bottom: 18px;
+            line-height: 1.45;
+            font-size: 0.95rem;
+        }
+
+        .proxy-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Responsive tweaks */
+        @media (max-width: 920px) {
+            .main-container { padding: 20px; margin-left: 72px; width: calc(100% - 72px); }
+            .sidebar { width: 72px; }
+            .search-bar { max-width: 360px; }
+            .settings-card { width: 92%; padding: 22px; }
+        }
+
+        /* Light theme modifier */
+        body.theme-light {
+            background-color: var(--bg-light);
+            color: var(--text-main-light);
+            background-image: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+        }
+        body.theme-light .settings-card,
+        body.theme-light .proxy-card,
+        body.theme-light .app-card {
+            background: var(--card-bg-light);
+            border: 1px solid var(--border-light);
+            color: var(--text-main-light);
+            box-shadow: 0 8px 30px rgba(2,6,23,0.04);
+        }
+        body.theme-light .search-bar,
+        body.theme-light select,
+        body.theme-light textarea {
+            background: #fff;
+            color: var(--text-main-light);
+        }
+        body.theme-light .title-group h1 {
+            background: linear-gradient(90deg, #0b1220 0%, #0b8b4f 60%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.theme-light .game-count-badge { color: #0b8b4f; border-color: rgba(11,139,79,0.18); background: rgba(11,139,79,0.06); }
+
+        /* Gradient theme modifiers will be applied inline by JS to the body style */
     </style>
 </head>
 <body>
@@ -345,6 +473,8 @@
 <nav class="sidebar">
     <img src="images/crunchicon.png" class="side-logo" alt="logo">
     <div class="nav-item" title="Home" onclick="location.reload()">🏠</div>
+    <!-- Modified: proxy now shows a blocking notification before launching -->
+    <div class="nav-item" onclick="showProxyWarning('https://ixl-alternativelinks.firebaseapp.com')" title="proxy">🌐</div>	
     <div class="nav-item" onclick="launchGame('os/cos.html')" title="Crunch OS">💻</div>
     <div class="nav-item" onclick="toggleOverlay('suggestOverlay')" title="Suggest a Game">💡</div>
     <div class="nav-item" onclick="toggleOverlay('logOverlay')" title="Update Log">📄</div>
@@ -356,7 +486,7 @@
     <header>
         <div class="title-group">
             <p>crunch on top</p>
-            <h1>crunch arcade (webport) <span style="color:var(--accent)">(v1.0.0)</span></h1>
+            <h1>crunch arcade (webport) <span style="color:var(--accent)">(v1.1)</span></h1>
         </div>
     </header>
 
@@ -402,6 +532,12 @@
             <img src="images/cror.jpg" class="app-icon" alt="bs">
             <div class="app-label">Crossy Road</div>
         </div>
+		
+        <div class="app-card" onclick="launchGame('games/Crossy-Road/index.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Crossy Road (Alt)')">❤</div>
+            <img src="images/cror.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Crossy Road (Alt)</div>
+        </div>		
 
         <div class="app-card" onclick="launchGame('games/gd.html')">
             <div class="fav-btn" onclick="toggleFav(event, this, 'Geometry Dash')">❤</div>
@@ -644,7 +780,7 @@
         </div>
 
         <div class="app-card" onclick="launchGame('https://cuphead-firebase-port.firebaseapp.com')">
-            <div class="fav-btn" onclick="toggleFav(event, this, 'Cuphead')">❤</div>
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Cuphead')">��</div>
             <img src="images/cuphead.png" class="app-icon" alt="bs">
             <div class="app-label">Cuphead</div>
         </div>
@@ -985,19 +1121,366 @@
             <div class="app-label">Melon Playground</div>
         </div>
 
+        <div class="app-card" onclick="launchGame('https://repo-fired-baseit.firebaseapp.com')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'R.E.P.O')">❤</div>
+            <img src="images/repo.jpg" class="app-icon" alt="bs">
+            <div class="app-label">R.E.P.O</div>
+        </div>
+		
+		        <div class="app-card" onclick="launchGame('games/aquaparkio.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Aqua Park.io')">❤</div>
+            <img src="images/aquaparkio.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Aqua Park.io</div>
+        </div>
+		
+        <div class="app-card" onclick="launchGame('games/asmallworldcup.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'A Small World Cup')">❤</div>
+            <img src="images/asmwc.jpg" class="app-icon" alt="bs">
+            <div class="app-label">A Small World Cup</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/badbodyguards.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Bad Bodyguards')">❤</div>
+            <img src="images/badbg.png" class="app-icon" alt="bs">
+            <div class="app-label">Bad Bodyguards</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/basketslamdunk2.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Basket Ball Slam Dunk 2')">❤</div>
+            <img src="images/bbsd.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Basket Ball Slam Dunk 2</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/blockblast.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Block Blast')">❤</div>
+            <img src="images/blockblast.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Block Blast</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/Brawlstars.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Brawl Stars')">❤</div>
+            <img src="images/brawlstairs.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Brawl Stars</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/clashofvikings.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Clash of Vikings')">❤</div>
+            <img src="images/clashov.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Clash of Vikings</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/civiballs.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Civi Balls')">❤</div>
+            <img src="images/civiball.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Civi Balls</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/carcrash3.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Car Crash Simulator 3')">❤</div>
+            <img src="images/mp.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Car Crash Simulator 3</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/crazymotorcycle.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Crazy Motorcycle')">❤</div>
+            <img src="images/crazym.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Crazy Motorcycle</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/cuttr.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Cut the Rope')">❤</div>
+            <img src="images/cuttr.png" class="app-icon" alt="bs">
+            <div class="app-label">Cut the Rope</div>
+        </div>
+		
+        <div class="app-card" onclick="launchGame('games/drivemad.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Drive Mad')">❤</div>
+            <img src="images/drivemad.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Drive Mad</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/fnafpizzas.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Fnaf Pizzzeria Sim')">❤</div>
+            <img src="images/fnafpizzas.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Fnaf Pizzzeria Sim</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/fnafsister.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'FNAF Sister Location')">❤</div>
+            <img src="images/fnafsister.jpg" class="app-icon" alt="bs">
+            <div class="app-label">FNAF Sister Location</div>
+        </div>		
+
+        <div class="app-card" onclick="launchGame('games/highwayracer.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Highway Racer')">❤</div>
+            <img src="images/highwayracer.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Highway Racer</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/mrracer.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Mr Racer')">❤</div>
+            <img src="images/mrracer.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Mr Racer</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/mytd.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'My Teardrop')">❤</div>
+            <img src="images/mytd.png" class="app-icon" alt="bs">
+            <div class="app-label">My Teardrop</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/flappyb.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Flappy Bird')">❤</div>
+            <img src="images/flappyb.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Flappy Bird</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/oret.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Oregon Trail')">❤</div>
+            <img src="images/oret.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Oregon Trail</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/stumbleg.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Stumble Guys')">❤</div>
+            <img src="images/stumbleg.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Stumble Guys</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('https://amandafireport.web.app')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Amanda The Adventurer')">❤</div>
+            <img src="images/atg.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Amanda The Adventurer</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('https://gettingoverdih-fireport.web.app')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Getting Over it')">❤</div>
+            <img src="images/goit.png" class="app-icon" alt="bs">
+            <div class="app-label">Getting Over it</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('https://thatsnotmyneighbor-sdih.web.app')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Thats not my Neighbor')">❤</div>
+            <img src="images/thatsnmn.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Thats not my Neighbor</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/bbbros.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Baseball Bros')">❤</div>
+            <img src="images/bbbros.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Baseball Bros</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/baskbros.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Basketball Bros')">❤</div>
+            <img src="images/baskbros.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Basketball Bros</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/basketrandom.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Basketball Random')">❤</div>
+            <img src="images/basketballrandom.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Basketball Random</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/tombofthemask.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Tomb Of The Mask')">❤</div>
+            <img src="images/tombofthemask.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Tomb Of The Mask</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/carkingarenea.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Car King Arena')">❤</div>
+            <img src="images/carkingarenea.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Car King Arena</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/realflightsim.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Real Flight Sim')">❤</div>
+            <img src="images/realflightsim.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Real Flight Sim</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/rbcol.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Retrobowl College')">❤</div>
+            <img src="images/rbcol.png" class="app-icon" alt="bs">
+            <div class="app-label">Retrobowl College</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/roofts.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Rooftop Sniper')">❤</div>
+            <img src="images/roofts.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Rooftop Sniper</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/territorialio.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Territorial.io')">❤</div>
+            <img src="images/territorialio.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Territorial.io</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/waterpoolio.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Waterpool.io')">❤</div>
+            <img src="images/waterpoolio.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Waterpool.io</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/portal2d.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Portal 2D')">❤</div>
+            <img src="images/portal2d.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Portal 2D</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/puppethockey.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Puppet Hockey')">❤</div>
+            <img src="images/puppethockey.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Puppy Hockey</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/ovo3.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'OvO 3')">❤</div>
+            <img src="images/ovo3.jpg" class="app-icon" alt="bs">
+            <div class="app-label">OvO 3</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/mario.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'NES Mario')">❤</div>
+            <img src="images/mario.jpg" class="app-icon" alt="bs">
+            <div class="app-label">NES Mario</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/FIFAS95.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'FIFA Soccer 95')">❤</div>
+            <img src="images/fifa95.jpg" class="app-icon" alt="bs">
+            <div class="app-label">FIFA Soccer 95</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/NBAHangtime.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'NBA Hangtime')">❤</div>
+            <img src="images/nbaht.jpg" class="app-icon" alt="bs">
+            <div class="app-label">NBA Hangtime</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/FIFA99.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'FIFA 99')">❤</div>
+            <img src="images/fifa99.jpg" class="app-icon" alt="bs">
+            <div class="app-label">FIFA 99</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/Doom65.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Doom 64')">❤</div>
+            <img src="images/Doom64.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Doom 64</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/worldcup08.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'World Cup 98')">❤</div>
+            <img src="images/worldcup08.jpg" class="app-icon" alt="bs">
+            <div class="app-label">World Cup 98</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/mortalk4.html')">
+            <div class="fav-btn" onclick="toggleFav(event, this, 'Mortal Kombat 4')">❤</div>
+            <img src="images/mortalk4.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Mortal Kombat 4</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/granny2.html')">
+            <img src="images/granny2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Granny 2</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/granny3.html')">
+            <img src="images/granny3.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Granny 3</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/footballl.html')">
+            <img src="images/footballl.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Soccer Legends</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/escaper2.html')">
+            <img src="images/escaper2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Escape Road 2</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/ducklifeb.html')">
+            <img src="images/ducklifeb.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Ducklife Battle</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/crazyc3d.html')">
+            <img src="images/crazyc3d.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Crazy Chicken 3D</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/bloon6.html')">
+            <img src="images/bloon6.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Bloons TD6</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/bowm.html')">
+            <img src="images/bowm.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Bow Masters</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/blockydd.html')">
+            <img src="images/blockydd.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Blocky Demolition Derby</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/blockblast2.html')">
+            <img src="images/blockblast2.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Block Blast 2</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/ballh/index.html')">
+            <img src="images/ballhop.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Ball Hop</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/Stack/index.html')">
+            <img src="images/stack.jpg" class="app-icon" alt="bs">
+            <div class="app-label">Stack</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/Hextris/index.html')">
+            <img src="images/hextris.png" class="app-icon" alt="bs">
+            <div class="app-label">Hextris</div>
+        </div>
+
+        <div class="app-card" onclick="launchGame('games/Hacker-Tetris/index.html')">
+            <img src="images/hackert.png" class="app-icon" alt="bs">
+            <div class="app-label">Hacker Tetris</div>
+        </div>
+
     </div>
 </div>
 
 <div id="logOverlay">
     <div class="settings-card">
         <h2>Update Log</h2>
-        <div style="color: var(--text-dim); line-height: 1.6; font-size: 0.9rem;">
-            <p><strong>Crunch Arcade Webport (v1.0.0)</strong></p>
-            <ul style="padding-left: 20px;">
-                <li>Released, have fun!</li>
+        <div style="color: var(--text-dim); line-height: 1.6; font-size: 0.95rem;">
+            <p><strong>Crunch Arcade Webport (v1.1)</strong></p>
+            <ul style="padding-left: 20px; color: var(--text-dim);">
+                <li>Added 50+ games</li>
+                <li>Design settings added</li>	
+                <li>OS Fixed (remastered)</li>	
+                <li>funny proxy which can get u in trouble btw</li>				
             </ul>
         </div>
-        <button class="btn-primary" onclick="toggleOverlay('logOverlay')">Close</button>
+
+        <!-- Added: Dont show again option -->
+        <div style="display:flex; align-items:center; gap:10px; margin-top:14px; margin-bottom:6px;">
+            <input type="checkbox" id="dontShowChangelog" />
+            <label for="dontShowChangelog" style="color:var(--text-dim); font-size:0.9rem;">Don't show again</label>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:12px; justify-content:flex-end;">
+            <button class="btn-primary secondary" onclick="toggleOverlay('logOverlay')">Close</button>
+            <button class="btn-primary" id="logCloseOk">OK</button>
+        </div>
     </div>
 </div>
 
@@ -1009,7 +1492,7 @@
             <textarea id="suggestInput" placeholder="Enter your suggestion..."></textarea>
         </div>
         <button class="btn-primary" id="sendSuggestBtn" onclick="sendSuggestion()">Send</button>
-        <button class="btn-primary" style="background: transparent; border: 1px solid var(--border); margin-top: 10px;" onclick="toggleOverlay('suggestOverlay')">Cancel</button>
+        <button class="btn-primary secondary" style="margin-top: 10px;" onclick="toggleOverlay('suggestOverlay')">Cancel</button>
     </div>
 </div>
 
@@ -1035,20 +1518,52 @@
         </div>
 
         <div class="setting-item">
+            <label>Theme Mode</label>
+            <div style="display:flex; gap:10px;">
+                <select id="themeMode" class="theme-option" onchange="onThemeModeChange()">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="gradient">Gradient</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="setting-item" id="gradientOptionsWrapper" style="display:none;">
+            <label>gradient shiii</label>
+            <select id="gradientPreset" class="theme-option">
+                <option value="green-forest">Green Forest</option>
+                <option value="midnight">Midnight</option>
+                <option value="sunrise">Sunrise</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
             <label>Hide in about:blank</label>
             <button class="btn-primary" style="background: #334155;" onclick="stealthMode()">open</button>
         </div>
 
-        <button class="btn-primary" onclick="saveSettings()">Save Changes</button>
+        <div style="display:flex; gap:12px; margin-top:8px;">
+            <button class="btn-primary" onclick="saveSettings()">Save Changes</button>
+            <button class="btn-primary secondary" onclick="resetThemeToDefault()">Reset Theme</button>
+        </div>
+    </div>
+</div>
+
+<div id="proxyModal">
+    <div class="proxy-card">
+        <h3>ALERT!</h3>
+        <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">Using a proxy can hold you liable for fuhing around with school property</p>
+        <p style="color:var(--text-dim); margin-top:0;">
+            if you do not wanna risk getting in major trouble stay out of this, besides for that meh idc go ahead
+        </p>
+        <div class="proxy-actions">
+            <button class="btn-primary secondary" onclick="closeProxyModal()">nvm bro</button>
+            <button class="btn-primary" id="proxyConfirmBtn">idgaf bro stfu</button>
+        </div>
     </div>
 </div>
 
 <script>
-    /**
-     * CRUNCH ARCADE SYSTEM LOGIC
-     * -------------------------
-     * Cloaking configurations for educational masks.
-     */
     const cloakData = {
         ixl: { title: "IXL | Dashboard", icon: "https://www.ixl.com/favicon.ico" },
         schoology: { title: "Schoology | Courses", icon: "https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico" },
@@ -1063,14 +1578,23 @@
         main.classList.toggle('blur-target');
     }
 
+    function closeProxyModal() {
+        document.getElementById('proxyModal').style.display = 'none';
+        document.getElementById('mainContent').classList.remove('blur-target');
+    }
+
     function applyCloak(targetWindow) {
         const choice = document.getElementById('cloakType').value;
         const data = cloakData[choice];
-        targetWindow.document.title = data.title;
-        const link = targetWindow.document.createElement('link');
-        link.rel = 'icon';
-        link.href = data.icon;
-        targetWindow.document.head.appendChild(link);
+        try {
+            targetWindow.document.title = data.title;
+            const link = targetWindow.document.createElement('link');
+            link.rel = 'icon';
+            link.href = data.icon;
+            targetWindow.document.head.appendChild(link);
+        } catch (e) {
+            console.warn('Could not apply cloak:', e);
+        }
     }
 
     function stealthMode() {
@@ -1093,11 +1617,25 @@
         win.document.body.appendChild(iframe);
     }
 
-    /**
-     * RANDOM GAME SELECTION SYSTEM
-     * Logic: Pulls all cards from the gameGrid, picks a random index, 
-     * and triggers the associated launch function.
-     */
+    let _pendingProxyUrl = null;
+    function showProxyWarning(url) {
+        _pendingProxyUrl = url;
+        const proxyModal = document.getElementById('proxyModal');
+        const main = document.getElementById('mainContent');
+        proxyModal.style.display = 'flex';
+        main.classList.add('blur-target');
+
+        const confirmBtn = document.getElementById('proxyConfirmBtn');
+        confirmBtn.onclick = () => {
+            proxyModal.style.display = 'none';
+            main.classList.remove('blur-target');
+            if (_pendingProxyUrl) {
+                launchGame(_pendingProxyUrl);
+            }
+            _pendingProxyUrl = null;
+        };
+    }
+
     function playRandomGame() {
         const cards = document.querySelectorAll('#gameGrid .app-card');
         if (cards.length === 0) return;
@@ -1137,12 +1675,21 @@
             favorites = favorites.filter(fav => fav !== gameName);
         }
         localStorage.setItem('crunchFavs', JSON.stringify(favorites));
-        refreshFavorites(); // Addon: Update the favorites section immediately
+        refreshFavorites();
     }
 
     function saveSettings() {
         localStorage.setItem('autoStealth', document.getElementById('autoStealth').value);
         localStorage.setItem('cloakPref', document.getElementById('cloakType').value);
+        // theme settings
+        const mode = document.getElementById('themeMode').value;
+        localStorage.setItem('themeMode', mode);
+        if (mode === 'gradient') {
+            localStorage.setItem('gradientPreset', document.getElementById('gradientPreset').value);
+        } else {
+            localStorage.removeItem('gradientPreset');
+        }
+        applyThemeFromPrefs();
         toggleOverlay('settingsOverlay');
     }
 
@@ -1152,7 +1699,7 @@
         const favorites = JSON.parse(localStorage.getItem('crunchFavs') || "[]");
         const allCards = document.querySelectorAll('#gameGrid .app-card');
         
-        favGrid.innerHTML = ''; // Clear current display
+        favGrid.innerHTML = '';
         
         if (favorites.length > 0) {
             favSection.style.display = 'block';
@@ -1160,7 +1707,6 @@
                 const label = card.querySelector('.app-label').innerText;
                 if (favorites.includes(label)) {
                     const clone = card.cloneNode(true);
-                    // Re-bind click events to clone
                     clone.onclick = card.onclick;
                     clone.querySelector('.fav-btn').onclick = (e) => toggleFav(e, card.querySelector('.fav-btn'), label);
                     favGrid.appendChild(clone);
@@ -1172,8 +1718,10 @@
     }
 
     function updateGameCount() {
-        const totalGames = document.querySelectorAll('#gameGrid .app-card').length;
-        document.getElementById('gameCounter').innerText = `${totalGames} Games Available`;
+        const all = document.querySelectorAll('#gameGrid .app-card');
+        let visible = 0;
+        all.forEach(c => { if (c.style.display !== 'none') visible++; });
+        document.getElementById('gameCounter').innerText = `${visible} Games Available`;
     }
 
     async function sendSuggestion() {
@@ -1219,8 +1767,61 @@
         }
     }
 
+    function onThemeModeChange() {
+        const mode = document.getElementById('themeMode').value;
+        const wrapper = document.getElementById('gradientOptionsWrapper');
+        wrapper.style.display = (mode === 'gradient') ? 'block' : 'none';
+    }
+
+    function applyThemeFromPrefs() {
+        const mode = localStorage.getItem('themeMode') || 'dark';
+        const preset = localStorage.getItem('gradientPreset') || 'green-forest';
+        const body = document.body;
+
+        body.classList.remove('theme-light');
+        body.style.backgroundImage = '';
+        body.style.backgroundColor = '';
+
+        if (mode === 'light') {
+            body.classList.add('theme-light');
+            document.documentElement.style.setProperty('--accent', '#0b8b4f');
+            document.documentElement.style.setProperty('--accent-glow', 'rgba(11,139,79,0.22)');
+        } else if (mode === 'dark') {
+            body.classList.remove('theme-light');
+            document.documentElement.style.setProperty('--accent', '#8b5cf6');
+            document.documentElement.style.setProperty('--accent-glow', 'rgba(139,92,246,0.4)');
+        } else if (mode === 'gradient') {
+            body.classList.remove('theme-light');
+            document.documentElement.style.setProperty('--accent', '#8b5cf6');
+            document.documentElement.style.setProperty('--accent-glow', 'rgba(139,92,246,0.4)');
+
+            if (preset === 'green-forest') {
+                body.style.backgroundImage = "radial-gradient(at 10% 10%, rgba(16,185,129,0.08) 0px, transparent 25%), radial-gradient(at 90% 90%, rgba(6,95,70,0.08) 0px, transparent 35%), linear-gradient(180deg, rgba(2,6,23,0.85), rgba(6,30,15,0.92))";
+                document.documentElement.style.setProperty('--accent', '#10b981');
+                document.documentElement.style.setProperty('--accent-glow', 'rgba(16,185,129,0.22)');
+            } else if (preset === 'midnight') {
+                body.style.backgroundImage = "radial-gradient(at 5% 10%, rgba(99,102,241,0.09) 0px, transparent 25%), radial-gradient(at 95% 90%, rgba(139,92,246,0.09) 0px, transparent 35%), linear-gradient(180deg, rgba(2,6,23,0.92), rgba(4,8,28,0.95))";
+                document.documentElement.style.setProperty('--accent', '#6366f1');
+                document.documentElement.style.setProperty('--accent-glow', 'rgba(99,102,241,0.22)');
+            } else if (preset === 'sunrise') {
+                body.style.backgroundImage = "radial-gradient(at 10% 10%, rgba(255,159,67,0.09) 0px, transparent 25%), radial-gradient(at 90% 80%, rgba(255,96,96,0.08) 0px, transparent 35%), linear-gradient(180deg, rgba(12,6,23,0.7), rgba(40,10,30,0.75))";
+                document.documentElement.style.setProperty('--accent', '#ff6b6b');
+                document.documentElement.style.setProperty('--accent-glow', 'rgba(255,107,107,0.2)');
+            }
+        }
+    }
+
+    function resetThemeToDefault() {
+        localStorage.removeItem('themeMode');
+        localStorage.removeItem('gradientPreset');
+        applyThemeFromPrefs();
+        // Reset settings UI controls
+        document.getElementById('themeMode').value = 'dark';
+        document.getElementById('gradientPreset').value = 'green-forest';
+        onThemeModeChange();
+    }
+
     window.onload = () => {
-        // Load Auto Stealth
         const isAutoStealth = localStorage.getItem('autoStealth') === 'true';
         const hasTriggered = sessionStorage.getItem('stealthTriggered');
         
@@ -1237,7 +1838,14 @@
             document.getElementById('cloakType').value = localStorage.getItem('cloakPref');
         }
 
-        // Load Favorites icons
+        const themeMode = localStorage.getItem('themeMode') || 'dark';
+        document.getElementById('themeMode').value = themeMode;
+        if (localStorage.getItem('gradientPreset')) {
+            document.getElementById('gradientPreset').value = localStorage.getItem('gradientPreset');
+        }
+        onThemeModeChange();
+        applyThemeFromPrefs();
+
         let favorites = JSON.parse(localStorage.getItem('crunchFavs') || "[]");
         let cards = document.querySelectorAll('#gameGrid .app-card');
         for (let card of cards) {
@@ -1249,16 +1857,26 @@
         
         updateGameCount();
         refreshFavorites();
+
+        const dontShow = localStorage.getItem('hideChangelog') === 'true';
+        if (!dontShow) {
+            document.getElementById('logOverlay').style.display = 'flex';
+            document.getElementById('mainContent').classList.add('blur-target');
+        }
+
+        // set the checkbox state
+        document.getElementById('dontShowChangelog').checked = localStorage.getItem('hideChangelog') === 'true';
+
+        // wire log overlay OK button to respect checkbox
+        document.getElementById('logCloseOk').onclick = () => {
+            const checked = document.getElementById('dontShowChangelog').checked;
+            localStorage.setItem('hideChangelog', checked ? 'true' : 'false');
+            toggleOverlay('logOverlay');
+        };
     };
 
-    /**
-     * PERSISTENCE AND CACHE MANAGEMENT
-     * Ensures that local storage interactions are sanitized
-     * and that the UI state remains consistent across sessions.
-     */
     function sanitizeData() {
         console.log("Crunch Arcade: Verifying Local Data integrity...");
-        // Placeholder for future data validation logic
     }
     sanitizeData();
 </script>
