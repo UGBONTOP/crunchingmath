@@ -2286,7 +2286,8 @@
                 <li>adding alternative proxies soon</li>
                 <li>btw fortnite isnt possible stop asking me u bums</li>
                 <li>anyways adding more soon check later ig idk have fun?</li>		
-				<li>fixed many games</li>			
+				<li>fixed many games</li>	
+				<li>added more cloaks + fixed clever</li>
             </ul>
             <div style="display:flex; align-items:center; gap:10px; margin-top:20px; padding-top:20px; border-top:1px solid var(--glass-border);">
                 <input type="checkbox" id="dontShowChangelog" style="accent-color: var(--c-primary); transform: scale(1.2);">
@@ -2343,9 +2344,11 @@
             <div class="form-group">
                 <label class="form-label">cloaking (tab cloak)</label>
                 <select id="cloakType" class="form-control">
+                    <option value="desmos">Default (Desmos)</option>				
                     <option value="ixl">IXL Learning</option>
                     <option value="schoology">Schoology LMS</option>
                     <option value="clever">Clever Portal</option>
+                    <option value="studysync">StudySync</option>					
                 </select>
             </div>
 
@@ -2530,7 +2533,9 @@
     const cloakData = {
         ixl: { title: "IXL | Dashboard", icon: "https://www.ixl.com/favicon.ico" },
         schoology: { title: "Schoology | Courses", icon: "https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico" },
-        clever: { title: "Clever | Portal", icon: "https://assets.clever.com/launchpad/f76785/favicon.ico" }
+        clever: { title: "Clever | Portal", icon: "https://assets.clever.com/favicon.ico" },
+        desmos: { title: "Desmos | Graphing Calculator", icon: "https://www.desmos.com/assets/img/apps/graphing/favicon.ico" },
+        studysync: { title: "StudySync - Assignments", icon: "https://apps.studysync.com/favicon-studysync.ico" },				
     };
 
     function toggleOverlay(id) {
