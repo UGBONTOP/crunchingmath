@@ -114,7 +114,20 @@
             width: 100%;
             height: 100%;
             overflow: hidden; /* Canvas bg handles scroll */
+			
+			cursor: url('images/cursor.png') 32 32, auto;
         }
+		
+button, 
+.dock-item, 
+.dock-logo, 
+.tilt-card, 
+.game-card, 
+.heart-btn, 
+.btn-random,
+a {
+    cursor: url('images/cursor.png') 32 32, pointer !important;
+}
 
         body {
             background-color: var(--c-bg-main);
