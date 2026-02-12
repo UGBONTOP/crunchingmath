@@ -3,155 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Stealth Player</title>
+    <title>Deep Stealth Player</title>
     <style>
-        body { background: #111; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .controls { margin-bottom: 20px; background: #222; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        input { padding: 10px; width: 300px; border: none; border-radius: 4px; margin-right: 10px; }
-        button { padding: 10px 20px; cursor: pointer; background: #cc0000; color: white; border: none; border-radius: 4px; font-weight: bold; }
-        button:hover { background: #ff0000; }
-        #player-box { width: 560px; height: 315px; background: #000; border: 2px solid #333; display: flex; align-items: center; justify-content: center; position: relative; }
-        #status { color: #666; }
+        body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .ui-layer { background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333; z-index: 10; }
+        input { padding: 12px; width: 280px; border: 1px solid #444; background: #000; color: #fff; border-radius: 6px; }
+        button { padding: 12px 24px; cursor: pointer; background: #e50914; color: white; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #ff1f1f; transform: scale(1.02); }
+        #safe-zone { margin-top: 20px; width: 560px; height: 315px; background: #000; border-radius: 8px; overflow: hidden; }
     </style>
 </head>
 <body>
 
-    <div class="controls">
-        <input type="text" id="urlInput" placeholder="Paste YouTube URL here...">
-        <button onclick="initVideo()">Load Video</button>
+    <div class="ui-layer">
+        <input type="text" id="v_url" placeholder="Video URL or ID">
+        <button id="v_load">Initialize Stream</button>
     </div>
 
-    <div id="player-box">
-        <div id="status">Waiting for link...</div>
-    </div>
+    <div id="safe-zone"></div>
 
     <script>
-        // Multi-layer obfuscation to evade extension detection
-        
-        const obf = {
-            // Layer 1: String fragments stored separately
-            parts: ['iframe', 'src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen'],
-            base: 'https://www.',
-            domain: ['you', 'tube', '.com'].join(''),
-            path: '/embed/',
-            
-            // Layer 2: Dynamic attribute builder
-            buildAttr: function(name, value) {
-                return name + '="' + value + '"';
-            },
-            
-            // Layer 3: Permission builder (randomized order to confuse fingerprinting)
-            perms: function() {
-                const list = [
-                    'accelerometer',
-                    'autoplay', 
-                    'clipboard-write',
-                    'encrypted-media',
-                    'gyroscope',
-                    'picture-in-picture',
-                    'web-share',
-                    'fullscreen'
-                ];
-                // Shuffle to avoid pattern detection
-                return list.sort(() => Math.random() - 0.5).join('; ');
-            }
-        };
-        
-        function initVideo() {
-            const input = document.getElementById('urlInput').value;
-            const videoId = extractId(input);
-            
-            if (!videoId) {
-                alert("Invalid YouTube URL");
-                return;
-            }
-            
-            // Use multiple delay/async techniques to avoid synchronous detection
-            setTimeout(() => {
-                requestAnimationFrame(() => {
-                    deployPlayer(videoId);
-                });
-            }, 10);
-        }
-        
-        function deployPlayer(videoId) {
-            const container = document.getElementById('player-box');
-            
-            // Build the iframe dynamically piece by piece
-            const elem = document.createElement(obf.parts[0]); // 'iframe'
-            
-            // Set attributes via DOM API instead of innerHTML
-            elem.setAttribute(obf.parts[2], '560');  // width
-            elem.setAttribute(obf.parts[3], '315');  // height
-            elem.setAttribute(obf.parts[4], '0');    // frameborder
-            elem.setAttribute(obf.parts[5], obf.perms()); // allow
-            elem.setAttribute(obf.parts[6], '');     // allowfullscreen
-            
-            // Construct URL in fragments
-            const fullUrl = obf.base + obf.domain + obf.path + videoId;
-            
-            // Apply URL via setAttribute to avoid innerHTML detection
-            elem.setAttribute(obf.parts[1], fullUrl); // src
-            
-            // Additional stealth: set via JavaScript property as backup
-            elem[obf.parts[1]] = fullUrl;
-            
-            // Clear and inject using DOM manipulation
-            container.textContent = ''; // Safer than innerHTML = ''
-            container.appendChild(elem);
-            
-            // Extra layer: MutationObserver blocker (optional - blocks extensions watching DOM changes)
-            blockObservers(container);
-        }
-        
-        function extractId(url) {
-            const patterns = [
-                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^#\&\?]{11})/,
-                /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
-            ];
-            
-            for (let pattern of patterns) {
-                const match = url.match(pattern);
-                if (match) return match[1];
-            }
-            return null;
-        }
-        
-        // Advanced: Prevent MutationObserver-based extension monitoring
-        function blockObservers(element) {
-            const original = {
-                observe: MutationObserver.prototype.observe,
-                disconnect: MutationObserver.prototype.disconnect
-            };
-            
-            // Wrap MutationObserver to ignore our container
-            MutationObserver.prototype.observe = function(target, options) {
-                if (target === element || element.contains(target)) {
-                    // Silently ignore observation attempts on our player
-                    return;
-                }
-                return original.observe.call(this, target, options);
-            };
-            
-            // Restore after 5 seconds (so we don't break other legitimate observers)
-            setTimeout(() => {
-                MutationObserver.prototype.observe = original.observe;
-            }, 5000);
-        }
-        
-        // Anti-tampering: Detect if page scripts are being intercepted
         (function() {
-            const origDefineProperty = Object.defineProperty;
-            Object.defineProperty = function(obj, prop, descriptor) {
-                // Detect suspicious property interception
-                if (typeof descriptor.get === 'function' || typeof descriptor.set === 'function') {
-                    const stack = new Error().stack;
-                    if (stack && !stack.includes('stealth_player')) {
-                        console.warn('Extension property interception detected');
-                    }
-                }
-                return origDefineProperty(obj, prop, descriptor);
+            const CONFIG = {
+                t1: 'ifr', t2: 'ame',
+                p1: 'ht', p2: 'tps://www.',
+                d1: 'you', d2: 'tube.com/embed/'
             };
+
+            const loadBtn = document.getElementById('v_load');
+            const zone = document.getElementById('safe-zone');
+
+            // 1. Create a Shadow Root to hide the internal DOM from extensions
+            const shadow = zone.attachShadow({ mode: 'closed' }); 
+
+            loadBtn.addEventListener('click', () => {
+                const rawUrl = document.getElementById('v_url').value;
+                const id = extractId(rawUrl);
+                
+                if (id) {
+                    deploy(id);
+                }
+            });
+
+            function deploy(vid) {
+                // Clear previous
+                shadow.innerHTML = '';
+
+                // 2. Build the element inside the Shadow Root
+                const frame = document.createElement(CONFIG.t1 + CONFIG.t2);
+                const target = CONFIG.p1 + CONFIG.p2 + CONFIG.d1 + CONFIG.d2 + vid;
+
+                // 3. Use a Proxy to lie about the 'src' if an extension tries to read it
+                const stealthFrame = new Proxy(frame, {
+                    get(target, prop) {
+                        if (prop === 'src') return 'about:blank'; // Lie to scanners
+                        return target[prop];
+                    }
+                });
+
+                // Style the frame
+                Object.assign(frame.style, {
+                    width: '100%',
+                    height: '100%',
+                    border: 'none'
+                });
+
+                frame.setAttribute('allowfullscreen', 'true');
+                frame.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+                
+                // 4. Set the source via property rather than attribute
+                frame.src = target;
+
+                shadow.appendChild(frame);
+            }
+
+            function extractId(url) {
+                const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^"&?\/\s]{11})/);
+                return match ? match[1] : (url.length === 11 ? url : null);
+            }
+
+            // 5. Block 'getEventListeners' and other inspection tools
+            window.getEventListeners = () => [];
         })();
     </script>
 </body>
