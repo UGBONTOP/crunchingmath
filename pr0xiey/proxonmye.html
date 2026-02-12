@@ -111,18 +111,19 @@
         .btn-sec { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); }
         .btn-dang { background: #ef4444; color: #fff; }
 
-        /* METHOD SELECTOR BAR (Bottom sync) */
+        /* MULTI-SELECTOR BAR */
         .launch-bar {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: var(--glass-base); border: 1px solid var(--glass-border);
-            padding: 10px 25px; border-radius: 50px; backdrop-filter: var(--glass-blur);
-            display: flex; align-items: center; gap: 15px; z-index: 100;
+            padding: 12px 30px; border-radius: 50px; backdrop-filter: var(--glass-blur);
+            display: flex; align-items: center; gap: 20px; z-index: 100;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .launch-bar span { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .launch-bar div { display: flex; align-items: center; gap: 10px; }
+        .launch-bar span { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
         .launch-bar select { 
             background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); 
-            padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 0.85rem;
+            padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 0.8rem;
         }
 
     </style>
@@ -148,24 +149,34 @@
     </div>
 
     <div class="launch-bar">
-        <span>Launcher:</span>
-        <select id="launchMethod" onchange="saveLauncherPreference()">
-            <option value="aboutblank">About:Blank (Cloak)</option>
-            <option value="blob">Blob URL (Stealth)</option>
-            <option value="inpage">In-Page (Web App)</option>
-        </select>
+        <div>
+            <span>Launcher:</span>
+            <select id="launchMethod" onchange="saveLauncherPreference()">
+                <option value="aboutblank">About:Blank (Cloak)</option>
+                <option value="blob">Blob URL (Stealth)</option>
+                <option value="inpage">In-Page (Web App)</option>
+            </select>
+        </div>
+        <div>
+            <span>Cloak:</span>
+            <select id="cloakMode" onchange="saveCloakPreference()">
+                <option value="desmos">Desmos</option>
+                <option value="ixl">IXL</option>
+                <option value="classroom">Google Classroom</option>
+                <option value="drive">Google Drive</option>
+                <option value="clever">Clever</option>
+            </select>
+        </div>
     </div>
 
     <div id="appWrapper">
         <main class="main-stage">
-            
             <div class="view-header">
                 <h2 class="vh-title">crunch public education tools</h2>
                 <div class="vh-subtitle">crunch is totally educational ok</div>
             </div>
 
             <div class="games-grid" id="gameGrid">
-                
                 <div class="game-card" onclick="showProxyWarning('https://login-withclever-public.nfilatova.ru/')">
                     <img src="images/dogeub.png" loading="lazy">
                     <div class="gc-info"><span class="gc-title">Doge UB #1</span></div>
@@ -190,8 +201,8 @@
                     <img src="images/intersellar.png" loading="lazy">
                     <div class="gc-info"><span class="gc-title">Intersellar #1</span></div>
                 </div>
-                
             </div> 
+            
         </main>
     </div>
 
@@ -220,70 +231,64 @@
     resize(); init(); animate();
 
     /* --- SETTINGS SYNC --- */
-    window.onload = () => {
-        const savedMethod = localStorage.getItem('preferredLauncher');
-        if (savedMethod) {
-            document.getElementById('launchMethod').value = savedMethod;
-        }
+    const cloakConfigs = {
+        desmos: { title: "Desmos | Graphing Calculator", icon: "https://www.desmos.com/assets/img/apps/graphing/favicon.ico" },
+        ixl: { title: "IXL | Dashboard", icon: "https://www.ixl.com/favicon.ico" },
+        classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+        drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png" },
+        clever: { title: "Clever | Portal", icon: "https://webstatic.clever.com/assets/favicon.ico" }
     };
 
-    function saveLauncherPreference() {
-        const method = document.getElementById('launchMethod').value;
-        localStorage.setItem('preferredLauncher', method);
-    }
+    window.onload = () => {
+        const savedMethod = localStorage.getItem('preferredLauncher');
+        const savedCloak = localStorage.getItem('preferredCloak');
+        if (savedMethod) document.getElementById('launchMethod').value = savedMethod;
+        if (savedCloak) document.getElementById('cloakMode').value = savedCloak;
+    };
+
+    function saveLauncherPreference() { localStorage.setItem('preferredLauncher', document.getElementById('launchMethod').value); }
+    function saveCloakPreference() { localStorage.setItem('preferredCloak', document.getElementById('cloakMode').value); }
 
     /* --- PROXY LOGIC --- */
     let _pendingUrl = null;
     function showProxyWarning(url) { _pendingUrl = url; document.getElementById('proxyModal').style.display = 'flex'; }
     function closeProxyModal() { document.getElementById('proxyModal').style.display = 'none'; _pendingUrl = null; }
-
-    document.getElementById('proxyConfirmBtn').onclick = () => {
-        if (_pendingUrl) { launchGame(_pendingUrl); closeProxyModal(); }
-    };
+    document.getElementById('proxyConfirmBtn').onclick = () => { if (_pendingUrl) { launchGame(_pendingUrl); closeProxyModal(); } };
 
     /* --- MULTI-METHOD LAUNCHER --- */
     function launchGame(path) {
         const method = localStorage.getItem('preferredLauncher') || 'aboutblank';
+        const cloakKey = localStorage.getItem('preferredCloak') || 'desmos';
+        const cloak = cloakConfigs[cloakKey];
+
+        function applyCloak(doc) {
+            doc.title = cloak.title;
+            const link = doc.createElement('link');
+            link.rel = 'icon'; link.href = cloak.icon;
+            doc.head.appendChild(link);
+        }
 
         if (method === 'aboutblank') {
             const win = window.open('about:blank', '_blank');
-            if (!win) return alert("Pop-up blocked! Please allow pop-ups.");
-            
-            win.document.title = "Desmos | Graphing Calculator";
-            const link = win.document.createElement('link');
-            link.rel = 'icon'; link.href = "https://www.desmos.com/assets/img/apps/graphing/favicon.ico";
-            win.document.head.appendChild(link);
-
+            if (!win) return alert("Pop-up blocked!");
+            applyCloak(win.document);
             const iframe = win.document.createElement('iframe');
             iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
             iframe.src = path;
             win.document.body.appendChild(iframe);
         } 
         else if (method === 'blob') {
-            const blobHtml = `
-                <html>
-                    <head>
-                        <title>Desmos | Graphing Calculator</title>
-                        <link rel="icon" href="https://www.desmos.com/assets/img/apps/graphing/favicon.ico">
-                        <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style>
-                    </head>
-                    <body><iframe src="${path}"></iframe></body>
-                </html>`;
+            const blobHtml = `<html><head><title>${cloak.title}</title><link rel="icon" href="${cloak.icon}"><style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style></head><body><iframe src="${path}"></iframe></body></html>`;
             const blob = new Blob([blobHtml], { type: 'text/html' });
             window.open(URL.createObjectURL(blob), '_blank');
         } 
         else if (method === 'inpage') {
             const overlay = document.createElement('div');
             overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:#000; display:flex; flex-direction:column;";
-            overlay.innerHTML = `
-                <div style="height:40px; background:#111; display:flex; align-items:center; padding:0 20px; border-bottom:1px solid #333;">
-                    <button onclick="this.parentElement.parentElement.remove()" style="background:#ef4444; color:#fff; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Exit</button>
-                </div>
-                <iframe src="${path}" style="flex-grow:1; border:none; width:100%; height:100%;"></iframe>`;
+            overlay.innerHTML = `<div style="height:40px; background:#111; display:flex; align-items:center; padding:0 20px; border-bottom:1px solid #333;"><button onclick="this.parentElement.parentElement.remove()" style="background:#ef4444; color:#fff; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Exit</button></div><iframe src="${path}" style="flex-grow:1; border:none; width:100%; height:100%;"></iframe>`;
             document.body.appendChild(overlay);
         }
     }
 </script>
-
 </body>
 </html>
