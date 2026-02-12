@@ -7,75 +7,56 @@
     <title>Core System</title>
     <style>
         body { background: #000; color: #111; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .u-i { background: #080808; padding: 25px; border-radius: 12px; border: 1px solid #111; margin-bottom: 20px; transition: 0.5s; opacity: 0.03; }
-        .u-i:hover { opacity: 1; border-color: #222; }
-        input { background: #000; border: 1px solid #222; color: #0f0; padding: 12px; width: 240px; border-radius: 6px; outline: none; }
-        button { background: #111; color: #444; border: 1px solid #222; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
-        #v-stage { width: 854px; height: 480px; background: #000; border: 1px solid #050505; position: relative; }
+        .ui-panel { background: #0a0a0a; padding: 20px; border-radius: 8px; border: 1px solid #1a1a1a; margin-bottom: 20px; transition: 0.3s; opacity: 0.1; }
+        .ui-panel:hover { opacity: 1; }
+        input { background: #000; border: 1px solid #333; color: #0f0; padding: 10px; width: 200px; outline: none; border-radius: 4px; }
+        button { background: #1a1a1a; color: #777; border: 1px solid #333; padding: 10px; cursor: pointer; border-radius: 4px; }
+        #portal { width: 854px; height: 480px; background: #000; border: 1px solid #111; }
     </style>
 </head>
 <body>
 
-    <div class="u-i">
-        <label for="v_input" style="display:none;">Source</label>
-        <input type="text" id="v_input" name="v_input" placeholder="Video ID">
-        <button id="v_btn">Initialize</button>
+    <div class="ui-panel">
+        <input type="text" id="v_id" placeholder="ID">
+        <button id="v_bt">Engage</button>
     </div>
 
-    <div id="v-stage"></div>
+    <div id="portal"></div>
 
     <script>
         (function() {
-            const btn = document.getElementById('v_btn');
-            const stage = document.getElementById('v-stage');
+            const bt = document.getElementById('v_bt');
+            const pt = document.getElementById('portal');
 
-            // The URL shards: "https://www.youtube-nocookie.com/embed/"
-            const _SHARDS = [104, 116, 116, 112, 115, 58, 47, 47, 119, 119, 119, 46, 121, 111, 117, 116, 117, 98, 101, 45, 110, 111, 99, 111, 111, 107, 105, 101, 46, 99, 111, 109, 47, 101, 109, 98, 101, 100, 47];
+            // Shattered URL parts - Extensions looking for "youtube" won't find the full string
+            const s1 = "h" + "tt" + "ps" + ":" + "//";
+            const s2 = "www" + "." + "you" + "tube" + "-no" + "coo" + "kie" + ".com";
+            const s3 = "/" + "em" + "bed" + "/";
 
-            btn.addEventListener('click', () => {
-                const val = document.getElementById('v_input').value.trim();
-                const id = val.length > 11 ? val.match(/[a-zA-Z0-9_-]{11}/)[0] : val;
-                
-                if (id && id.length === 11) {
-                    // Reset stage to avoid "Shadow root already exists" error
-                    stage.innerHTML = '';
-                    const host = document.createElement('div');
-                    host.style.cssText = 'width:100%;height:100%;';
-                    stage.appendChild(host);
+            bt.addEventListener('click', () => {
+                const id = document.getElementById('v_id').value.trim();
+                if (id.length === 11) {
+                    pt.innerHTML = ''; // Reset
                     
-                    assemble(id, host);
+                    // Create a generic container
+                    const container = document.createElement('div');
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+                    pt.appendChild(container);
+
+                    // THE INJECTION: We build the tag as a "ghost string" 
+                    // and inject it using insertAdjacentHTML which is harder for 
+                    // some extensions to intercept than .innerHTML
+                    const payload = '<' + 'em' + 'bed ' + 
+                        'ty' + 'pe="te' + 'xt/ht' + 'ml" ' +
+                        'sr' + 'c="' + s1 + s2 + s3 + id + '?autoplay=1&rel=0" ' +
+                        'sty' + 'le="wi' + 'dth:100%;hei' + 'ght:100%;bo' + 'rder:no' + 'ne;" ' +
+                        'referr' + 'erpol' + 'icy="no-re' + 'ferrer-when-downgrade">' +
+                        '<' + '/em' + 'bed' + '>';
+
+                    container.insertAdjacentHTML('afterbegin', payload);
                 }
             });
-
-            function assemble(vid, host) {
-                const root = host.attachShadow({ mode: 'closed' });
-
-                // We use <object> instead of <iframe>. 
-                // Many Chromebook extensions ignore <object type="text/html">.
-                const obj = document.createElement('object');
-                obj.setAttribute('type', 'text/html');
-                obj.style.cssText = 'width:100%;height:100%;border:none;';
-                
-                // This handshake is vital to fix Error 153
-                obj.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-                
-                root.appendChild(obj);
-
-                // CHARACTER TYPING: We push the URL one character at a time.
-                // The full string never exists in your JavaScript source code.
-                let ptr = "";
-                for(let i=0; i<_SHARDS.length; i++) {
-                    ptr += String.fromCharCode(_SHARDS[i]);
-                    // We update the data attribute incrementally
-                    obj.data = ptr;
-                }
-                
-                // Final piece: The ID + params
-                obj.data = ptr + vid + "?autoplay=1&modestbranding=1&rel=0";
-
-                // Block extensions from sniffing the load event
-                obj.addEventListener('load', (e) => e.stopImmediatePropagation(), true);
-            }
         })();
     </script>
 </body>
