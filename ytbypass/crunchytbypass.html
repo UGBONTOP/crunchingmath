@@ -2,64 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>Stream Shield</title>
+    <title>Stealth Flux</title>
     <style>
-        body { background: #000; color: #444; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .input-hub { background: #111; padding: 20px; border-radius: 8px; border: 1px solid #222; margin-bottom: 20px; z-index: 100; }
-        input { background: #000; border: 1px solid #333; color: #0f0; padding: 12px; width: 280px; border-radius: 5px; outline: none; }
-        button { background: #222; color: #fff; border: 1px solid #333; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        #view-port { width: 854px; height: 480px; background: #000; border: 1px solid #1a1a1a; position: relative; }
+        body { background: #000; color: #555; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #portal { width: 854px; height: 480px; background: #050505; border: 1px solid #111; position: relative; }
+        .ui { margin-bottom: 20px; opacity: 0.2; transition: 0.3s; }
+        .ui:hover { opacity: 1; }
+        input { background: #111; border: 1px solid #222; color: #eee; padding: 10px; width: 250px; outline: none; }
+        button { background: #222; color: #fff; border: 1px solid #333; padding: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="input-hub">
-        <label for="vid_id" style="display:none;">Video ID</label>
-        <input type="text" id="vid_id" name="vid_id" placeholder="Paste ID or Link">
-        <button id="vid_load" name="vid_load">Connect</button>
+    <div class="ui">
+        <input type="text" id="v_id" placeholder="ID Only (e.g. dQw4w9WgXcQ)">
+        <button id="v_go">Inject</button>
     </div>
 
-    <div id="view-port"></div>
+    <div id="portal"></div>
 
     <script>
         (function() {
-            const btn = document.getElementById('vid_load');
-            const port = document.getElementById('view-port');
+            // Obfuscated parts: "https://", "www.youtube-nocookie.com/embed/"
+            const _h = "aHR0cHM6Ly8="; // https://
+            const _d = "d3d3LnlvdXR1YmUtbm9jb29raWUuY29tL2VtYmVkLw=="; // www.youtube-nocookie.com/embed/
 
-            btn.addEventListener('click', () => {
-                const val = document.getElementById('vid_id').value;
-                const id = val.match(/(?:v=|be\/|embed\/)([^&?\/\s]{11})/) ? val.match(/(?:v=|be\/|embed\/)([^&?\/\s]{11})/)[1] : (val.length === 11 ? val : null);
-                
-                if (id) start(id);
+            const go = document.getElementById('v_go');
+            const portal = document.getElementById('portal');
+
+            go.addEventListener('click', () => {
+                const id = document.getElementById('v_id').value.trim();
+                if (id.length === 11) {
+                    process(id);
+                }
             });
 
-            function start(id) {
-                port.innerHTML = '';
+            function process(id) {
+                portal.innerHTML = '';
                 
-                // Using a 'closed' shadow root to prevent extension DOM traversal
-                const root = port.attachShadow({ mode: 'closed' });
+                // Construct the source purely in-memory using Base64 decoding
+                const target = atob(_h) + atob(_d) + id + "?autoplay=1&rel=0";
 
-                const ifr = document.createElement('iframe');
+                // Create a 'Closed' Shadow DOM so extensions can't see inside
+                const shadow = portal.attachShadow({ mode: 'closed' });
+
+                // INSTEAD OF AN IFRAME: Use a generic <object> tag.
+                // Many extensions don't scan 'data' attributes of objects for video URLs.
+                const obj = document.createElement('object');
                 
-                // --- CRITICAL UPDATES FOR ERROR 153 ---
-                // 1. Explicitly set the referrer policy on the element itself
-                ifr.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+                // Hide the type from standard video-sniffers
+                obj.setAttribute('type', 'text/html'); 
+                obj.setAttribute('data', target);
                 
-                // 2. Use the 'nocookie' domain which bypasses many privacy-based blocklists
-                const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+                obj.style.width = '100%';
+                obj.style.height = '100%';
 
-                ifr.style.width = '100%';
-                ifr.style.height = '100%';
-                ifr.style.border = 'none';
-                ifr.setAttribute('allowfullscreen', 'true');
-                ifr.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+                // Force a neutral referrer policy to satisfy YouTube's 153 check
+                // while keeping the origin hidden from extensions.
+                obj.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
 
-                // 3. Apply source via property to avoid early-stage network sniffing
-                ifr.src = src;
+                // Block event bubbling to prevent extensions from "hearing" the player load
+                obj.addEventListener('load', (e) => e.stopPropagation(), true);
 
-                root.appendChild(ifr);
+                shadow.appendChild(obj);
             }
         })();
     </script>
