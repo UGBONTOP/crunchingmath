@@ -17,227 +17,113 @@
            ========================================= */
 
         :root {
-            /* CORE COLORS */
             --bg-deep: #050505;
-            --accent-primary: #7c3aed; /* Violet */
+            --accent-primary: #7c3aed;
             --accent-glow: rgba(124, 58, 237, 0.6);
-            
-            /* TEXT */
             --text-main: #ffffff;
             --text-muted: #94a3b8;
-            
-            /* GLASS VARIABLES */
             --glass-base: rgba(20, 20, 20, 0.6);
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-blur: blur(24px);
-            
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
         }
 
-        /* GLOBAL RESET */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
+        *, *::before, *::after { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
         
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: var(--font-body);
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background-color: var(--bg-deep); color: var(--text-main); font-family: var(--font-body);
         }
 
-        /* BACKGROUND ELEMENTS */
-        #bgCanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            opacity: 0.8;
-        }
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.8; }
+        .ui-noise { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); z-index: 1; pointer-events: none; mix-blend-mode: overlay; }
+        .ambient-glow { position: fixed; top: 50%; left: 50%; width: 80vw; height: 80vh; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); transform: translate(-50%, -50%); opacity: 0.15; z-index: 0; pointer-events: none; }
 
-        .ui-noise {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
-            z-index: 1;
-            pointer-events: none;
-            mix-blend-mode: overlay;
-        }
-
-        .ambient-glow {
-            position: fixed;
-            top: 50%; left: 50%;
-            width: 80vw; height: 80vh;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* =========================================
-           MAIN LAYOUT
-           ========================================= */
-        
-        #appWrapper {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            height: 100vh;
-            position: relative;
-            z-index: 10;
-        }
+        #appWrapper { display: flex; justify-content: center; width: 100%; height: 100vh; position: relative; z-index: 10; }
 
         .main-stage {
-            flex-grow: 1;
-            position: relative;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            height: 100%;
-            padding: 50px;
-            max-width: 1600px;
-            display: flex;
-            flex-direction: column;
+            flex-grow: 1; position: relative; overflow-y: auto; overflow-x: hidden;
+            scroll-behavior: smooth; height: 100%; padding: 50px; max-width: 1600px;
+            display: flex; flex-direction: column;
         }
 
         .view-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 60px;
-            margin-top: 40px;
-            flex-direction: column;
-            gap: 10px;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 60px; margin-top: 40px; flex-direction: column; gap: 10px;
         }
 
         .vh-title { 
-            font-family: var(--font-display); 
-            font-size: 4rem; 
-            font-weight: 800; 
-            margin: 0; 
-            text-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+            font-family: var(--font-display); font-size: 4rem; font-weight: 800; 
+            margin: 0; text-shadow: 0 0 30px rgba(124, 58, 237, 0.4); text-align: center;
         }
         
-        .vh-subtitle {
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        .vh-subtitle { color: var(--text-muted); font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* GRID SYSTEM */
         .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-            gap: 30px;
-            padding-bottom: 100px;
-            perspective: 1000px;
-            justify-content: center;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 30px; padding-bottom: 120px; perspective: 1000px; justify-content: center;
         }
 
-        /* 3D CARD STYLES */
         .game-card {
-            aspect-ratio: 1 / 1;
-            background: var(--glass-base);
-            border-radius: 24px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            border-bottom: 6px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            transform-style: preserve-3d;
-            backdrop-filter: var(--glass-blur);
+            aspect-ratio: 1 / 1; background: var(--glass-base); border-radius: 24px;
+            position: relative; overflow: hidden; border: 1px solid var(--glass-border);
+            border-bottom: 6px solid rgba(255, 255, 255, 0.1); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer; backdrop-filter: var(--glass-blur);
         }
 
-        .game-card img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-            filter: brightness(0.9);
-        }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; filter: brightness(0.9); }
 
         .gc-info {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            padding: 15px;
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px;
             background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            z-index: 10;
+            transform: translateY(100%); transition: transform 0.3s ease;
+            display: flex; justify-content: center; align-items: flex-end; z-index: 10;
         }
 
         .gc-title { font-weight: 700; font-size: 1.1rem; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
         .game-card:hover {
-            z-index: 5;
             transform: translateY(-12px) scale(1.05);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px var(--accent-glow);
             border-color: var(--accent-primary);
         }
-        
-        .game-card:hover img { 
-            transform: scale(1.1); 
-            filter: brightness(1.1);
-        }
         .game-card:hover .gc-info { transform: translateY(0); }
 
-        /* =========================================
-           MODAL STYLES (Restored)
-           ========================================= */
+        /* MODALS */
         .modal-wrap {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            display: none;
-            justify-content: center; align-items: center;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(20px); z-index: 1000; display: none;
+            justify-content: center; align-items: center; padding: 20px;
         }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .gloss-modal {
-            background: #0f1014;
-            border: 1px solid #ef4444; /* Red border for warning */
-            width: 100%; max-width: 500px;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            transform: scale(0.95);
-            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            text-align: center;
+            background: #0f1014; border: 1px solid #ef4444; width: 100%; max-width: 500px;
+            border-radius: 24px; padding: 40px; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            text-align: center; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        @keyframes scaleIn { to { transform: scale(1); } }
+        @keyframes scaleIn { from { transform: scale(0.95); } to { transform: scale(1); } }
 
-        .gm-header {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: #ef4444;
-        }
+        .gm-header { font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin-bottom: 20px; color: #ef4444; }
 
         .btn-act { padding: 12px 24px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; margin: 0 10px; }
         .btn-sec { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); }
-        .btn-sec:hover { border-color: #fff; color: #fff; }
         .btn-dang { background: #ef4444; color: #fff; }
-        .btn-dang:hover { background: #dc2626; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+        /* METHOD SELECTOR BAR (Bottom sync) */
+        .launch-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--glass-base); border: 1px solid var(--glass-border);
+            padding: 10px 25px; border-radius: 50px; backdrop-filter: var(--glass-blur);
+            display: flex; align-items: center; gap: 15px; z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .launch-bar span { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .launch-bar select { 
+            background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); 
+            padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 0.85rem;
+        }
 
     </style>
 </head>
@@ -252,14 +138,22 @@
             <div class="gm-header">brotato watch out</div>
             <p style="color: #fff; margin-bottom: 30px; line-height: 1.6;">
                 ight so like u bout to open up a proxy/game.<br> 
-                This won't show on ur history depending on ur settings BUT I'm not liable for this. 
-                If you're caught and try to blame it on me it's your fault.
+                This won't show on ur history depending on ur settings.
             </p>
             <div>
                 <button class="btn-act btn-sec" onclick="closeProxyModal()">nvm im scared</button>
                 <button class="btn-act btn-dang" id="proxyConfirmBtn">ok cool launch it</button>
             </div>
         </div>
+    </div>
+
+    <div class="launch-bar">
+        <span>Launcher:</span>
+        <select id="launchMethod" onchange="saveLauncherPreference()">
+            <option value="aboutblank">About:Blank (Cloak)</option>
+            <option value="blob">Blob URL (Stealth)</option>
+            <option value="inpage">In-Page (Web App)</option>
+        </select>
     </div>
 
     <div id="appWrapper">
@@ -274,166 +168,121 @@
                 
                 <div class="game-card" onclick="showProxyWarning('https://login-withclever-public.nfilatova.ru/')">
                     <img src="images/dogeub.png" loading="lazy">
-                    <div class="gc-info">
-                        <span class="gc-title">Doge UB #1</span>
-                    </div>
+                    <div class="gc-info"><span class="gc-title">Doge UB #1</span></div>
                 </div>
-
 
                  <div class="game-card" onclick="showProxyWarning('https://epic-free-music.com.concordiasae.ca/')">
                     <img src="images/dogeub.png" loading="lazy">
-                    <div class="gc-info">
-                        <span class="gc-title">Doge UB #2</span>
-                    </div>
+                    <div class="gc-info"><span class="gc-title">Doge UB #2</span></div>
                 </div>               
                 
-
                 <div class="game-card" onclick="showProxyWarning('https://teacher-education-topics.concordiasae.ca/')">
                     <img src="images/dogeub.png" loading="lazy">
-                    <div class="gc-info">
-                        <span class="gc-title">Doge UB #3</span>
-                    </div>
+                    <div class="gc-info"><span class="gc-title">Doge UB #3</span></div>
                 </div>
 
                 <div class="game-card" onclick="showProxyWarning('https://clever-teacherpage.concordiasae.ca/')">
                     <img src="images/frogies.gif" loading="lazy">
-                    <div class="gc-info">
-                        <span class="gc-title">Frogies #1</span>
-                    </div>
+                    <div class="gc-info"><span class="gc-title">Frogies #1</span></div>
                 </div>
 
-                 <div class="game-card" onclick="showProxyWarning('schoology-signin-options.concordiasae.ca')">
+                 <div class="game-card" onclick="showProxyWarning('https://schoology-signin-options.concordiasae.ca')">
                     <img src="images/intersellar.png" loading="lazy">
-                    <div class="gc-info">
-                        <span class="gc-title">Intersellar #1</span>
-                    </div>
+                    <div class="gc-info"><span class="gc-title">Intersellar #1</span></div>
                 </div>
-                
                 
             </div> 
         </main>
     </div>
 
 <script>
-    /* --- CANVAS BACKGROUND ANIMATION --- */
+    /* --- CANVAS BACKGROUND --- */
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-    let particleColorBase = '124, 58, 237'; 
-
-    function resize() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-    }
-
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
     class Particle {
         constructor() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.vx = (Math.random() - 0.5) * 0.4; 
-            this.vy = (Math.random() - 0.5) * 0.4;
-            this.size = Math.random() * 4 + 1; 
-            this.alpha = Math.random() * 0.4 + 0.1;
-            this.color = `rgba(${particleColorBase}, ${this.alpha})`;
+            this.x = Math.random() * width; this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.4; this.vy = (Math.random() - 0.5) * 0.4;
+            this.size = Math.random() * 4 + 1; this.alpha = Math.random() * 0.4 + 0.1;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
             if (this.x < 0) this.x = width; if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height; if (this.y > height) this.y = 0;
         }
-        draw() {
-            ctx.fillStyle = this.color; ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-        }
+        draw() { ctx.fillStyle = `rgba(124, 58, 237, ${this.alpha})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
     }
+    function init() { particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle()); }
+    function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    window.addEventListener('resize', () => { resize(); init(); });
+    resize(); init(); animate();
 
-    function initParticles() {
-        particles = [];
-        const particleCount = Math.floor((width * height) / 14000); 
-        for (let i = 0; i < particleCount; i++) { particles.push(new Particle()); }
-    }
-    function animate() {
-        ctx.clearRect(0, 0, width, height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-    window.addEventListener('resize', () => { resize(); initParticles(); });
-    resize(); initParticles(); animate();
-
-    /* --- PROXY WARNING LOGIC --- */
-    let _pendingUrl = null;
-
-    function showProxyWarning(url) {
-        _pendingUrl = url;
-        document.getElementById('proxyModal').style.display = 'flex';
-    }
-
-    function closeProxyModal() {
-        document.getElementById('proxyModal').style.display = 'none';
-        _pendingUrl = null;
-    }
-
-    // Set up confirm button listener
-    document.getElementById('proxyConfirmBtn').onclick = () => {
-        if (_pendingUrl) {
-            launchGame(_pendingUrl);
-            closeProxyModal();
+    /* --- SETTINGS SYNC --- */
+    window.onload = () => {
+        const savedMethod = localStorage.getItem('preferredLauncher');
+        if (savedMethod) {
+            document.getElementById('launchMethod').value = savedMethod;
         }
     };
 
-    /* --- GAME LAUNCHER --- */
-/* --- ENHANCED GAME LAUNCHER --- */
-    function launchGame(path) {
-        // Attempt 1: about:blank cloak
-        const win = window.open('about:blank', '_blank');
-        
-        if (win) {
-            try {
-                win.document.title = "Desmos | Graphing Calculator";
-                const link = win.document.createElement('link');
-                link.rel = 'icon';
-                link.href = "https://www.desmos.com/assets/img/apps/graphing/favicon.ico";
-                win.document.head.appendChild(link);
-
-                const iframe = win.document.createElement('iframe');
-                iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
-                iframe.src = path;
-                win.document.body.appendChild(iframe);
-            } catch (e) {
-                console.error('Window injection failed, attempting fallback...');
-            }
-        } else {
-            // Attempt 2: Blob URL Cloaking
-            try {
-                const blobHtml = `
-                    <html>
-                        <head>
-                            <title>Desmos | Graphing Calculator</title>
-                            <link rel="icon" href="https://www.desmos.com/assets/img/apps/graphing/favicon.ico">
-                            <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style>
-                        </head>
-                        <body><iframe src="${path}"></iframe></body>
-                    </html>`;
-                const blob = new Blob([blobHtml], { type: 'text/html' });
-                const blobUrl = URL.createObjectURL(blob);
-                window.open(blobUrl, '_blank');
-            } catch (e) {
-                // Attempt 3: Emergency In-Page Launch
-                console.warn("Pop-ups blocked. Launching in-page.");
-                const overlay = document.createElement('div');
-                overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:#000;";
-                overlay.innerHTML = `
-                    <button onclick="this.parentElement.remove()" style="position:absolute; top:10px; right:10px; z-index:10000; padding:10px; background:#ef4444; color:#fff; border:none; border-radius:5px; cursor:pointer;">Close Game</button>
-                    <iframe src="${path}" style="width:100%; height:100%; border:none;"></iframe>
-                `;
-                document.body.appendChild(overlay);
-            }
-        }
+    function saveLauncherPreference() {
+        const method = document.getElementById('launchMethod').value;
+        localStorage.setItem('preferredLauncher', method);
     }
 
+    /* --- PROXY LOGIC --- */
+    let _pendingUrl = null;
+    function showProxyWarning(url) { _pendingUrl = url; document.getElementById('proxyModal').style.display = 'flex'; }
+    function closeProxyModal() { document.getElementById('proxyModal').style.display = 'none'; _pendingUrl = null; }
+
+    document.getElementById('proxyConfirmBtn').onclick = () => {
+        if (_pendingUrl) { launchGame(_pendingUrl); closeProxyModal(); }
+    };
+
+    /* --- MULTI-METHOD LAUNCHER --- */
+    function launchGame(path) {
+        const method = localStorage.getItem('preferredLauncher') || 'aboutblank';
+
+        if (method === 'aboutblank') {
+            const win = window.open('about:blank', '_blank');
+            if (!win) return alert("Pop-up blocked! Please allow pop-ups.");
+            
+            win.document.title = "Desmos | Graphing Calculator";
+            const link = win.document.createElement('link');
+            link.rel = 'icon'; link.href = "https://www.desmos.com/assets/img/apps/graphing/favicon.ico";
+            win.document.head.appendChild(link);
+
+            const iframe = win.document.createElement('iframe');
+            iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
+            iframe.src = path;
+            win.document.body.appendChild(iframe);
+        } 
+        else if (method === 'blob') {
+            const blobHtml = `
+                <html>
+                    <head>
+                        <title>Desmos | Graphing Calculator</title>
+                        <link rel="icon" href="https://www.desmos.com/assets/img/apps/graphing/favicon.ico">
+                        <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style>
+                    </head>
+                    <body><iframe src="${path}"></iframe></body>
+                </html>`;
+            const blob = new Blob([blobHtml], { type: 'text/html' });
+            window.open(URL.createObjectURL(blob), '_blank');
+        } 
+        else if (method === 'inpage') {
+            const overlay = document.createElement('div');
+            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:#000; display:flex; flex-direction:column;";
+            overlay.innerHTML = `
+                <div style="height:40px; background:#111; display:flex; align-items:center; padding:0 20px; border-bottom:1px solid #333;">
+                    <button onclick="this.parentElement.parentElement.remove()" style="background:#ef4444; color:#fff; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Exit</button>
+                </div>
+                <iframe src="${path}" style="flex-grow:1; border:none; width:100%; height:100%;"></iframe>`;
+            document.body.appendChild(overlay);
+        }
+    }
 </script>
 
 </body>
