@@ -3,79 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost Frame Obfuscator</title>
+    <title>Dynamic Stealth Player</title>
     <style>
-        body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
-        .container { background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 600px; text-align: center; }
-        input { width: 80%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #121212; color: white; margin-bottom: 15px; }
-        button { padding: 12px 24px; background: #3ea6ff; border: none; color: black; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #65b8ff; }
-        #vault-guard { width: 560px; height: 315px; margin-top: 25px; background: #000; border-radius: 8px; overflow: hidden; }
-        .info { font-size: 0.8rem; color: #888; margin-top: 10px; }
+        body { background: #111; color: #eee; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .controls { margin-bottom: 20px; background: #222; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        input { padding: 10px; width: 300px; border: none; border-radius: 4px; margin-right: 10px; }
+        button { padding: 10px 20px; cursor: pointer; background: #cc0000; color: white; border: none; border-radius: 4px; font-weight: bold; }
+        button:hover { background: #ff0000; }
+        #player-box { width: 560px; height: 315px; background: #000; border: 2px solid #333; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Stealth Link Embedder</h2>
-        <input type="text" id="ytLink" placeholder="Paste YouTube Share Link (e.g., https://youtu.be/...)">
-        <br>
-        <button onclick="processAndInject()">Generate Secure Embed</button>
-        <div class="info">URL is Base64 encoded and injected into a Closed Shadow DOM.</div>
-        
-        <div id="vault-guard"></div>
+    <div class="controls">
+        <input type="text" id="urlInput" placeholder="Paste YouTube URL here...">
+        <button onclick="handleVideo()">Load Video</button>
+    </div>
+
+    <div id="player-box">
+        <div id="status">Waiting for link...</div>
     </div>
 
     <script>
-        function extractVideoId(url) {
-            // Handles youtu.be, youtube.com/watch, and youtube.com/embed
+        function handleVideo() {
+            const input = document.getElementById('urlInput').value;
+            const container = document.getElementById('player-box');
+            
+            // 1. Extract the Video ID
+            const videoId = extractId(input);
+            
+            if (!videoId) {
+                alert("Invalid YouTube URL");
+                return;
+            }
+
+            // 2. Construct the raw HTML string
+            // We include the "allow='fullscreen'" fix here
+            const rawHtml = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>`;
+
+            // 3. Encode to Base64 (The "Stealth" step)
+            const encoded = btoa(rawHtml);
+            console.log("Encoded Payload:", encoded);
+
+            // 4. Decode and Inject
+            // Extensions watching the static HTML won't see the iframe until this line runs
+            container.innerHTML = atob(encoded);
+        }
+
+        function extractId(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
-
-function processAndInject() {
-    const inputUrl = document.getElementById('ytLink').value;
-    const videoId = extractVideoId(inputUrl);
-    
-    // 1. Reset the container to clear old Shadow Roots
-    let oldContainer = document.getElementById('vault-guard');
-    if (!videoId) {
-        alert("Please enter a valid YouTube link.");
-        return;
-    }
-    const newContainer = oldContainer.cloneNode(false); 
-    oldContainer.parentNode.replaceChild(newContainer, oldContainer);
-
-    // 2. Create the Closed Shadow Root
-    const shadow = newContainer.attachShadow({ mode: 'closed' });
-
-    // 3. Obfuscate the URL (Base64)
-    const rawUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
-    const encodedUrl = btoa(rawUrl);
-
-    // 4. Use srcdoc to create a nested environment 
-    // This keeps the "Origin" correct for YouTube's config
-    const frame = document.createElement('iframe');
-    frame.style.width = "100%";
-    frame.style.height = "100%";
-    frame.style.border = "none";
-    frame.setAttribute('allowfullscreen', 'true');
-    frame.setAttribute('allow', 'autoplay; encrypted-media');
-
-    // We decode the URL only inside the srcdoc string
-    frame.srcdoc = `
-        <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;background:#000;}</style>
-        <iframe 
-            src="${atob(encodedUrl)}" 
-            style="width:100%;height:100%;border:none;" 
-            allow="autoplay; encrypted-media" 
-            allowfullscreen>
-        </iframe>
-    `;
-
-    shadow.appendChild(frame);
-}
     </script>
 </body>
 </html>
