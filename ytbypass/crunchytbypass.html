@@ -2,69 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ghost Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stealth Link Player</title>
     <style>
-        /* Hidden UI to prevent extension flagging */
-        body { background: #000; color: #333; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .secure-input { opacity: 0.1; transition: opacity 0.3s; margin-bottom: 10px; }
-        .secure-input:hover { opacity: 1; }
-        input { background: #111; border: 1px solid #222; color: #eee; padding: 8px; width: 200px; border-radius: 4px; }
-        button { cursor: pointer; background: #222; color: #888; border: 1px solid #333; padding: 8px; border-radius: 4px; }
-        
-        /* The Player Container */
-        #viewport { width: 854px; height: 480px; background: #000; border: 1px solid #111; position: relative; }
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .ui { background: #161616; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; z-index: 10; }
+        input { background: #000; border: 1px solid #444; color: #0f0; padding: 10px; width: 250px; border-radius: 5px; outline: none; }
+        button { background: #333; color: #ccc; border: 1px solid #444; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #444; color: #fff; }
+        #player-stage { width: 854px; height: 480px; background: #000; border: 1px solid #222; position: relative; }
     </style>
 </head>
 <body>
 
-    <div class="secure-input">
-        <input type="text" id="v_field" name="v_field" aria-label="Video Source" placeholder="ID">
-        <button id="v_btn" name="v_btn" aria-label="Load">Load</button>
+    <div class="ui">
+        <label for="v_in" style="display:none;">Video ID</label>
+        <input type="text" id="v_in" name="v_in" placeholder="Enter Video ID or Link">
+        <button id="v_go">Load Stream</button>
     </div>
 
-    <div id="viewport"></div>
+    <div id="player-stage"></div>
 
     <script>
         (function() {
-            const btn = document.getElementById('v_btn');
-            const view = document.getElementById('viewport');
+            const btn = document.getElementById('v_go');
+            const stage = document.getElementById('player-stage');
 
             btn.addEventListener('click', () => {
-                const val = document.getElementById('v_field').value;
-                const id = val.includes('v=') ? val.split('v=')[1].split('&')[0] : val;
+                const val = document.getElementById('v_in').value;
+                const id = val.match(/(?:v=|be\/|embed\/)([^&?\/\s]{11})/) ? val.match(/(?:v=|be\/|embed\/)([^&?\/\s]{11})/)[1] : (val.length === 11 ? val : null);
                 
-                if (id.length === 11) {
-                    execute(id);
+                if (id) {
+                    launch(id);
                 }
             });
 
-            function execute(vid) {
-                view.innerHTML = '';
+            function launch(vid) {
+                stage.innerHTML = '';
                 
-                // 1. Using a 'closed' shadow root so extensions can't query the iframe
-                const shadow = view.attachShadow({ mode: 'closed' });
+                // We still use Shadow DOM (Closed) to hide the DOM from extensions
+                const root = stage.attachShadow({ mode: 'closed' });
 
-                // 2. Build the iframe in memory
                 const ifr = document.createElement('iframe');
                 
-                // 3. The 'Sandbox' is key: It blocks extensions from 'touching' the video content
-                // but allows the video to play.
-                ifr.setAttribute('sandbox', 'allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-presentation');
+                // --- THE FIXES FOR ERROR 153 ---
+                // 1. Force the referrer policy so YouTube knows who is asking for the video
+                ifr.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
                 
+                // 2. Use the no-cookie domain which is less likely to be blocked by 'Ad-trackers'
+                const target = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&modestbranding=1&rel=0`;
+
                 ifr.style.width = '100%';
                 ifr.style.height = '100%';
                 ifr.style.border = 'none';
-                
-                // 4. Randomized URL construction to bypass network string filters
-                const p1 = 'https://';
-                const p2 = 'www.youtube.com';
-                const p3 = '/embed/';
-                const params = '?autoplay=1&modestbranding=1&rel=0';
+                ifr.setAttribute('allowfullscreen', 'true');
+                ifr.setAttribute('allow', 'autoplay; encrypted-media');
 
-                // We set the src at the last possible microsecond
-                ifr.src = p1 + p2 + p3 + vid + params;
+                // Set source
+                ifr.src = target;
 
-                shadow.appendChild(ifr);
+                root.appendChild(ifr);
             }
         })();
     </script>
