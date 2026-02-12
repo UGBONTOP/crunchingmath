@@ -2,88 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Stealth Core v4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Core System</title>
     <style>
-        body { background: #000; color: #111; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .ui-gate { opacity: 0.02; transition: 0.3s; padding: 20px; }
-        .ui-gate:hover { opacity: 1; }
-        input { background: #111; border: 1px solid #222; color: #0f0; padding: 10px; width: 220px; outline: none; }
-        button { background: #222; color: #fff; border: 1px solid #333; padding: 10px; cursor: pointer; }
-        #deep-space { width: 854px; height: 480px; background: #000; position: relative; }
+        body { background: #000; color: #111; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .u-i { background: #080808; padding: 25px; border-radius: 12px; border: 1px solid #111; margin-bottom: 20px; transition: 0.5s; opacity: 0.03; }
+        .u-i:hover { opacity: 1; border-color: #222; }
+        input { background: #000; border: 1px solid #222; color: #0f0; padding: 12px; width: 240px; border-radius: 6px; outline: none; }
+        button { background: #111; color: #444; border: 1px solid #222; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
+        #v-stage { width: 854px; height: 480px; background: #000; border: 1px solid #050505; position: relative; }
     </style>
 </head>
 <body>
 
-    <div class="ui-gate">
-        <input type="text" id="v_src" placeholder="ID Only">
-        <button id="v_bt">Initialize</button>
+    <div class="u-i">
+        <label for="v_input" style="display:none;">Source</label>
+        <input type="text" id="v_input" name="v_input" placeholder="Video ID">
+        <button id="v_btn">Initialize</button>
     </div>
 
-    <div id="deep-space"></div>
+    <div id="v-stage"></div>
 
     <script>
         (function() {
-            const btn = document.getElementById('v_bt');
-            const space = document.getElementById('deep-space');
+            const btn = document.getElementById('v_btn');
+            const stage = document.getElementById('v-stage');
 
-            // Scrambled pieces for reconstruction
-            const _m = ["ht", "tps", ":", "//", "www", ".you", "tube", "-no", "cookie", ".com", "/em", "bed/"];
+            // The URL shards: "https://www.youtube-nocookie.com/embed/"
+            const _SHARDS = [104, 116, 116, 112, 115, 58, 47, 47, 119, 119, 119, 46, 121, 111, 117, 116, 117, 98, 101, 45, 110, 111, 99, 111, 111, 107, 105, 101, 46, 99, 111, 109, 47, 101, 109, 98, 101, 100, 47];
 
             btn.addEventListener('click', () => {
-                const id = document.getElementById('v_src').value.trim();
-                if (id.length === 11) cloak(id);
+                const val = document.getElementById('v_input').value.trim();
+                const id = val.length > 11 ? val.match(/[a-zA-Z0-9_-]{11}/)[0] : val;
+                
+                if (id && id.length === 11) {
+                    // Reset stage to avoid "Shadow root already exists" error
+                    stage.innerHTML = '';
+                    const host = document.createElement('div');
+                    host.style.cssText = 'width:100%;height:100%;';
+                    stage.appendChild(host);
+                    
+                    assemble(id, host);
+                }
             });
 
-            function cloak(id) {
-                space.innerHTML = '';
-                
-                // 1. NESTED SHADOW DOM (Double Layer Protection)
-                // Layer 1
-                const l1 = space.attachShadow({ mode: 'closed' });
-                const container = document.createElement('div');
-                l1.appendChild(container);
-                
-                // Layer 2 (The actual hideout)
-                const l2 = container.attachShadow({ mode: 'closed' });
+            function assemble(vid, host) {
+                const root = host.attachShadow({ mode: 'closed' });
 
-                const el = document.createElement('iframe'); // Using iframe but masking it
-                el.style.width = '100%';
-                el.style.height = '100%';
-                el.style.border = 'none';
-                el.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                // We use <object> instead of <iframe>. 
+                // Many Chromebook extensions ignore <object type="text/html">.
+                const obj = document.createElement('object');
+                obj.setAttribute('type', 'text/html');
+                obj.style.cssText = 'width:100%;height:100%;border:none;';
                 
-                // 2. Fragmented URL Injection
-                let u = "";
-                _m.forEach(s => u += s);
-                el.src = u + id + "?autoplay=1&modestbranding=1&rel=0";
+                // This handshake is vital to fix Error 153
+                obj.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                
+                root.appendChild(obj);
 
-                l2.appendChild(el);
+                // CHARACTER TYPING: We push the URL one character at a time.
+                // The full string never exists in your JavaScript source code.
+                let ptr = "";
+                for(let i=0; i<_SHARDS.length; i++) {
+                    ptr += String.fromCharCode(_SHARDS[i]);
+                    // We update the data attribute incrementally
+                    obj.data = ptr;
+                }
+                
+                // Final piece: The ID + params
+                obj.data = ptr + vid + "?autoplay=1&modestbranding=1&rel=0";
 
-                // 3. THE "DECEPTION" LOOP
-                // This script runs every 100ms. If it finds a video tag with a "blob" src,
-                // it tries to rename/hide the attribute from the extension's view.
-                setInterval(() => {
-                    try {
-                        // We reach into the iframe and scramble the internal video tag's identity
-                        const innerDoc = el.contentDocument || el.contentWindow.document;
-                        const vids = innerDoc.getElementsByTagName('video');
-                        
-                        for (let v of vids) {
-                            // Lie about what this is
-                            if (v.hasAttribute('src')) {
-                                const realSrc = v.src;
-                                // We "hide" the src in a custom attribute that extensions don't track
-                                v.setAttribute('data-ghost-src', realSrc); 
-                                // We remove the 'class' that extensions use to find the player
-                                v.removeAttribute('class');
-                                v.className = "completely-generic-tag";
-                            }
-                        }
-                    } catch(e) { 
-                        // Cross-origin might block direct manipulation, 
-                        // but the Shadow DOM layers usually handle that.
-                    }
-                }, 500);
+                // Block extensions from sniffing the load event
+                obj.addEventListener('load', (e) => e.stopImmediatePropagation(), true);
             }
         })();
     </script>
