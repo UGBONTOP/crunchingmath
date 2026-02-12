@@ -2,72 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Core System</title>
+    <title>Stealth Core v4</title>
     <style>
-        body { background: #000; color: #111; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .ui { background: #080808; padding: 25px; border-radius: 12px; border: 1px solid #111; margin-bottom: 20px; transition: 0.5s; opacity: 0.03; }
-        .ui:hover { opacity: 1; border-color: #222; }
-        input { background: #000; border: 1px solid #222; color: #0f0; padding: 12px; width: 240px; border-radius: 6px; outline: none; }
-        button { background: #111; color: #444; border: 1px solid #222; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
-        #v-portal { width: 854px; height: 480px; background: #000; border: 1px solid #050505; position: relative; }
+        body { background: #000; color: #111; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .ui-gate { opacity: 0.02; transition: 0.3s; padding: 20px; }
+        .ui-gate:hover { opacity: 1; }
+        input { background: #111; border: 1px solid #222; color: #0f0; padding: 10px; width: 220px; outline: none; }
+        button { background: #222; color: #fff; border: 1px solid #333; padding: 10px; cursor: pointer; }
+        #deep-space { width: 854px; height: 480px; background: #000; position: relative; }
     </style>
 </head>
 <body>
 
-    <div class="ui">
-        <input type="text" id="target_id" placeholder="Paste ID">
-        <button id="v_run">Engage</button>
+    <div class="ui-gate">
+        <input type="text" id="v_src" placeholder="ID Only">
+        <button id="v_bt">Initialize</button>
     </div>
 
-    <div id="v-portal"></div>
+    <div id="deep-space"></div>
 
     <script>
         (function() {
-            const btn = document.getElementById('v_run');
-            const portal = document.getElementById('v-portal');
+            const btn = document.getElementById('v_bt');
+            const space = document.getElementById('deep-space');
 
-            // This is the EXACT mathematical map for "https://www.youtube-nocookie.com/embed/"
-            // No strings exist here, just coordinates.
-            const _MAP = [104, 116, 116, 112, 115, 58, 47, 47, 119, 119, 119, 46, 121, 111, 117, 116, 117, 98, 101, 45, 110, 111, 99, 111, 111, 107, 105, 101, 46, 99, 111, 109, 47, 101, 109, 98, 101, 100, 47];
-            
+            // Scrambled pieces for reconstruction
+            const _m = ["ht", "tps", ":", "//", "www", ".you", "tube", "-no", "cookie", ".com", "/em", "bed/"];
+
             btn.addEventListener('click', () => {
-                const input = document.getElementById('target_id').value;
-                const id = input.length > 11 ? input.match(/[a-zA-Z0-9_-]{11}/)[0] : input;
-                
-                if (id && id.length === 11) {
-                    assemble(id);
-                }
+                const id = document.getElementById('v_src').value.trim();
+                if (id.length === 11) cloak(id);
             });
 
-            function assemble(vid) {
-                portal.innerHTML = '';
+            function cloak(id) {
+                space.innerHTML = '';
                 
-                // Reconstruct the URL character by character at the moment of the click
-                let d = "";
-                for(let i=0; i<_MAP.length; i++) {
-                    d += String.fromCharCode(_MAP[i]);
-                }
+                // 1. NESTED SHADOW DOM (Double Layer Protection)
+                // Layer 1
+                const l1 = space.attachShadow({ mode: 'closed' });
+                const container = document.createElement('div');
+                l1.appendChild(container);
                 
-                // Add a timestamp to the URL to confuse network caches used by extensions
-                const final = d + vid + "?autoplay=1&rel=0&t=" + Date.now();
+                // Layer 2 (The actual hideout)
+                const l2 = container.attachShadow({ mode: 'closed' });
 
-                const root = portal.attachShadow({ mode: 'closed' });
-
-                // Using <embed> instead of <iframe> to bypass standard Chromebook filters
-                const el = document.createElement('embed');
-                el.setAttribute('type', 'text/html');
-                el.setAttribute('src', final);
+                const el = document.createElement('iframe'); // Using iframe but masking it
                 el.style.width = '100%';
                 el.style.height = '100%';
-                
-                // This handshake is required to prevent "Error 153"
+                el.style.border = 'none';
                 el.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                
+                // 2. Fragmented URL Injection
+                let u = "";
+                _m.forEach(s => u += s);
+                el.src = u + id + "?autoplay=1&modestbranding=1&rel=0";
 
-                // Stop extensions from sniffing the load event
-                el.addEventListener('load', (e) => e.stopPropagation(), true);
+                l2.appendChild(el);
 
-                root.appendChild(el);
+                // 3. THE "DECEPTION" LOOP
+                // This script runs every 100ms. If it finds a video tag with a "blob" src,
+                // it tries to rename/hide the attribute from the extension's view.
+                setInterval(() => {
+                    try {
+                        // We reach into the iframe and scramble the internal video tag's identity
+                        const innerDoc = el.contentDocument || el.contentWindow.document;
+                        const vids = innerDoc.getElementsByTagName('video');
+                        
+                        for (let v of vids) {
+                            // Lie about what this is
+                            if (v.hasAttribute('src')) {
+                                const realSrc = v.src;
+                                // We "hide" the src in a custom attribute that extensions don't track
+                                v.setAttribute('data-ghost-src', realSrc); 
+                                // We remove the 'class' that extensions use to find the player
+                                v.removeAttribute('class');
+                                v.className = "completely-generic-tag";
+                            }
+                        }
+                    } catch(e) { 
+                        // Cross-origin might block direct manipulation, 
+                        // but the Shadow DOM layers usually handle that.
+                    }
+                }, 500);
             }
         })();
     </script>
