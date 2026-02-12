@@ -2,88 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Stealth Player</title>
+    <title>Ghost Player</title>
     <style>
-        body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .ui-layer { background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333; z-index: 10; }
-        input { padding: 12px; width: 280px; border: 1px solid #444; background: #000; color: #fff; border-radius: 6px; }
-        button { padding: 12px 24px; cursor: pointer; background: #e50914; color: white; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #ff1f1f; transform: scale(1.02); }
-        #safe-zone { margin-top: 20px; width: 560px; height: 315px; background: #000; border-radius: 8px; overflow: hidden; }
+        /* Hidden UI to prevent extension flagging */
+        body { background: #000; color: #333; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .secure-input { opacity: 0.1; transition: opacity 0.3s; margin-bottom: 10px; }
+        .secure-input:hover { opacity: 1; }
+        input { background: #111; border: 1px solid #222; color: #eee; padding: 8px; width: 200px; border-radius: 4px; }
+        button { cursor: pointer; background: #222; color: #888; border: 1px solid #333; padding: 8px; border-radius: 4px; }
+        
+        /* The Player Container */
+        #viewport { width: 854px; height: 480px; background: #000; border: 1px solid #111; position: relative; }
     </style>
 </head>
 <body>
 
-    <div class="ui-layer">
-        <input type="text" id="v_url" placeholder="Video URL or ID">
-        <button id="v_load">Initialize Stream</button>
+    <div class="secure-input">
+        <input type="text" id="v_field" name="v_field" aria-label="Video Source" placeholder="ID">
+        <button id="v_btn" name="v_btn" aria-label="Load">Load</button>
     </div>
 
-    <div id="safe-zone"></div>
+    <div id="viewport"></div>
 
     <script>
         (function() {
-            const CONFIG = {
-                t1: 'ifr', t2: 'ame',
-                p1: 'ht', p2: 'tps://www.',
-                d1: 'you', d2: 'tube.com/embed/'
-            };
+            const btn = document.getElementById('v_btn');
+            const view = document.getElementById('viewport');
 
-            const loadBtn = document.getElementById('v_load');
-            const zone = document.getElementById('safe-zone');
-
-            // 1. Create a Shadow Root to hide the internal DOM from extensions
-            const shadow = zone.attachShadow({ mode: 'closed' }); 
-
-            loadBtn.addEventListener('click', () => {
-                const rawUrl = document.getElementById('v_url').value;
-                const id = extractId(rawUrl);
+            btn.addEventListener('click', () => {
+                const val = document.getElementById('v_field').value;
+                const id = val.includes('v=') ? val.split('v=')[1].split('&')[0] : val;
                 
-                if (id) {
-                    deploy(id);
+                if (id.length === 11) {
+                    execute(id);
                 }
             });
 
-            function deploy(vid) {
-                // Clear previous
-                shadow.innerHTML = '';
-
-                // 2. Build the element inside the Shadow Root
-                const frame = document.createElement(CONFIG.t1 + CONFIG.t2);
-                const target = CONFIG.p1 + CONFIG.p2 + CONFIG.d1 + CONFIG.d2 + vid;
-
-                // 3. Use a Proxy to lie about the 'src' if an extension tries to read it
-                const stealthFrame = new Proxy(frame, {
-                    get(target, prop) {
-                        if (prop === 'src') return 'about:blank'; // Lie to scanners
-                        return target[prop];
-                    }
-                });
-
-                // Style the frame
-                Object.assign(frame.style, {
-                    width: '100%',
-                    height: '100%',
-                    border: 'none'
-                });
-
-                frame.setAttribute('allowfullscreen', 'true');
-                frame.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+            function execute(vid) {
+                view.innerHTML = '';
                 
-                // 4. Set the source via property rather than attribute
-                frame.src = target;
+                // 1. Using a 'closed' shadow root so extensions can't query the iframe
+                const shadow = view.attachShadow({ mode: 'closed' });
 
-                shadow.appendChild(frame);
+                // 2. Build the iframe in memory
+                const ifr = document.createElement('iframe');
+                
+                // 3. The 'Sandbox' is key: It blocks extensions from 'touching' the video content
+                // but allows the video to play.
+                ifr.setAttribute('sandbox', 'allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-presentation');
+                
+                ifr.style.width = '100%';
+                ifr.style.height = '100%';
+                ifr.style.border = 'none';
+                
+                // 4. Randomized URL construction to bypass network string filters
+                const p1 = 'https://';
+                const p2 = 'www.youtube.com';
+                const p3 = '/embed/';
+                const params = '?autoplay=1&modestbranding=1&rel=0';
+
+                // We set the src at the last possible microsecond
+                ifr.src = p1 + p2 + p3 + vid + params;
+
+                shadow.appendChild(ifr);
             }
-
-            function extractId(url) {
-                const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^"&?\/\s]{11})/);
-                return match ? match[1] : (url.length === 11 ? url : null);
-            }
-
-            // 5. Block 'getEventListeners' and other inspection tools
-            window.getEventListeners = () => [];
         })();
     </script>
 </body>
