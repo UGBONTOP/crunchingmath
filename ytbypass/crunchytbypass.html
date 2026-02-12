@@ -3,64 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stealth Portal</title>
+    <title>Core System</title>
     <style>
-        body { background: #050505; color: #444; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .ui-hub { background: #111; padding: 20px; border-radius: 8px; border: 1px solid #222; margin-bottom: 20px; }
-        input { background: #000; border: 1px solid #333; color: #0f0; padding: 10px; width: 220px; border-radius: 4px; outline: none; }
-        button { background: #222; color: #eee; border: 1px solid #333; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
-        #player-container { width: 854px; height: 480px; background: #000; border: 1px solid #111; position: relative; }
+        body { background: #000; color: #111; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .ui { background: #080808; padding: 25px; border-radius: 12px; border: 1px solid #111; margin-bottom: 20px; transition: 0.5s; opacity: 0.03; }
+        .ui:hover { opacity: 1; border-color: #222; }
+        input { background: #000; border: 1px solid #222; color: #0f0; padding: 12px; width: 240px; border-radius: 6px; outline: none; }
+        button { background: #111; color: #444; border: 1px solid #222; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
+        #v-portal { width: 854px; height: 480px; background: #000; border: 1px solid #050505; position: relative; }
     </style>
 </head>
 <body>
 
-    <div class="ui-hub">
-        <label for="v_input" style="display:none;">Source</label>
-        <input type="text" id="v_input" name="v_input" placeholder="YouTube ID">
-        <button id="v_btn">Initialize</button>
+    <div class="ui">
+        <input type="text" id="target_id" placeholder="Paste ID">
+        <button id="v_run">Engage</button>
     </div>
 
-    <div id="player-container"></div>
+    <div id="v-portal"></div>
 
     <script>
         (function() {
-            // "https://www.youtube-nocookie.com/embed/" encoded in Base64
-            const _B64_BASE = "aHR0cHM6Ly93d3cueW91dHViZS1ub2Nvb2tpZS5jb20vZW1iZWQv";
-            
-            const btn = document.getElementById('v_btn');
-            const container = document.getElementById('player-container');
+            const btn = document.getElementById('v_run');
+            const portal = document.getElementById('v-portal');
 
+            // This is the EXACT mathematical map for "https://www.youtube-nocookie.com/embed/"
+            // No strings exist here, just coordinates.
+            const _MAP = [104, 116, 116, 112, 115, 58, 47, 47, 119, 119, 119, 46, 121, 111, 117, 116, 117, 98, 101, 45, 110, 111, 99, 111, 111, 107, 105, 101, 46, 99, 111, 109, 47, 101, 109, 98, 101, 100, 47];
+            
             btn.addEventListener('click', () => {
-                const val = document.getElementById('v_input').value;
-                // Simple regex to grab ID from a link or take the raw 11 chars
-                const id = val.match(/([a-zA-Z0-9_-]{11})/) ? val.match(/([a-zA-Z0-9_-]{11})/)[0] : null;
+                const input = document.getElementById('target_id').value;
+                const id = input.length > 11 ? input.match(/[a-zA-Z0-9_-]{11}/)[0] : input;
                 
-                if (id) {
-                    launch(id);
+                if (id && id.length === 11) {
+                    assemble(id);
                 }
             });
 
-            function launch(vid) {
-                container.innerHTML = '';
+            function assemble(vid) {
+                portal.innerHTML = '';
                 
-                // Create the Shadow Root - Chromebook extensions can't query inside a 'closed' root
-                const shadow = container.attachShadow({ mode: 'closed' });
-
-                // Use an <embed> tag. Extensions focus on <iframe>; <embed> is often overlooked.
-                const player = document.createElement('embed');
+                // Reconstruct the URL character by character at the moment of the click
+                let d = "";
+                for(let i=0; i<_MAP.length; i++) {
+                    d += String.fromCharCode(_MAP[i]);
+                }
                 
-                // Decode the base and attach the ID
-                const target = atob(_B64_BASE) + vid + "?autoplay=1&rel=0&modestbranding=1";
+                // Add a timestamp to the URL to confuse network caches used by extensions
+                const final = d + vid + "?autoplay=1&rel=0&t=" + Date.now();
 
-                player.setAttribute('type', 'text/html');
-                player.setAttribute('src', target);
-                player.style.width = '100%';
-                player.style.height = '100%';
+                const root = portal.attachShadow({ mode: 'closed' });
+
+                // Using <embed> instead of <iframe> to bypass standard Chromebook filters
+                const el = document.createElement('embed');
+                el.setAttribute('type', 'text/html');
+                el.setAttribute('src', final);
+                el.style.width = '100%';
+                el.style.height = '100%';
                 
-                // Forces the browser to send the identity YouTube needs for 'Error 153'
-                player.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                // This handshake is required to prevent "Error 153"
+                el.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
 
-                shadow.appendChild(player);
+                // Stop extensions from sniffing the load event
+                el.addEventListener('load', (e) => e.stopPropagation(), true);
+
+                root.appendChild(el);
             }
         })();
     </script>
