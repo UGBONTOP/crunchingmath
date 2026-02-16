@@ -274,15 +274,18 @@
             doc.head.appendChild(link);
         }
 
-        if (method === 'aboutblank') {
-            const win = window.open('about:blank', '_blank');
-            if (!win) return alert("Pop-up blocked!");
-            applyCloak(win.document);
-            const iframe = win.document.createElement('iframe');
-            iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
-            iframe.src = path;
-            win.document.body.appendChild(iframe);
-        } 
+if (method === 'aboutblank') {
+    const win = window.open('about:blank', '_blank');
+    if (!win) return alert("Pop-up blocked!");
+    applyCloak(win.document);
+
+    const iframe = win.document.createElement('iframe');
+    iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
+    iframe.allowFullscreen = true;
+    iframe.setAttribute('allow', 'fullscreen');
+    iframe.src = path;
+    win.document.body.appendChild(iframe);
+}
         else if (method === 'blob') {
             const blobHtml = `<html><head><title>${cloak.title}</title><link rel="icon" href="${cloak.icon}"><style>body,html{margin:0;padding:0;height:100%;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style></head><body><iframe src="${path}"></iframe></body></html>`;
             const blob = new Blob([blobHtml], { type: 'text/html' });
