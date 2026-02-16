@@ -815,21 +815,21 @@
     <div id="appWrapper" class="pos-left">
         
         <nav class="sidebar-rail">
-            <div class="brand-icon" onclick="showHomeView()" title="main home screen">
+            <div class="brand-icon" onclick="showHomeView()" title="Home">
                 <img src="images/crunchicon.png" alt="logo">
             </div>
 
             <div class="nav-group">
-                <div class="nav-item" onclick="showGamesView()" data-tooltip="games">
+                <div class="nav-item" onclick="showGamesView()" data-tooltip="Game Library">
                     <span>🎮</span>
                 </div>
                 <div class="nav-item" onclick="launchGame('os/cos.html')" data-tooltip="Crunch OS">
                     <span>💻</span>
                 </div>
-                <div class="nav-item" onclick="showProxyWarning('pr0xiey/proxonmye.html')" data-tooltip="proxy page">
+                <div class="nav-item" onclick="showProxyWarning('https://login-withclever-public.nfilatova.ru')" data-tooltip="Web Proxy">
                     <span>🌐</span>
                 </div>
-                <div class="nav-item" onclick="launchGame('ytbypass/crunchytbypass.html')" data-tooltip="youtube bypass. (beta test)">
+                <div class="nav-item" onclick="launchGame('ytbypass/crunchytbypass.html')" data-tooltip="youtube bypass.">
                     <span>📺</span>
                 </div>				
             </div>
@@ -854,14 +854,14 @@
             
             <section id="view-home" class="active">
                 <h1 class="hero-title">CRUNCH<br>ARCADE</h1>
-                <div class="hero-version">V1.35</div>
+                <div class="hero-version">V1.3</div>
                 
                 <div class="quick-actions">
                     <div class="action-card" onclick="showGamesView()">
                         <div class="ac-icon">🕹️</div>
                         <div class="ac-label">Games</div>
                     </div>
-                    <div class="action-card" onclick="showProxyWarning('pr0xiey/proxonmye.html')">
+                    <div class="action-card" onclick="showProxyWarning('https://login-withclever-public.nfilatova.ru')">
                         <div class="ac-icon">🌐</div>
                         <div class="ac-label">Proxy</div>
                     </div>
@@ -869,10 +869,6 @@
                         <div class="ac-icon">🖥️</div>
                         <div class="ac-label">crunch os</div>
                     </div>
-                    <div class="action-card" onclick="launchGame('crunchtools/crunchtalkv3.html')">
-                        <div class="ac-icon">💬</div>
-                        <div class="ac-label">crunch talk v3</div>
-                    </div>                    
                 </div>
             </section>
 
@@ -1625,7 +1621,12 @@
                     <div class="game-card" onclick="launchGame('games/Terraria.html')">
                         <img src="images/terraria.png" loading="lazy">
                         <div class="gc-info"><span class="gc-title">Terraria 1.0</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Terraria 1.0')">❤</span></div>
-                    </div>						
+                    </div>		
+
+                    <div class="game-card" onclick="launchGame('https://gorillatag-webport.web.app')">
+                        <img src="images/gtag.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Gorilla Tag</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Gorilla Tag')">❤</span></div>
+                    </div>					
 
                 </div> 
             </section>
@@ -1636,15 +1637,13 @@
         <div class="gloss-modal">
             <div class="gm-header">Crunch Update bro</div>
             <div style="line-height: 1.6; color: var(--text-muted);">
-                <p><strong style="color: var(--accent-primary);">v1.35</strong></p>
+                <p><strong style="color: var(--accent-primary);">v1.3</strong></p>
                 <ul style="padding-left: 20px;">
                     <li>Added new launching methods, these patch up teachers who yknow, blocked aboutblanks like dumbasses lmao</li>
                     <li>In settings added more themes</li>	
                     <li>heads up btw, suggest stuff AT HOME or in the Proxy, because it doesnt work on the default site</li>
                     <li>btw i read some suggestions, tiktok and roblox. tiktok is in the proxies, roblox aint possible in a webbrowser</li>	
-                    <li>Fixed some games that led to 404 (Fnaf UNC, Etc, report issues if this happens ofc)</li>	
-                    <li>new proxy page for multiple of proxies</li>	        
-                    <li>crunch talk v3 added on here (not v2)</li>	                      
+                    <li>Fixed some games that led to 404 (Fnaf UNC, Etc, report issues if this happens ofc)</li>						
                 </ul>
                 <div style="margin-top: 20px; display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="dontShowChangelog">
@@ -2246,15 +2245,40 @@
         }
 
         // 2. ABOUT BLANK
-        else if (launchMethod === 'aboutblank') {
-            const win = window.open('about:blank', '_blank');
-            if (!win) return alert("Pop-up blocked! Please allow pop-ups to play.");
-            applyCloak(win);
-            const iframe = win.document.createElement('iframe');
-            iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
-            iframe.src = path;
-            win.document.body.appendChild(iframe);
-        } 
+else if (launchMethod === 'aboutblank') {
+    const win = window.open('about:blank', '_blank');
+    if (!win) return alert("Pop-up blocked! Please allow pop-ups to play.");
+    applyCloak(win);
+    
+    const iframe = win.document.createElement('iframe');
+    iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;";
+    iframe.src = path;
+    iframe.allowFullscreen = true;
+    win.document.body.appendChild(iframe);
+
+    // Fullscreen button
+    const btn = win.document.createElement('button');
+    btn.textContent = '⛶ Fullscreen';
+    btn.style = "position:fixed; bottom:12px; right:12px; z-index:9999; background:rgba(0,0,0,0.6); color:white; border:1px solid rgba(255,255,255,0.3); padding:7px 13px; border-radius:6px; cursor:pointer; font-size:13px; font-family:sans-serif;";
+    btn.onclick = () => {
+        if (!win.document.fullscreenElement) {
+            win.document.documentElement.requestFullscreen();
+            btn.textContent = '✕ Exit Fullscreen';
+        } else {
+            win.document.exitFullscreen();
+            btn.textContent = '⛶ Fullscreen';
+        }
+    };
+    win.document.body.appendChild(btn);
+
+    // F11 support
+    win.document.addEventListener('keydown', (e) => {
+        if (e.key === 'F11') {
+            e.preventDefault();
+            btn.click();
+        }
+    });
+}
         
         // 3. BLOB INJECTION
         else if (launchMethod === 'blob') {
