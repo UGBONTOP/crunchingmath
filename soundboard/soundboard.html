@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desmos Learning | Crunchmath.org </title>
+    <link rel="icon" type="image/png" href="images/crunchmathfr.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --accent-primary: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.6);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --glass-base: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(24px);
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden;
+            background-color: var(--bg-deep); color: var(--text-main); font-family: var(--font-body);
+        }
+
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.8; }
+        .ui-noise { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.04; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+
+        #appWrapper { position: relative; z-index: 10; display: flex; justify-content: center; width: 100%; min-height: 100vh; }
+
+        .main-stage {
+            flex-grow: 1; padding: 50px; max-width: 1400px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .view-header { text-align: center; margin-bottom: 60px; margin-top: 40px; }
+
+        .vh-title { 
+            font-family: var(--font-display); font-size: 4rem; font-weight: 800; 
+            margin: 0; text-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+        }
+        
+        .vh-subtitle { color: var(--text-muted); font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px;}
+
+        .games-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 25px; width: 100%; padding-bottom: 50px;
+        }
+
+        .game-card {
+            aspect-ratio: 1 / 1; background: var(--glass-base); border-radius: 20px;
+            position: relative; overflow: hidden; border: 1px solid var(--glass-border);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer; backdrop-filter: var(--glass-blur);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .game-card img { width: 60%; height: 60%; object-fit: contain; transition: transform 0.3s ease; filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.3)); }
+
+        .gc-info {
+            position: absolute; bottom: 0; width: 100%; padding: 10px;
+            background: rgba(0,0,0,0.5); text-align: center;
+        }
+
+        .gc-title { font-weight: 600; font-size: 0.9rem; color: #fff; }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px var(--accent-glow);
+            border-color: var(--accent-primary);
+        }
+        
+        .game-card:active { transform: scale(0.95); }
+
+        /* Current playing indicator */
+        .playing { border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important; }
+
+    </style>
+</head>
+<body>
+
+    <div class="ui-noise"></div>
+    <canvas id="bgCanvas"></canvas>
+
+    <div id="appWrapper">
+        <main class="main-stage">
+            <div class="view-header">
+                <h2 class="vh-title">crunchy on toppy</h2>
+                <div class="vh-subtitle">ladies ladies chilllll</div>
+            </div>
+
+            <div class="games-grid" id="soundGrid">
+                
+                <div class="game-card" onclick="playAudio('audio/babyboo.mp3', this)">
+                    <img src="images/button.png" alt="Sound 1">
+                    <div class="gc-info"><span class="gc-title">She Gon Call me babyboo</span></div>
+                </div>
+
+                <div class="game-card" onclick="playAudio('audio/bigguy.mp3', this)">
+                    <img src="images/button.png" alt="Sound 1">
+                    <div class="gc-info"><span class="gc-title">Big guy spongebob pants ok</span></div>
+                </div>                
+
+                <div class="game-card" onclick="playAudio('audio/ultimatetung.mp3', this)">
+                    <img src="images/button.png" alt="Sound 1">
+                    <div class="gc-info"><span class="gc-title">The ultimate tung tung sahur bro</span></div>
+                </div>     
+
+                <div class="game-card" onclick="playAudio('audio/icamein.mp3', this)">
+                    <img src="images/button.png" alt="Sound 1">
+                    <div class="gc-info"><span class="gc-title">epstein edit song</span></div>
+                </div>  
+                
+                <div class="game-card" onclick="playAudio('audio/slander.mp3', this)">
+                    <img src="images/button.png" alt="Sound 1">
+                    <div class="gc-info"><span class="gc-title">slander</span></div>
+                </div>  
+                
+
+                </div> 
+        </main>
+    </div>
+
+<script>
+    /* --- AUDIO ENGINE --- */
+    let currentAudio = null;
+
+    function playAudio(fileUrl, element) {
+        // Stop current audio if playing
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            // Remove playing class from all cards
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('playing'));
+        }
+
+        // Create new audio object
+        currentAudio = new Audio(fileUrl);
+        
+        // Visual feedback
+        element.classList.add('playing');
+
+        currentAudio.play().catch(e => {
+            console.error("Audio playback failed. Check file path:", fileUrl);
+            element.classList.remove('playing');
+        });
+
+        // Remove highlight when finished
+        currentAudio.onended = () => {
+            element.classList.remove('playing');
+        };
+    }
+
+    /* --- BACKGROUND ANIMATION --- */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width; this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.3; this.vy = (Math.random() - 0.5) * 0.3;
+            this.size = Math.random() * 3 + 1; this.alpha = Math.random() * 0.3 + 0.1;
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if (this.x < 0) this.x = width; if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height; if (this.y > height) this.y = 0;
+        }
+        draw() { ctx.fillStyle = `rgba(124, 58, 237, ${this.alpha})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    }
+    function init() { particles = []; for (let i = 0; i < 40; i++) particles.push(new Particle()); }
+    function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    window.addEventListener('resize', () => { resize(); init(); });
+    resize(); init(); animate();
+</script>
+</body>
+</html>
