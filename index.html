@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+
+<meta property="og:title" content="Crunch Education Tools" />
+<meta property="og:description" content="Crunchingmath.org offers many free lessons these include Algebra, History, English, and other topics of your choice." />
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/UGBONTOP/crunchingmath@main/images/crunchmathfr.png" />
+<meta property="og:url" content="https://crunchingmath.web.app" />
+<meta property="og:type" content="website" />
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
@@ -826,9 +834,12 @@
                 <div class="nav-item" onclick="showProxyWarning('pr0xiey/proxonmye.html')" data-tooltip="Proxies">
                     <span>🌐</span>
                 </div>
-                <div class="nav-item" onclick="launchGame('soundboard/soundboard.html')" data-tooltip="Crunch OS">
+                <div class="nav-item" onclick="launchGame('soundboard/soundboard.html')" data-tooltip="soundboard">
                     <span>🔊</span>
-                </div>                
+                </div>          
+                <div class="nav-item" onclick="launchGame('os/cos.html')" data-tooltip="crunch os">
+                    <span>💻</span>
+                </div>   				
                 <div class="nav-item" onclick="launchGame('ytbypass/crunchytbypass.html')" data-tooltip="youtube bypass.">
                     <span>📺</span>
                 </div>
@@ -894,6 +905,44 @@
                 </div>
 
                 <div class="games-grid" id="gameGrid">
+				
+                    <div class="game-card" onclick="launchGame('games/Terraria.html')">
+                        <img src="images/terraria.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Terraria 1.0</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Terraria 1.0')">❤</span></div>
+                    </div>		
+
+                    <div class="game-card" onclick="launchGame('https://gtagwebport-crunch.web.app/')">
+                        <img src="images/gtag.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Gorilla Tag</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Gorilla Tag')">❤</span></div>
+                    </div>				
+
+                    <div class="game-card" onclick="launchGame('https://cuphead-firebase-port.firebaseapp.com')">
+                        <img src="images/cuphead.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Cuphead</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Cuphead')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://bendy-firebase-port.firebaseapp.com')">
+                        <img src="images/bendy.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bendy</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bendy')">❤</span></div>
+                    </div>		
+
+                    <div class="game-card" onclick="launchGame('https://amandafireport.web.app')">
+                        <img src="images/atg.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Amanda The Adventurer</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Amanda The Adventurer')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://gettingoverdih-fireport.web.app')">
+                        <img src="images/goit.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Getting Over it</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Getting Over it')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://thatsnotmyneighbor-sdih.web.app')">
+                        <img src="images/thatsnmn.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Thats not my Neighbor</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Thats not my Neighbor')">❤</span></div>
+                    </div>					
+
+                    <div class="game-card" onclick="launchGame('games/rocketgoal.io.html')">
+                        <img src="images/rocketgoal-io.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Rocket Goal.io</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Rocket Goal.io')">❤</span></div>
+                    </div>						
+				
                     <div class="game-card" onclick="launchGame('games/BESTGAMEEVER.html')">
                         <img src="images/10outta10game.png" loading="lazy">
                         <div class="gc-info">
@@ -1088,14 +1137,6 @@
                     <div class="game-card" onclick="launchGame('games/halflife.html')">
                         <img src="images/halflife.jpg" loading="lazy">
                         <div class="gc-info"><span class="gc-title">Half-Life</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Half-Life')">❤</span></div>
-                    </div>
-                    <div class="game-card" onclick="launchGame('https://cuphead-firebase-port.firebaseapp.com')">
-                        <img src="images/cuphead.png" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Cuphead</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Cuphead')">❤</span></div>
-                    </div>
-                    <div class="game-card" onclick="launchGame('https://bendy-firebase-port.firebaseapp.com')">
-                        <img src="images/bendy.jpg" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Bendy</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bendy')">❤</span></div>
                     </div>
                     <div class="game-card" onclick="launchGame('games/stickmina.html')">
                         <img src="images/stickmina.jpg" loading="lazy">
@@ -1401,18 +1442,6 @@
                         <img src="images/stumbleg.jpg" loading="lazy">
                         <div class="gc-info"><span class="gc-title">Stumble Guys</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Stumble Guys')">❤</span></div>
                     </div>
-                    <div class="game-card" onclick="launchGame('https://amandafireport.web.app')">
-                        <img src="images/atg.jpg" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Amanda The Adventurer</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Amanda The Adventurer')">❤</span></div>
-                    </div>
-                    <div class="game-card" onclick="launchGame('https://gettingoverdih-fireport.web.app')">
-                        <img src="images/goit.png" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Getting Over it</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Getting Over it')">❤</span></div>
-                    </div>
-                    <div class="game-card" onclick="launchGame('https://thatsnotmyneighbor-sdih.web.app')">
-                        <img src="images/thatsnmn.jpg" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Thats not my Neighbor</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Thats not my Neighbor')">❤</span></div>
-                    </div>
                     <div class="game-card" onclick="launchGame('games/bbbros.html')">
                         <img src="images/bbbros.jpg" loading="lazy">
                         <div class="gc-info"><span class="gc-title">Baseball Bros</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Baseball Bros')">❤</span></div>
@@ -1621,22 +1650,12 @@
                     <div class="game-card" onclick="launchGame('games/getawso.html')">
                         <img src="images/getawso.jpg" loading="lazy">
                         <div class="gc-info"><span class="gc-title">Get Away Shootout</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Get Away Shootout')">❤</span></div>
-                    </div>	
-
-                    <div class="game-card" onclick="launchGame('games/Terraria.html')">
-                        <img src="images/terraria.png" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Terraria 1.0</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Terraria 1.0')">❤</span></div>
-                    </div>		
-
-                    <div class="game-card" onclick="launchGame('https://gtagwebport-crunch.web.app/')">
-                        <img src="images/gtag.jpg" loading="lazy">
-                        <div class="gc-info"><span class="gc-title">Gorilla Tag</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Gorilla Tag')">❤</span></div>
                     </div>					
 
                     <div class="game-card" onclick="launchGame('games/papabakeria.html')">
                         <img src="images/papasbakeria.jpg" loading="lazy">
                         <div class="gc-info"><span class="gc-title">Papas Bakeria</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Papas Bakeria')">❤</span></div>
-                    </div>
+                    </div>				
                     
                 </div> 
             </section>
