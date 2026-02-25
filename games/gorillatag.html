@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-yes">
-    <title>crunch's gtag webport (file:// ver)</title>
+    <title>crunch's gtag webport (web.app ver)</title>
     <link rel="icon" href="https://cdn.jsdelivr.net/gh/UGBONTOP/gtag-jsdliver@main/faviconbro.png" type="image/png">
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -205,8 +205,8 @@
       <canvas id="unity-canvas"></canvas>
       
       <div class="control-panel">
-        <button id="mute-mic" class="game-btn">
-          <span id="mic-icon">🎤</span> Mute Mic
+<button id="mute-mic" class="game-btn">
+          <span id="mic-icon">🎙️</span> Mute Mic
         </button>
         <button id="mute-lobby" class="game-btn">
           <span id="lobby-icon">🔊</span> Mute Lobby
@@ -267,8 +267,40 @@
       var isLobbyMuted = false;
       var micBtn = document.getElementById('mute-mic');
       var lobbyBtn = document.getElementById('mute-lobby');
+      var globalAudioStream = null;
+      var myUnityInstance = null; 
 
-      var totalSizeMB = 220.0;
+      const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+      navigator.mediaDevices.getUserMedia = async function(constraints) {
+        const stream = await origGetUserMedia(constraints);
+        if (constraints && constraints.audio) {
+            globalAudioStream = stream;
+            stream.getAudioTracks().forEach(track => track.enabled = !isMicMuted);
+        }
+        return stream;
+      };
+
+      window.allAudioElements = [];
+      
+      const origCreateElement = document.createElement;
+      document.createElement = function(tagName) {
+        const el = origCreateElement.call(document, tagName);
+        if (tagName.toLowerCase() === 'audio' || tagName.toLowerCase() === 'video') {
+          window.allAudioElements.push(el);
+          if (isLobbyMuted) el.muted = true;
+        }
+        return el;
+      };
+
+      const origAudio = window.Audio;
+      window.Audio = function(...args) {
+        const el = new origAudio(...args);
+        window.allAudioElements.push(el);
+        if (isLobbyMuted) el.muted = true;
+        return el;
+      };
+
+      var totalSizeMB = 221.2;
       var links = [
         "desmos-graphing.web.app | crunch arcade on top",
         "desmos-calculatortx.web.app | crunch arcade on top",
@@ -337,11 +369,11 @@
       micBtn.onclick = () => {
         isMicMuted = !isMicMuted;
         micBtn.classList.toggle('active', isMicMuted);
-        document.getElementById('mic-icon').textContent = isMicMuted ? '🚫' : '🎤';
+        document.getElementById('mic-icon').textContent = isMicMuted ? '🔇' : '🎙️';
         
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-            stream.getAudioTracks().forEach(track => track.enabled = !isMicMuted);
+        if (globalAudioStream) {
+          globalAudioStream.getAudioTracks().forEach(track => {
+            track.enabled = !isMicMuted;
           });
         }
       };
@@ -351,11 +383,17 @@
         lobbyBtn.classList.toggle('active', isLobbyMuted);
         document.getElementById('lobby-icon').textContent = isLobbyMuted ? '🔇' : '🔊';
 
-        if (isLobbyMuted) {
-          firebase.database().goOffline();
-        } else {
-          firebase.database().goOnline();
-        }
+
+        window.allAudioElements.forEach(el => el.muted = isLobbyMuted);
+
+        document.querySelectorAll('audio, video').forEach(el => el.muted = isLobbyMuted);
+
+        try {
+          if (myUnityInstance && myUnityInstance.Module && myUnityInstance.Module.WEBAudio && myUnityInstance.Module.WEBAudio.audioContext) {
+              if (isLobbyMuted) myUnityInstance.Module.WEBAudio.audioContext.suspend();
+              else myUnityInstance.Module.WEBAudio.audioContext.resume();
+          }
+        } catch(e) { console.warn("Could not suspend Unity audio context", e); }
       };
 
       var script = document.createElement("script");
@@ -370,6 +408,7 @@
           productName: "GTAGWebport",
           productVersion: "1",
         }, updateLoadingProgress).then((instance) => {
+          myUnityInstance = instance; // Save instance globally so mute button can access it
           var randomLink = links[Math.floor(Math.random() * links.length)];
           typeWriter(randomLink, 0, function() {
             document.getElementById('loading-screen').classList.add('fade-out');
