@@ -3,351 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Crunching Math Remastered | Crunchmath.org </title>
+    <title>Crunching Math Atlas | Crunchmath.org</title>
     <link rel="icon" type="image/png" href="images/crunchmathfr.png">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1e293b; 
-            --accent-color: #3b82f6; 
-            --accent-hover: #2563eb; 
-            --bg-color: #f1f5f9; 
-            --surface-color: #ffffff;
-            --text-main: #334155; 
-            --text-light: #64748b; 
+            --atlas-teal: #008a7b;
+            --atlas-dark: #222222;
+            --atlas-gray: #f9f9f9;
             --sidebar-width: 260px;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Source Sans Pro', sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
             display: flex;
-            min-height: 100vh;
+            background-color: #fff;
+            color: #333;
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
-        /* Sidebar */
+        /* Sidebar - Styled to match the Atlas clean aesthetic */
         .sidebar {
             width: var(--sidebar-width);
-            background-color: var(--primary-color);
-            color: white;
+            background-color: #fff;
+            border-right: 1px solid #eee;
             display: flex;
             flex-direction: column;
             padding: 2rem 1.5rem;
-            box-sizing: border-box;
             position: fixed;
             height: 100vh;
-            z-index: 10;
+            z-index: 100;
         }
-        .sidebar h2 {
-            margin-top: 0;
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 2rem;
+
+        .sidebar-logo {
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            color: var(--atlas-dark);
+            text-decoration: none;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .sidebar h3 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            color: #94a3b8;
-            letter-spacing: 1px;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
+
         .sidebar-links {
             list-style: none;
             padding: 0;
-            margin: 0;
-        }
-        .sidebar-links li {
-            margin-bottom: 0.5rem;
-        }
-        .sidebar-links a {
-            color: #cbd5e1;
-            text-decoration: none;
-            display: block;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        .sidebar-links a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            transform: translateX(5px);
         }
 
-        /* Main Content */
+        .sidebar-links a {
+            color: #555;
+            text-decoration: none;
+            display: block;
+            padding: 0.7rem 0;
+            font-weight: 400;
+            font-size: 1.05rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-links a:hover {
+            color: var(--atlas-teal);
+        }
+
+        .sidebar-section-title {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: #999;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        /* Main Content area */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 2rem 4rem;
-            box-sizing: border-box;
+            width: calc(100% - var(--sidebar-width));
         }
 
-        /* Hero Section */
+        /* Hero Section - Direct clone of image_cf8e78.jpg style */
         .hero {
-            background-color: var(--surface-color);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            position: relative;
+            height: 550px;
+            background: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
             display: flex;
             align-items: center;
-        }
-        .hero-img {
-            width: 40%;
-            height: 250px;
-            object-fit: cover;
-        }
-        .hero-text {
-            padding: 2rem;
-            width: 60%;
-        }
-        .hero-text h1 {
-            margin: 0 0 0.5rem 0;
-            color: var(--primary-color);
-            font-size: 2.2rem;
-        }
-        .hero-text p {
-            font-size: 1.05rem;
-            color: var(--text-light);
-            line-height: 1.5;
+            padding-left: 80px;
         }
 
-        /* Grade Selection */
-        .grade-selector {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .grade-btn {
-            background-color: var(--surface-color);
-            border: 2px solid transparent;
-            color: var(--text-main);
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        .grade-btn:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-color);
-        }
-        .grade-btn.active {
-            background-color: var(--accent-color);
+        .hero-box {
+            background-color: rgba(0, 0, 0, 0.75);
             color: white;
+            padding: 50px;
+            max-width: 550px;
+            border-radius: 2px;
         }
 
-        /* Dashboard panels */
-        .dashboard {
-            display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+        .hero-box h1 {
+            font-size: 3rem;
+            margin: 0 0 20px 0;
+            line-height: 1.1;
         }
-        .dashboard.active {
-            display: grid;
-            animation: fadeIn 0.5s ease-out;
+
+        .hero-box p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #ccc;
         }
-        .panel {
-            background: var(--surface-color);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+        .btn-atlas {
+            background-color: var(--atlas-teal);
+            color: white;
+            padding: 12px 28px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            display: inline-block;
+            transition: background 0.2s;
         }
-        ul.site-list {
-            list-style: none;
-            padding: 0;
+
+        .btn-atlas:hover {
+            background-color: #006d61;
         }
-        ul.site-list li {
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--bg-color);
+
+        /* Section Header Layout - Clone of image_cf8e79.jpg */
+        .content-section {
+            padding: 60px 80px;
+        }
+
+        .section-header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
-        ul.site-list a {
-            color: var(--accent-color);
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin: 0;
+            color: var(--atlas-dark);
+        }
+
+        .view-all {
+            color: var(--atlas-teal);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .book-btn {
-            display: block;
-            width: 100%;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 1rem;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 12px;
+        /* Atlas Grid & Cards */
+        .atlas-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .atlas-card {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
             cursor: pointer;
-            margin-top: 1rem;
+            border-radius: 2px;
         }
 
-        /* Modal */
+        .atlas-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .atlas-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Label on the top-left of cards */
+        .card-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(34, 34, 34, 0.9);
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 5;
+        }
+
+        /* Modal styling */
         .modal {
             display: none;
             position: fixed;
-            z-index: 100;
+            z-index: 1000;
             left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(15, 23, 42, 0.7);
+            background-color: rgba(0,0,0,0.85);
             backdrop-filter: blur(4px);
         }
+
         .modal-content {
             background-color: white;
             margin: 5% auto;
-            padding: 2.5rem;
-            border-radius: 16px;
+            padding: 50px;
             width: 80%;
-            max-width: 700px;
+            max-width: 800px;
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
         }
-        .close {
+
+        .close-modal {
             position: absolute;
-            top: 1rem; right: 1.5rem;
+            top: 20px; right: 30px;
             font-size: 2rem;
             cursor: pointer;
-            color: var(--text-light);
+            color: #999;
         }
-        .fact-list li {
-            margin-bottom: 0.8rem;
-            padding: 0.8rem;
-            background: var(--bg-color);
-            border-radius: 8px;
+
+        @media (max-width: 1200px) {
+            .atlas-grid { grid-template-columns: 1fr 1fr; }
         }
 
         @media (max-width: 768px) {
-            .sidebar { position: relative; width: 100%; height: auto; }
-            .main-content { margin-left: 0; padding: 1.5rem; }
-            .dashboard.active { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; width: 100%; }
+            .hero { padding-left: 20px; }
+            .content-section { padding: 40px 20px; }
+            .atlas-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <h2>📊 CrunchingMath</h2>
+        <a href="#" class="sidebar-logo">📈 CrunchingMath</a>
         
-        <h3>Hub Navigation</h3>
         <ul class="sidebar-links">
-            <li><a href="#" onclick="window.scrollTo(0,0)">🏠 Home</a></li>
-            <li><a href="#grade-section">📚 Select Grade</a></li>
+            <li><a href="#">Home</a></li>
+            <li><a href="#grades">Math Atlas (Grades)</a></li>
+            <li><a href="#resources">Learning Resources</a></li>
         </ul>
 
-        <h3>Apps & Tools</h3>
+        <div class="sidebar-section-title">Applications</div>
         <ul class="sidebar-links">
-            <li><a href="https://clever.com" target="_blank">🎒 Clever Portal</a></li>
-            <li><a href="https://www.ixl.com" target="_blank">📝 IXL Platform</a></li>
             <li><a href="main/index.html">📐 Desmos State Calculator</a></li>
+            <li><a href="https://clever.com" target="_blank">🎒 Clever Portal</a></li>
+            <li><a href="https://www.ixl.com" target="_blank">📝 IXL Practice</a></li>
         </ul>
     </aside>
 
     <main class="main-content">
-        
-        <header class="hero animate-in">
-            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80" alt="Students learning" class="hero-img">
-            <div class="hero-text">
-                <h1>CrunchingMath.org</h1>
-                <p>Helping students in Grades 6-9 master math with professional tools and interactive resources.</p>
+        <header class="hero">
+            <div class="hero-box">
+                <h1>Welcome to the Crunching Math</h1>
+                <p>CrunchingMath is a professional educational resource providing comprehensive data and foundational support for Australia’s student populations. Our aim is to promote mathematical fluency and mastery.</p>
+                <a href="main/index.html" class="btn-atlas">Explore Grades</a>
             </div>
         </header>
 
-        <section id="grade-section" class="grade-section animate-in" style="animation-delay: 0.1s;">
-            <h2 style="color: var(--primary-color);">Choose Your Grade</h2>
-            <div class="grade-selector">
-                <button class="grade-btn" onclick="selectGrade(6)">6th Grade</button>
-                <button class="grade-btn" onclick="selectGrade(7)">7th Grade</button>
-                <button class="grade-btn" onclick="selectGrade(8)">8th Grade</button>
-                <button class="grade-btn" onclick="selectGrade(9)">9th Grade</button>
+        <section class="content-section" id="grades">
+            <div class="section-header">
+                <h2>Explore Grades 6-8</h2>
+                <a href="#" class="view-all">VIEW ALL GRADES &rarr;</a>
             </div>
-            <div id="welcome-message" style="color: var(--text-light); margin-bottom: 2rem;">
-                Select your level to unlock your dashboard and study materials.
+
+            <div class="atlas-grid">
+                <div class="atlas-card" onclick="selectGrade(6)">
+                    <div class="card-label">Grade 6</div>
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop" alt="Mathematics Concepts">
+                </div>
+                <div class="atlas-card" onclick="selectGrade(7)">
+                    <div class="card-label">Grade 7</div>
+                    <img src="https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?q=80&w=800&auto=format&fit=crop" alt="Geometry and Algebra">
+                </div>
+                <div class="atlas-card" onclick="selectGrade(8)">
+                    <div class="card-label">Grade 8</div>
+                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="Advanced Calculation">
+                </div>
             </div>
         </section>
 
-        <section id="dashboard" class="dashboard">
-            <div class="panel">
-                <h2 style="margin-top:0">Top 10 Learning Sites</h2>
-                <ul class="site-list">
-                    <li><a href="https://www.ixl.com" target="_blank">IXL Learning</a> <span>Practice</span></li>
-                    <li><a href="https://www.desmos.com" target="_blank">Desmos</a> <span>Graphing</span></li>
-                    <li><a href="https://www.khanacademy.org" target="_blank">Khan Academy</a> <span>Videos</span></li>
-                    <li><a href="https://www.mathway.com" target="_blank">Mathway</a> <span>Solver</span></li>
-                    <li><a href="https://www.prodigygame.com" target="_blank">Prodigy</a> <span>Gaming</span></li>
-                    <li><a href="https://www.geogebra.org" target="_blank">GeoGebra</a> <span>Geometry</span></li>
-                    <li><a href="https://www.deltamath.com" target="_blank">DeltaMath</a> <span>Worksheets</span></li>
-                    <li><a href="https://brilliant.org" target="_blank">Brilliant</a> <span>Logic</span></li>
-                    <li><a href="https://quizlet.com" target="_blank">Quizlet</a> <span>Study</span></li>
-                    <li><a href="https://artofproblemsolving.com" target="_blank">AoPS</a> <span>Advanced</span></li>
-                </ul>
+        <section class="content-section" id="resources" style="background-color: var(--atlas-gray);">
+            <div class="section-header">
+                <h2>Mathematics Resources</h2>
+                <a href="#" class="view-all">VIEW ALL RESOURCES &rarr;</a>
             </div>
 
-            <div class="panel" style="text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                <h2>Study Guide</h2>
-                <p style="color: var(--text-light);">Access 20 grade-level facts and equations to help with your homework and tests.</p>
-                <button class="book-btn" onclick="openBook()">📖 Open Grade Book</button>
+            <div class="atlas-grid">
+                <div class="atlas-card" onclick="window.open('https://www.ixl.com', '_blank')">
+                    <div class="card-label">IXL LEARNING</div>
+                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="Learning Platform">
+                </div>
+                <div class="atlas-card" onclick="window.open('https://www.desmos.com', '_blank')">
+                    <div class="card-label">DESMOS CALCULATOR</div>
+                    <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=800&auto=format&fit=crop" alt="Graphing Software">
+                </div>
+                <div class="atlas-card" onclick="selectGrade(9)">
+                    <div class="card-label">GRADE 9 ALGEBRA</div>
+                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="High School Math">
+                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="High School Math">
+                </div>
             </div>
         </section>
     </main>
 
-    <div id="math-book-modal" class="modal">
+    <div id="math-modal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeBook()">&times;</span>
-            <h2 id="book-title" style="color: var(--primary-color);">Math Facts</h2>
-            <ol id="book-facts" class="fact-list"></ol>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title" style="font-size: 2.2rem; margin-top: 0;">Math Facts</h2>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            <div id="modal-body" style="line-height: 1.8; font-size: 1.1rem; color: #444;">
+                </div>
         </div>
     </div>
 
     <script>
-        let currentGrade = null;
-        const mathFacts = {
-            6: ["Area of a Triangle: A = bh/2", "Follow PEMDAS", "Ratios compare two quantities", "GCF is the largest common divisor", "LCM is the smallest shared multiple", "Dividing Fractions: Keep-Change-Flip", "Percent means out of 100", "Absolute Value is distance from zero", "Mean is the average", "Median is the middle value", "Mode is most frequent", "Range is High minus Low", "Volume = l * w * h", "Exponents show repeated multiplication", "Inequalities: < and >", "Independent variable is usually x", "Dependent variable is usually y", "Point (0,0) is the origin", "Integers include negative whole numbers", "3.14 is an approximation of Pi"],
-            7: ["Proportions: y = kx", "Unit rate is per 1 unit", "Integers: -x- is +", "Two-step equations: Isolate x", "C = 2 * pi * r", "A = pi * r^2", "Supplementary = 180°", "Complementary = 90°", "Cylinder Volume: pi * r^2 * h", "Probability = Success / Total", "Compound probability: P(A) * P(B)", "Scale factor = Drawing / Actual", "Rational numbers can be fractions", "Flip signs when dividing by negatives", "Percent change = Change / Original", "Interest: I = prt", "Cross multiply for proportions", "Vertical angles are equal", "Distributive property: a(b+c)", "Surface area is total outside area"],
-            8: ["Pythagorean Theorem: a² + b² = c²", "Slope (m) = rise / run", "y = mx + b", "Functions: 1 input = 1 output", "Vertical line test for functions", "Systems: Where lines cross", "x^-a = 1 / x^a", "x^0 = 1", "Scientific Notation: a x 10^b", "Translations are slides", "Reflections are flips", "Triangle angles sum to 180°", "Cone Volume: 1/3 * pi * r^2 * h", "Sphere Volume: 4/3 * pi * r^3", "Irrational numbers never end/repeat", "Scatter plots show correlation", "Distance formula find length", "Like terms have same variables", "Coefficient is number before variable", "Square root of 2 is irrational"],
-            9: ["y = ax² + bx + c", "Quadratic formula: solve for x", "Factoring: x² + 5x + 6 = (x+2)(x+3)", "Difference of squares: (a-b)(a+b)", "Growth: y = a(1+r)^t", "Arithmetic sequence: a + (n-1)d", "Domain: possible x values", "Range: possible y values", "Parallel slopes are equal", "Perpendicular slopes are reciprocals", "SOH: Sine = Opp/Hyp", "CAH: Cos = Adj/Hyp", "TOA: Tan = Opp/Adj", "Midpoint formula", "Vertex form: y = a(x-h)² + k", "Substitution method for systems", "Elimination method for systems", "Absolute value equations have 2 answers", "Discriminant: b² - 4ac", "Standard form of a line: Ax + By = C"]
+        const gradeFacts = {
+            6: ["Area of a Triangle: A = bh/2", "Order of Ops: PEMDAS", "Ratios: Comparison of two quantities", "GCF vs LCM logic", "Dividing Fractions: Keep-Change-Flip", "Mean, Median, Mode, and Range", "Absolute Value: Distance from zero", "Integers: Whole numbers and their opposites", "Algebraic Expressions: Variables as placeholders", "Surface Area: Area of all faces"],
+            7: ["Proportions: y = kx", "Unit Rate: Quantity per 1 unit", "C = 2 * π * r (Circumference)", "A = π * r² (Area of circle)", "Vertical & Adjacent Angles", "Scale Drawings: Scaled vs Actual", "Simple Interest: I = prt", "Rational Numbers on a line", "Inequalities: Flipping signs with negatives", "Probability: Likelihood of an event"],
+            8: ["Pythagorean Theorem: a² + b² = c²", "Slope-Intercept: y = mx + b", "Functions: One output per input", "Scientific Notation for small/large data", "Systems of Equations: Intersections", "Volume of Cones, Spheres, and Cylinders", "Scatter Plots: Correlation & Trends", "Transformations: Rotations & Translations", "Irrational Numbers: π and √2", "Exponent Rules: Adding when multiplying"],
+            9: ["Quadratic Formula: x = [-b ± √(b²-4ac)] / 2a", "Factoring Polynomials", "Domain & Range of functions", "Arithmetic & Geometric Sequences", "Parallel vs Perpendicular Slopes", "Trigonometry: SOH CAH TOA", "Midpoint & Distance formulas", "Absolute Value Equations", "Vertex Form: y = a(x-h)² + k", "Exponential Growth & Decay"]
         };
 
         function selectGrade(grade) {
-            currentGrade = grade;
-            const buttons = document.querySelectorAll('.grade-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('welcome-message').style.display = 'none';
-            document.getElementById('dashboard').classList.add('active');
-        }
+            const modal = document.getElementById('math-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
 
-        function openBook() {
-            if (!currentGrade) return;
-            const modal = document.getElementById('math-book-modal');
-            const list = document.getElementById('book-facts');
-            document.getElementById('book-title').innerText = `Grade ${currentGrade} Math Essentials`;
-            list.innerHTML = '';
-            mathFacts[currentGrade].forEach(f => {
-                const li = document.createElement('li');
-                li.innerText = f;
-                list.appendChild(li);
-            });
+            title.innerText = `Grade ${grade} Essentials Atlas`;
+            body.innerHTML = "<ul>" + gradeFacts[grade].map(f => `<li style="margin-bottom:10px;">${f}</li>`).join('') + "</ul>";
+            
             modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
 
-        function closeBook() { document.getElementById('math-book-modal').style.display = 'none'; }
+        function closeModal() {
+            document.getElementById('math-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('math-modal')) {
+                closeModal();
+            }
+        }
     </script>
 </body>
 </html>
