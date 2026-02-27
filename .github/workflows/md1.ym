@@ -1,0 +1,39 @@
+name: Deploy to Firebase Hosting
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      # This runs a separate job for every pair defined below
+      matrix:
+        include:
+          - project_id: oldmillschool-mathatlas
+            secret_name: OLDMILL
+          - project_id: math-atlas
+            secret_name: MATHATLAS
+          - project_id: learning-mathatlas
+            secret_name: LEARNINGMATHATLAS
+          - project_id: grade-atlas
+            secret_name: GRADEATLAS # Assuming this is for Clever Learn
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          # Dynamically pulls the secret based on the matrix name
+          firebaseServiceAccount: "${{ secrets[matrix.secret_name] }}"
+          projectId: "${{ matrix.project_id }}"
+          channelId: live
