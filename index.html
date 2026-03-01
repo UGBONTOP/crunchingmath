@@ -1,210 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta property="og:title" content="Crunch Education Tools" />
-<meta property="og:description" content="Crunchingmath.org offers many free lessons these include Algebra, History, English, and other topics of your choice." />
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/UGBONTOP/crunchingmath@main/images/crunchmathfr.png" />
-<meta property="og:url" content="https://crunchingmath.web.app" />
-<meta property="og:type" content="website" />
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crunching Math Atlas | Crunchmath.org</title>
-    <link rel="icon" type="image/png" href="images/crunchmathfr.png">
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>CrunchingMath Learning Portal</title>
+    <meta name="description" content="Free comprehensive math lessons, interactive graphing tools, and student portal access." />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --atlas-teal: #008a7b;
-            --atlas-dark: #222222;
-            --atlas-gray: #f9f9f9;
-            --sidebar-width: 260px;
+            --primary-blue: #1a56db;
+            --primary-hover: #1e40af;
+            --bg-light: #f3f4f6;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
         }
 
-        body {
-            font-family: 'Source Sans Pro', sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            display: flex;
-            background-color: #fff;
-            color: #333;
-        }
-
-        /* Sidebar - Styled to match the Atlas clean aesthetic */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: #fff;
-            border-right: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 1.5rem;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
-
-        .sidebar-logo {
-            font-weight: 700;
-            font-size: 1.4rem;
-            margin-bottom: 2.5rem;
-            color: var(--atlas-dark);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-links {
-            list-style: none;
             padding: 0;
         }
 
-        .sidebar-links a {
-            color: #555;
-            text-decoration: none;
-            display: block;
-            padding: 0.7rem 0;
-            font-weight: 400;
-            font-size: 1.05rem;
-            transition: color 0.2s;
-        }
-
-        .sidebar-links a:hover {
-            color: var(--atlas-teal);
-        }
-
-        .sidebar-section-title {
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            color: #999;
-            margin-top: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        /* Main Content area */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            width: calc(100% - var(--sidebar-width));
-        }
-
-        /* Hero Section - Direct clone of image_cf8e78.jpg style */
-        .hero {
-            position: relative;
-            height: 550px;
-            background: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000&auto=format&fit=crop') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            padding-left: 80px;
-        }
-
-        .hero-box {
-            background-color: rgba(0, 0, 0, 0.75);
-            color: white;
-            padding: 50px;
-            max-width: 550px;
-            border-radius: 2px;
-        }
-
-        .hero-box h1 {
-            font-size: 3rem;
-            margin: 0 0 20px 0;
-            line-height: 1.1;
-        }
-
-        .hero-box p {
-            font-size: 1.1rem;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
             line-height: 1.6;
-            margin-bottom: 30px;
-            color: #ccc;
         }
 
-        .btn-atlas {
-            background-color: var(--atlas-teal);
-            color: white;
-            padding: 12px 28px;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            display: inline-block;
-            transition: background 0.2s;
-        }
-
-        .btn-atlas:hover {
-            background-color: #006d61;
-        }
-
-        /* Section Header Layout - Clone of image_cf8e79.jpg */
-        .content-section {
-            padding: 60px 80px;
-        }
-
-        .section-header {
+        /* Navigation Bar */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .section-header h2 {
-            font-size: 2rem;
-            margin: 0;
-            color: var(--atlas-dark);
-        }
-
-        .view-all {
-            color: var(--atlas-teal);
-            text-decoration: none;
+        .logo {
+            font-size: 1.5rem;
             font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--primary-blue);
+            text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* Atlas Grid & Cards */
-        .atlas-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
         }
 
-        .atlas-card {
-            position: relative;
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
-            cursor: pointer;
-            border-radius: 2px;
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
         }
 
-        .atlas-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+        .nav-links a:hover {
+            color: var(--primary-blue);
         }
 
-        .atlas-card:hover img {
-            transform: scale(1.05);
-        }
-
-        /* Label on the top-left of cards */
-        .card-label {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background-color: rgba(34, 34, 34, 0.9);
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(to right, rgba(26, 86, 219, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2000&auto=format&fit=crop') center/cover;
             color: white;
-            padding: 6px 12px;
-            font-size: 0.75rem;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
             font-weight: 700;
-            text-transform: uppercase;
-            z-index: 5;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: var(--primary-blue);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: #f9fafb;
+            transform: translateY(-2px);
+        }
+
+        /* Section Layout */
+        .section {
+            padding: 4rem 5%;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img {
+            height: 160px;
+            background-color: #e5e7eb;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-blue);
+        }
+
+        /* Desmos Tool Section */
+        .tool-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Portal Links Grid */
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .portal-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .portal-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background: #eff6ff;
         }
 
         /* Modal styling */
@@ -213,127 +217,177 @@
             position: fixed;
             z-index: 1000;
             left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85);
+            background-color: rgba(17, 24, 39, 0.7);
             backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
             background-color: white;
-            margin: 5% auto;
-            padding: 50px;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
             position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         .close-modal {
             position: absolute;
-            top: 20px; right: 30px;
-            font-size: 2rem;
+            top: 15px; right: 20px;
+            font-size: 1.5rem;
             cursor: pointer;
-            color: #999;
+            color: var(--text-muted);
+            background: none;
+            border: none;
         }
 
-        @media (max-width: 1200px) {
-            .atlas-grid { grid-template-columns: 1fr 1fr; }
+        /* Cloak Button Styling */
+        .cloak-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .cloak-btn {
+            padding: 1rem;
+            border: 2px solid var(--primary-blue);
+            background: white;
+            color: var(--primary-blue);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cloak-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .cloak-desc {
+            font-size: 0.85rem;
+            font-weight: 400;
+            display: block;
+            margin-top: 4px;
+            opacity: 0.8;
         }
 
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; width: 100%; }
-            .hero { padding-left: 20px; }
-            .content-section { padding: 40px 20px; }
-            .atlas-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <a href="#" class="sidebar-logo">📈 CrunchingMath</a>
-        
-        <ul class="sidebar-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#grades">Math Atlas (Grades)</a></li>
-            <li><a href="#resources">Learning Resources</a></li>
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            CrunchingMath
+        </a>
+        <ul class="nav-links">
+            <li><a href="#curriculum">Curriculum</a></li>
+            <li><a href="#calculator">Graphing Tool</a></li>
+            <li><a href="#portals">Student Portals</a></li>
         </ul>
+    </nav>
 
-        <div class="sidebar-section-title">Applications</div>
-        <ul class="sidebar-links">
-            <li><a href="main/index.html">📐 Desmos State Calculator</a></li>
-            <li><a href="https://clever.com" target="_blank">🎒 Clever Portal</a></li>
-            <li><a href="https://www.ixl.com" target="_blank">📝 IXL Practice</a></li>
-        </ul>
-    </aside>
+    <header class="hero">
+        <h1>Master Mathematics Daily</h1>
+        <p>CrunchingMath provides comprehensive resources, interactive tools, and direct portal access for students to achieve academic fluency.</p>
+        <button onclick="openCloakModal()" class="btn-primary">Check Grades</button>
+    </header>
 
-    <main class="main-content">
-        <header class="hero">
-            <div class="hero-box">
-                <h1>Welcome to the Crunching Math</h1>
-                <p>CrunchingMath is a professional educational resource providing comprehensive data and foundational support for Australia’s student populations. Our aim is to promote mathematical fluency and mastery.</p>
-                <a href="main/index.html" class="btn-atlas">Explore Grades</a>
-            </div>
-        </header>
-
-        <section class="content-section" id="grades">
-            <div class="section-header">
-                <h2>Explore Grades 6-8</h2>
-                <a href="#" class="view-all">VIEW ALL GRADES &rarr;</a>
-            </div>
-
-            <div class="atlas-grid">
-                <div class="atlas-card" onclick="selectGrade(6)">
-                    <div class="card-label">Grade 6</div>
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop" alt="Mathematics Concepts">
-                </div>
-                <div class="atlas-card" onclick="selectGrade(7)">
-                    <div class="card-label">Grade 7</div>
-                    <img src="https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?q=80&w=800&auto=format&fit=crop" alt="Geometry and Algebra">
-                </div>
-                <div class="atlas-card" onclick="selectGrade(8)">
-                    <div class="card-label">Grade 8</div>
-                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="Advanced Calculation">
+    <section id="curriculum" class="section">
+        <h2 class="section-title">Essential Curriculum Data</h2>
+        <div class="grid">
+            <div class="card" onclick="selectGrade(6)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 6 Foundations</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Ratios, expressions, surface area, and statistical variability.</p>
                 </div>
             </div>
-        </section>
-
-        <section class="content-section" id="resources" style="background-color: var(--atlas-gray);">
-            <div class="section-header">
-                <h2>Mathematics Resources</h2>
-                <a href="#" class="view-all">VIEW ALL RESOURCES &rarr;</a>
-            </div>
-
-            <div class="atlas-grid">
-                <div class="atlas-card" onclick="window.open('https://www.ixl.com', '_blank')">
-                    <div class="card-label">IXL LEARNING</div>
-                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="Learning Platform">
-                </div>
-                <div class="atlas-card" onclick="window.open('https://www.desmos.com', '_blank')">
-                    <div class="card-label">DESMOS CALCULATOR</div>
-                    <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=800&auto=format&fit=crop" alt="Graphing Software">
-                </div>
-                <div class="atlas-card" onclick="selectGrade(9)">
-                    <div class="card-label">GRADE 9 ALGEBRA</div>
-                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="High School Math">
-                    <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&auto=format&fit=crop" alt="High School Math">
+            <div class="card" onclick="selectGrade(7)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 7 Pre-Algebra</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Proportions, probability, rational numbers, and scale drawings.</p>
                 </div>
             </div>
-        </section>
-    </main>
+            <div class="card" onclick="selectGrade(8)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1632516643730-1c944f772ba7?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 8 Advanced</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Linear equations, functions, geometry, and the Pythagorean Theorem.</p>
+                </div>
+            </div>
+            <div class="card" onclick="selectGrade(9)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 9 Algebra I</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Quadratic formulas, polynomials, domain/range, and sequences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="calculator" class="section" style="background-color: white;">
+        <h2 class="section-title">Interactive Graphing Calculator</h2>
+        <div class="tool-container">
+            <iframe src="https://www.desmos.com/calculator" width="100%" height="600px" style="border: none;" frameborder="0"></iframe>
+        </div>
+    </section>
+
+    <section id="portals" class="section">
+        <h2 class="section-title">District Student Portals</h2>
+        <div class="portal-grid">
+            <a href="https://www.skyward.com/" target="_blank" class="portal-btn">📊 Skyward Portal</a>
+            <a href="https://www.powerschool.com/" target="_blank" class="portal-btn">🎓 PowerSchool</a>
+            <a href="https://clever.com/" target="_blank" class="portal-btn">🎒 Clever</a>
+            <a href="https://www.ixl.com/" target="_blank" class="portal-btn">📝 IXL Learning</a>
+            <a href="https://canvas.instructure.com/" target="_blank" class="portal-btn">📚 Canvas LMS</a>
+            <a href="https://classroom.google.com/" target="_blank" class="portal-btn">🏫 Google Classroom</a>
+        </div>
+    </section>
 
     <div id="math-modal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2 id="modal-title" style="font-size: 2.2rem; margin-top: 0;">Math Facts</h2>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-            <div id="modal-body" style="line-height: 1.8; font-size: 1.1rem; color: #444;">
-                </div>
+            <button class="close-modal" onclick="closeModal('math-modal')">&times;</button>
+            <h2 id="modal-title" style="color: var(--primary-blue); border-bottom: 2px solid var(--bg-light); padding-bottom: 10px; margin-bottom: 10px;">Grade Facts</h2>
+            <div id="modal-body" style="color: var(--text-main);"></div>
+        </div>
+    </div>
+
+    <div id="cloak-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('cloak-modal')">&times;</button>
+            <h2 style="color: var(--text-main); text-align: center; margin-bottom: 10px;">Select Launch Method</h2>
+            <p style="text-align: center; color: var(--text-muted);">How would you like to open the portal?</p>
+            
+            <div class="cloak-options">
+                <button class="cloak-btn" onclick="launchCloak('aboutblank')">
+                    1. About:Blank
+                    <span class="cloak-desc">Opens in a hidden about:blank tab.</span>
+                </button>
+                <button class="cloak-btn" onclick="launchCloak('blob')">
+                    2. Blob URL
+                    <span class="cloak-desc">Generates a local blob string to hide the path.</span>
+                </button>
+                <button class="cloak-btn" onclick="launchCloak('default')">
+                    3. Can get it blocked
+                    <span class="cloak-desc">Standard redirect. Leaves URL visible.</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
+        // --- Grade Facts Logic ---
         const gradeFacts = {
             6: ["Area of a Triangle: A = bh/2", "Order of Ops: PEMDAS", "Ratios: Comparison of two quantities", "GCF vs LCM logic", "Dividing Fractions: Keep-Change-Flip", "Mean, Median, Mode, and Range", "Absolute Value: Distance from zero", "Integers: Whole numbers and their opposites", "Algebraic Expressions: Variables as placeholders", "Surface Area: Area of all faces"],
             7: ["Proportions: y = kx", "Unit Rate: Quantity per 1 unit", "C = 2 * π * r (Circumference)", "A = π * r² (Area of circle)", "Vertical & Adjacent Angles", "Scale Drawings: Scaled vs Actual", "Simple Interest: I = prt", "Rational Numbers on a line", "Inequalities: Flipping signs with negatives", "Probability: Likelihood of an event"],
@@ -346,22 +400,77 @@
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
 
-            title.innerText = `Grade ${grade} Essentials Atlas`;
-            body.innerHTML = "<ul>" + gradeFacts[grade].map(f => `<li style="margin-bottom:10px;">${f}</li>`).join('') + "</ul>";
+            title.innerText = `Grade ${grade} Essentials Overview`;
+            body.innerHTML = "<ul style='padding-left: 20px; line-height: 1.8;'>" + gradeFacts[grade].map(f => `<li>${f}</li>`).join('') + "</ul>";
             
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal() {
-            document.getElementById('math-modal').style.display = 'none';
+        // --- Shared Modal Logic ---
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
+        function openCloakModal() {
+            document.getElementById('cloak-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
         window.onclick = function(event) {
-            if (event.target == document.getElementById('math-modal')) {
-                closeModal();
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
+        }
+
+        // --- Cloaking Logic ---
+        function launchCloak(type) {
+            // The destination file you want to open
+            const targetURL = window.location.origin + window.location.pathname.replace('index.html', '') + 'main/index.html';
+
+            if (type === 'aboutblank') {
+                // Opens a new about:blank tab and embeds an iframe
+                let win = window.open('about:blank', '_blank');
+                if (win) {
+                    let iframe = win.document.createElement('iframe');
+                    iframe.src = targetURL;
+                    iframe.style.width = '100vw';
+                    iframe.style.height = '100vh';
+                    iframe.style.border = 'none';
+                    iframe.style.margin = '0';
+                    iframe.style.padding = '0';
+                    win.document.body.style.margin = '0';
+                    win.document.body.style.overflow = 'hidden';
+                    win.document.body.appendChild(iframe);
+                    win.document.title = "Google Drive"; // Optional tab disguise
+                } else {
+                    alert("Pop-up blocker prevented the about:blank page. Please allow pop-ups.");
+                }
+
+            } else if (type === 'blob') {
+                // Creates a blob URL containing an iframe
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head><title>Google Docs</title><style>body{margin:0;overflow:hidden;}</style></head>
+                    <body>
+                        <iframe src="${targetURL}" style="width:100vw; height:100vh; border:none;"></iframe>
+                    </body>
+                    </html>
+                `;
+                let blob = new Blob([html], { type: 'text/html' });
+                let url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+
+            } else if (type === 'default') {
+                // Standard redirect
+                window.location.href = 'main/index.html';
+            }
+
+            // Close the modal after clicking
+            closeModal('cloak-modal');
         }
     </script>
 </body>
