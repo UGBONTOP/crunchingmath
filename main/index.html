@@ -1401,6 +1401,17 @@
 
                     <div id="tab-system" class="os-section">
                         <h2 class="gm-header">System & Backups</h2>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Prevent Accidental Close</h4>
+                                <p>Show "Unsaved changes" dialog</p>
+                            </div>
+                            <select id="preventClose" class="input-glass" style="width:150px;">
+                                <option value="true">Enabled (Default)</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
                         
                         <div class="setting-item">
                             <div class="setting-label">
@@ -1895,9 +1906,20 @@
 
     async function launchGame(path) {
         let launchMethod = localStorage.getItem('launchMethod') || 'aboutblank';
+        const shouldPreventClose = localStorage.getItem('preventClose') !== 'false';
+        const preventCloseScript = shouldPreventClose ? `<script>window.addEventListener('beforeunload', function(e){e.preventDefault();e.returnValue='';});<\/script>` : '';
+
         if (launchMethod === 'inpage') { const launcher = document.getElementById('inPageLauncher'); const frame = document.getElementById('inPageFrame'); launcher.style.display = 'flex'; frame.src = path; }
         else if (launchMethod === 'aboutblank') {
             const win = window.open('about:blank', '_blank'); if (!win) return alert("Pop-up blocked! Please allow pop-ups to play."); applyCloak(win);
+            
+            if (shouldPreventClose) {
+                win.addEventListener('beforeunload', function (e) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                });
+            }
+
             const iframe = win.document.createElement('iframe'); iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;"; iframe.src = path; iframe.allowFullscreen = true; win.document.body.appendChild(iframe);
             const btn = win.document.createElement('button'); btn.textContent = '⛶ Fullscreen'; btn.style = "position:fixed; bottom:12px; right:12px; z-index:9999; background:rgba(0,0,0,0.6); color:white; border:1px solid rgba(255,255,255,0.3); padding:7px 13px; border-radius:6px; cursor:pointer; font-size:13px; font-family:sans-serif;";
             btn.onclick = () => { if (!win.document.fullscreenElement) { win.document.documentElement.requestFullscreen(); btn.textContent = '✕ Exit Fullscreen'; } else { win.document.exitFullscreen(); btn.textContent = '⛶ Fullscreen'; } };
@@ -1906,7 +1928,7 @@
         }
         else if (launchMethod === 'blob') {
             if (path.startsWith('http')) {
-                const code = `<!DOCTYPE html><html style="width:100%;height:100%;"><head><title>Loading...</title></head><body style="margin:0;overflow:hidden;background:#000;"><iframe src="${path}" style="width:100vw; height:100vh; border:none;"></iframe></body></html>`;
+                const code = `<!DOCTYPE html><html style="width:100%;height:100%;"><head><title>Loading...</title>${preventCloseScript}</head><body style="margin:0;overflow:hidden;background:#000;"><iframe src="${path}" style="width:100vw; height:100vh; border:none;"></iframe></body></html>`;
                 const blobUrl = URL.createObjectURL(new Blob([code], { type: 'text/html' }));
                 const win = window.open(blobUrl, '_blank'); try { applyCloak(win); } catch(e) {}
             } else {
@@ -1914,7 +1936,7 @@
                     const response = await fetch(path); if (!response.ok) throw new Error("Failed to load");
                     let code = await response.text();
                     const link = document.createElement("a"); link.href = path; const fullPath = link.href; const basePath = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
-                    code = code.replace('<head>', '<head><base href="' + basePath + '">');
+                    code = code.replace('<head>', '<head><base href="' + basePath + '">' + preventCloseScript);
                     const blobUrl = URL.createObjectURL(new Blob([code], { type: 'text/html' }));
                     const win = window.open(blobUrl, '_blank'); try { applyCloak(win); } catch(e) {}
                 } catch (err) { alert("Blob Failed. Falling back to standard."); window.open(path, '_blank'); }
@@ -1972,6 +1994,7 @@
         localStorage.setItem('gradientPref', document.getElementById('gradientSelect').value);
         localStorage.setItem('dockPos', document.getElementById('dockPos').value);
         localStorage.setItem('homepageStyle', document.getElementById('homepageStyle').value);
+        localStorage.setItem('preventClose', document.getElementById('preventClose').value);
         applyHomepageStyle(); updateDockPosition(); toggleOptimizer(); applyTheme();
         const ca = localStorage.getItem('customAccent'); const cg = localStorage.getItem('customGlow');
         if (ca && cg) applyAdaptiveTheme(ca, cg);
@@ -2011,6 +2034,14 @@
         } catch (error) { alert("Network error."); } finally { btn.innerText = "Transmit"; btn.disabled = false; }
     }
 
+    // Global listener for the unsaved changes warning on the main window
+    window.addEventListener('beforeunload', function (e) {
+        if (localStorage.getItem('preventClose') !== 'false') {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
     window.onload = () => {
         const isAutoStealth = localStorage.getItem('autoStealth') === 'true';
         if (isAutoStealth && !sessionStorage.getItem('stealthTriggered')) { sessionStorage.setItem('stealthTriggered', 'true'); stealthMode(); }
@@ -2020,6 +2051,7 @@
         if(localStorage.getItem('panicKey')) document.getElementById('panicKeyInput').value = localStorage.getItem('panicKey');
         if(localStorage.getItem('panicUrl')) document.getElementById('panicUrlInput').value = localStorage.getItem('panicUrl');
         if(localStorage.getItem('launchMethod')) document.getElementById('launchMethod').value = localStorage.getItem('launchMethod');
+        if(localStorage.getItem('preventClose')) document.getElementById('preventClose').value = localStorage.getItem('preventClose');
 
         document.getElementById('themeSelect').value = localStorage.getItem('themePref') || 'default';
         document.getElementById('gradientSelect').value = localStorage.getItem('gradientPref') || 'midnight';
