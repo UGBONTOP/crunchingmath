@@ -1904,32 +1904,14 @@
 
     function closeInPageGame() { document.getElementById('inPageLauncher').style.display = 'none'; document.getElementById('inPageFrame').src = ''; }
 
-async function launchGame(path) {
-    let launchMethod = localStorage.getItem('launchMethod') || 'aboutblank';
-    const shouldPreventClose = localStorage.getItem('preventClose') !== 'false';
-    const preventCloseScript = shouldPreventClose ? `<script>window.addEventListener('beforeunload', function(e){e.preventDefault();e.returnValue='';});<\/script>` : '';
+    async function launchGame(path) {
+        let launchMethod = localStorage.getItem('launchMethod') || 'aboutblank';
+        const shouldPreventClose = localStorage.getItem('preventClose') !== 'false';
+        const preventCloseScript = shouldPreventClose ? `<script>window.addEventListener('beforeunload', function(e){e.preventDefault();e.returnValue='';});<\/script>` : '';
 
-    // 1. If In-Page, just launch (No dialog needed for internal frames)
-    if (launchMethod === 'inpage') { 
-        const launcher = document.getElementById('inPageLauncher'); 
-        const frame = document.getElementById('inPageFrame'); 
-        launcher.style.display = 'flex'; 
-        frame.src = path; 
-        return; 
-    }
-
-    // 2. FOR ALL OTHER METHODS: Show the Dialog first
-    const dialog = document.getElementById('leaveDialog');
-    dialog.style.display = 'flex';
-
-    // 3. Define what happens when "Continue" is clicked
-    document.getElementById('confirmLeaveBtn').onclick = async () => {
-        dialog.style.display = 'none'; // Hide dialog
-
-        if (launchMethod === 'aboutblank') {
-            const win = window.open('about:blank', '_blank'); 
-            if (!win) return alert("Pop-up blocked! Please allow pop-ups to play."); 
-            applyCloak(win);
+        if (launchMethod === 'inpage') { const launcher = document.getElementById('inPageLauncher'); const frame = document.getElementById('inPageFrame'); launcher.style.display = 'flex'; frame.src = path; }
+        else if (launchMethod === 'aboutblank') {
+            const win = window.open('about:blank', '_blank'); if (!win) return alert("Pop-up blocked! Please allow pop-ups to play."); applyCloak(win);
             
             if (shouldPreventClose) {
                 win.addEventListener('beforeunload', function (e) {
@@ -1938,58 +1920,30 @@ async function launchGame(path) {
                 });
             }
 
-            const iframe = win.document.createElement('iframe'); 
-            iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;"; 
-            iframe.src = path; 
-            iframe.allowFullscreen = true; 
-            win.document.body.appendChild(iframe);
-
-            const btn = win.document.createElement('button'); 
-            btn.textContent = '⛶ Fullscreen'; 
-            btn.style = "position:fixed; bottom:12px; right:12px; z-index:9999; background:rgba(0,0,0,0.6); color:white; border:1px solid rgba(255,255,255,0.3); padding:7px 13px; border-radius:6px; cursor:pointer; font-size:13px; font-family:sans-serif;";
-            btn.onclick = () => { 
-                if (!win.document.fullscreenElement) { 
-                    win.document.documentElement.requestFullscreen(); 
-                    btn.textContent = '✕ Exit Fullscreen'; 
-                } else { 
-                    win.document.exitFullscreen(); 
-                    btn.textContent = '⛶ Fullscreen'; 
-                } 
-            };
+            const iframe = win.document.createElement('iframe'); iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;"; iframe.src = path; iframe.allowFullscreen = true; win.document.body.appendChild(iframe);
+            const btn = win.document.createElement('button'); btn.textContent = '⛶ Fullscreen'; btn.style = "position:fixed; bottom:12px; right:12px; z-index:9999; background:rgba(0,0,0,0.6); color:white; border:1px solid rgba(255,255,255,0.3); padding:7px 13px; border-radius:6px; cursor:pointer; font-size:13px; font-family:sans-serif;";
+            btn.onclick = () => { if (!win.document.fullscreenElement) { win.document.documentElement.requestFullscreen(); btn.textContent = '✕ Exit Fullscreen'; } else { win.document.exitFullscreen(); btn.textContent = '⛶ Fullscreen'; } };
             win.document.body.appendChild(btn);
             win.document.addEventListener('keydown', (e) => { if (e.key === 'F11') { e.preventDefault(); btn.click(); } });
-
-        } else if (launchMethod === 'blob') {
+        }
+        else if (launchMethod === 'blob') {
             if (path.startsWith('http')) {
                 const code = `<!DOCTYPE html><html style="width:100%;height:100%;"><head><title>Loading...</title>${preventCloseScript}</head><body style="margin:0;overflow:hidden;background:#000;"><iframe src="${path}" style="width:100vw; height:100vh; border:none;"></iframe></body></html>`;
                 const blobUrl = URL.createObjectURL(new Blob([code], { type: 'text/html' }));
-                const win = window.open(blobUrl, '_blank'); 
-                try { applyCloak(win); } catch(e) {}
+                const win = window.open(blobUrl, '_blank'); try { applyCloak(win); } catch(e) {}
             } else {
                 try {
-                    const response = await fetch(path); 
-                    if (!response.ok) throw new Error("Failed to load");
+                    const response = await fetch(path); if (!response.ok) throw new Error("Failed to load");
                     let code = await response.text();
-                    const link = document.createElement("a"); 
-                    link.href = path; 
-                    const fullPath = link.href; 
-                    const basePath = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
+                    const link = document.createElement("a"); link.href = path; const fullPath = link.href; const basePath = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
                     code = code.replace('<head>', '<head><base href="' + basePath + '">' + preventCloseScript);
                     const blobUrl = URL.createObjectURL(new Blob([code], { type: 'text/html' }));
-                    const win = window.open(blobUrl, '_blank'); 
-                    try { applyCloak(win); } catch(e) {}
-                } catch (err) { 
-                    alert("Blob Failed. Falling back to standard."); 
-                    window.open(path, '_blank'); 
-                }
+                    const win = window.open(blobUrl, '_blank'); try { applyCloak(win); } catch(e) {}
+                } catch (err) { alert("Blob Failed. Falling back to standard."); window.open(path, '_blank'); }
             }
-        } else { 
-            const win = window.open(path, '_blank'); 
-            if (!win) return alert("Pop-up blocked!"); 
-            try { applyCloak(win); } catch (e) {} 
         }
-    };
-}
+        else { const win = window.open(path, '_blank'); if (!win) return alert("Pop-up blocked!"); try { applyCloak(win); } catch (e) {} }
+    }
 
     function playRandomGame() { const cards = document.querySelectorAll('#gameGrid .game-card'); if (cards.length === 0) return; cards[Math.floor(Math.random() * cards.length)].click(); }
 
