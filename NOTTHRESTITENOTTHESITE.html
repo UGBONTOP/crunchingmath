@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrunchingMath Learning Portal</title>
+    <meta name="description" content="Free comprehensive math lessons, interactive graphing tools, and student portal access." />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a56db;
+            --primary-hover: #1e40af;
+            --bg-light: #f3f4f6;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(to right, rgba(26, 86, 219, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2000&auto=format&fit=crop') center/cover;
+            color: white;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: var(--primary-blue);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: #f9fafb;
+            transform: translateY(-2px);
+        }
+
+        /* Section Layout */
+        .section {
+            padding: 4rem 5%;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img {
+            height: 160px;
+            background-color: #e5e7eb;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-blue);
+        }
+
+        /* Desmos Tool Section */
+        .tool-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Portal Links Grid */
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .portal-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .portal-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background: #eff6ff;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+        }
+
+        /* Cloak Button Styling */
+        .cloak-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .cloak-btn {
+            padding: 1rem;
+            border: 2px solid var(--primary-blue);
+            background: white;
+            color: var(--primary-blue);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cloak-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .cloak-desc {
+            font-size: 0.85rem;
+            font-weight: 400;
+            display: block;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            CrunchingMath
+        </a>
+        <ul class="nav-links">
+            <li><a href="#curriculum">Curriculum</a></li>
+            <li><a href="#calculator">Graphing Tool</a></li>
+            <li><a href="#portals">Student Portals</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <h1>Master Mathematics Daily</h1>
+        <p>CrunchingMath provides comprehensive resources, interactive tools, and direct portal access for students to achieve academic fluency.</p>
+        <button onclick="openCloakModal()" class="btn-primary">Check Grades</button>
+    </header>
+
+    <section id="curriculum" class="section">
+        <h2 class="section-title">Essential Curriculum Data</h2>
+        <div class="grid">
+            <div class="card" onclick="selectGrade(6)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 6 Foundations</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Ratios, expressions, surface area, and statistical variability.</p>
+                </div>
+            </div>
+            <div class="card" onclick="selectGrade(7)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 7 Pre-Algebra</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Proportions, probability, rational numbers, and scale drawings.</p>
+                </div>
+            </div>
+            <div class="card" onclick="selectGrade(8)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1632516643730-1c944f772ba7?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 8 Advanced</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Linear equations, functions, geometry, and the Pythagorean Theorem.</p>
+                </div>
+            </div>
+            <div class="card" onclick="selectGrade(9)">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Grade 9 Algebra I</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Quadratic formulas, polynomials, domain/range, and sequences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="calculator" class="section" style="background-color: white;">
+        <h2 class="section-title">Interactive Graphing Calculator</h2>
+        <div class="tool-container">
+            <iframe src="https://www.desmos.com/calculator" width="100%" height="600px" style="border: none;" frameborder="0"></iframe>
+        </div>
+    </section>
+
+    <section id="portals" class="section">
+        <h2 class="section-title">District Student Portals</h2>
+        <div class="portal-grid">
+            <a href="https://www.skyward.com/" target="_blank" class="portal-btn">📊 Skyward Portal</a>
+            <a href="https://www.powerschool.com/" target="_blank" class="portal-btn">🎓 PowerSchool</a>
+            <a href="https://clever.com/" target="_blank" class="portal-btn">🎒 Clever</a>
+            <a href="https://www.ixl.com/" target="_blank" class="portal-btn">📝 IXL Learning</a>
+            <a href="https://canvas.instructure.com/" target="_blank" class="portal-btn">📚 Canvas LMS</a>
+            <a href="https://classroom.google.com/" target="_blank" class="portal-btn">🏫 Google Classroom</a>
+        </div>
+    </section>
+
+    <div id="math-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('math-modal')">&times;</button>
+            <h2 id="modal-title" style="color: var(--primary-blue); border-bottom: 2px solid var(--bg-light); padding-bottom: 10px; margin-bottom: 10px;">Grade Facts</h2>
+            <div id="modal-body" style="color: var(--text-main);"></div>
+        </div>
+    </div>
+
+    <div id="cloak-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('cloak-modal')">&times;</button>
+            <h2 style="color: var(--text-main); text-align: center; margin-bottom: 10px;">Select Launch Method</h2>
+            <p style="text-align: center; color: var(--text-muted);">How would you like to open the portal?</p>
+            
+            <div class="cloak-options">
+                <button class="cloak-btn" onclick="launchCloak('aboutblank')">
+                    1. About:Blank
+                    <span class="cloak-desc">Opens in a hidden about:blank tab.</span>
+                </button>
+                <button class="cloak-btn" onclick="launchCloak('blob')">
+                    2. Blob URL
+                    <span class="cloak-desc">Generates a local blob string to hide the path.</span>
+                </button>
+                <button class="cloak-btn" onclick="launchCloak('default')">
+                    3. Can get it blocked
+                    <span class="cloak-desc">Standard redirect. Leaves URL visible.</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Grade Facts Logic ---
+        const gradeFacts = {
+            6: ["Area of a Triangle: A = bh/2", "Order of Ops: PEMDAS", "Ratios: Comparison of two quantities", "GCF vs LCM logic", "Dividing Fractions: Keep-Change-Flip", "Mean, Median, Mode, and Range", "Absolute Value: Distance from zero", "Integers: Whole numbers and their opposites", "Algebraic Expressions: Variables as placeholders", "Surface Area: Area of all faces"],
+            7: ["Proportions: y = kx", "Unit Rate: Quantity per 1 unit", "C = 2 * π * r (Circumference)", "A = π * r² (Area of circle)", "Vertical & Adjacent Angles", "Scale Drawings: Scaled vs Actual", "Simple Interest: I = prt", "Rational Numbers on a line", "Inequalities: Flipping signs with negatives", "Probability: Likelihood of an event"],
+            8: ["Pythagorean Theorem: a² + b² = c²", "Slope-Intercept: y = mx + b", "Functions: One output per input", "Scientific Notation for small/large data", "Systems of Equations: Intersections", "Volume of Cones, Spheres, and Cylinders", "Scatter Plots: Correlation & Trends", "Transformations: Rotations & Translations", "Irrational Numbers: π and √2", "Exponent Rules: Adding when multiplying"],
+            9: ["Quadratic Formula: x = [-b ± √(b²-4ac)] / 2a", "Factoring Polynomials", "Domain & Range of functions", "Arithmetic & Geometric Sequences", "Parallel vs Perpendicular Slopes", "Trigonometry: SOH CAH TOA", "Midpoint & Distance formulas", "Absolute Value Equations", "Vertex Form: y = a(x-h)² + k", "Exponential Growth & Decay"]
+        };
+
+        function selectGrade(grade) {
+            const modal = document.getElementById('math-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            title.innerText = `Grade ${grade} Essentials Overview`;
+            body.innerHTML = "<ul style='padding-left: 20px; line-height: 1.8;'>" + gradeFacts[grade].map(f => `<li>${f}</li>`).join('') + "</ul>";
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // --- Shared Modal Logic ---
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function openCloakModal() {
+            document.getElementById('cloak-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // --- Cloaking Logic ---
+        function launchCloak(type) {
+            // The destination file you want to open
+            const targetURL = window.location.origin + window.location.pathname.replace('index.html', '') + 'main/index.html';
+
+            if (type === 'aboutblank') {
+                // Opens a new about:blank tab and embeds an iframe
+                let win = window.open('about:blank', '_blank');
+                if (win) {
+                    let iframe = win.document.createElement('iframe');
+                    iframe.src = targetURL;
+                    iframe.style.width = '100vw';
+                    iframe.style.height = '100vh';
+                    iframe.style.border = 'none';
+                    iframe.style.margin = '0';
+                    iframe.style.padding = '0';
+                    win.document.body.style.margin = '0';
+                    win.document.body.style.overflow = 'hidden';
+                    win.document.body.appendChild(iframe);
+                    win.document.title = "Google Drive"; // Optional tab disguise
+                } else {
+                    alert("Pop-up blocker prevented the about:blank page. Please allow pop-ups.");
+                }
+
+            } else if (type === 'blob') {
+                // Creates a blob URL containing an iframe
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head><title>Google Docs</title><style>body{margin:0;overflow:hidden;}</style></head>
+                    <body>
+                        <iframe src="${targetURL}" style="width:100vw; height:100vh; border:none;"></iframe>
+                    </body>
+                    </html>
+                `;
+                let blob = new Blob([html], { type: 'text/html' });
+                let url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+
+            } else if (type === 'default') {
+                // Standard redirect
+                window.location.href = 'main/index.html';
+            }
+
+            // Close the modal after clicking
+            closeModal('cloak-modal');
+        }
+    </script>
+</body>
+</html>
