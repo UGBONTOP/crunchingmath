@@ -4,13 +4,11 @@
 
 <script>
     (function() {
-        var params = new URLSearchParams(window.location.search);
-        if (params.get('ref') === 'crunch') {
-            // Valid — strip the ?ref=crunch from the URL bar so it looks clean
-            var cleanUrl = window.location.pathname;
-            window.history.replaceState(null, '', cleanUrl);
+        if (window.location.hash === '#crunch') {
+            // Valid — strip the #crunch from the URL bar so it looks clean
+            window.history.replaceState(null, '', window.location.pathname);
         } else {
-            // No key or wrong key — redirect to bye.html
+            // No hash or wrong hash — redirect to bye.html
             window.location.replace('bye.html');
         }
     })();
