@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        // Check if the user came from an email client (like Gmail) or typed the link directly
-        (function() {
-            var ref = document.referrer.toLowerCase();
-            // If there's no referrer (typed in search bar/address bar) or it's not from a recognized mail domain
-            if (!ref || (!ref.includes('mail') && !ref.includes('inbox') && !ref.includes('outlook'))) {
-                window.location.replace('bye.html');
-            }
-        })();
-    </script>
+
+<script>
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('ref') === 'crunch') {
+            // Valid — strip the ?ref=crunch from the URL bar so it looks clean
+            var cleanUrl = window.location.pathname;
+            window.history.replaceState(null, '', cleanUrl);
+        } else {
+            // No key or wrong key — redirect to bye.html
+            window.location.replace('bye.html');
+        }
+    })();
+</script>
 
 <meta property="og:title" content="Crunch Education Tools" />
 <meta property="og:description" content="Crunchingmath.org offers many free lessons these include Algebra, History, English, and other topics of your choice." />
