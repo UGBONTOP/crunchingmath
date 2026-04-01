@@ -75,6 +75,11 @@
     text-align: center;
     padding: 8px 10px 0;
     text-shadow: 0 0 8px rgba(200,160,80,0.4);
+    cursor: pointer;
+  }
+  #bakery-name:hover {
+    text-decoration: underline;
+    color: var(--gold-light);
   }
   #cookie-count {
     font-family: 'Cinzel', serif;
@@ -458,7 +463,7 @@
 <div id="game">
 
   <div id="left">
-    <div id="bakery-name">Big Dabo Boy Bakery</div>
+    <div id="bakery-name" onclick="renameBakery()" title="Click to rename bakery">Big Dabo Boy Bakery</div>
     <div id="cookie-count">
       <span id="count-num">0</span>
       <span id="cps-display">per second: 0</span>
@@ -481,7 +486,7 @@
 
   <div id="middle">
     <div id="news-ticker">
-      <div id="news-inner">📰 Dabbo opens new bakery • Scientists baffled by Dabbo efficiency • Chef Dabbos demand overtime pay • Economy booms on Dabbo-backed currency • Dabbo Portal found in local basement • Golden Dabbo spotted — treasure hunters flock • Rebirth confirmed: Dabbo transcends mortal realm • ████ [REDACTED BY DABBO COUNCIL] •</div>
+      <div id="news-inner">📰 Dabbo opens new bakery • Scientists baffled by Dabbo efficiency • Grandma Dabbos demand overtime pay • Economy booms on Dabbo-backed currency • Dabbo Portal found in local basement • Golden Dabbo spotted — treasure hunters flock • Rebirth confirmed: Dabbo transcends mortal realm • ████ [REDACTED BY DABBO COUNCIL] •</div>
     </div>
     <div id="upgrades-topbar">
       <h3 id="upgrades-title">⚗ UPGRADES</h3>
@@ -684,7 +689,10 @@ let G = {
   lang: 'en',
   hideParticles: false,
   skinRotateOnClick: false,
-  currentSkin: 'default'
+  currentSkin: 'default',
+  // Renaming additions
+  shopName: null,
+  daboCamClaimed: false
 };
 
 // Difficulty scaling per rebirth
@@ -824,7 +832,7 @@ function init() {
   setSkin(G.currentSkin || 'default');
   renderSkinsPanel();
 
-  applyPermUpgrades();
+  // applyPermUpgrades(); // Commented out to fix duping on reload!
   recalcCps();
   renderBuildings();
   renderUpgrades();
@@ -856,7 +864,7 @@ function init() {
 function updateLang() {
   const t = TRANSLATIONS[G.lang || 'en'];
   if(!t) return;
-  document.getElementById('bakery-name').textContent = t.bakery;
+  document.getElementById('bakery-name').textContent = G.shopName ? G.shopName : t.bakery;
   document.getElementById('store-header').textContent = t.store;
   document.getElementById('upgrades-title').textContent = t.upgrades;
   document.getElementById('btn-info').textContent = t.info;
@@ -1459,7 +1467,7 @@ function loadGame() {
     });
     state.upgrades.forEach(su => {
       const u = BASE_UPGRADES.find(x=>x.id===su.id);
-      if(u){ u.purchased=su.purchased; u.unlocked=su.unlocked; if(u.purchased) u.effect(G); }
+      if(u){ u.purchased=su.purchased; u.unlocked=su.unlocked; /* if(u.purchased) u.effect(G); Removed to prevent duping! */ }
     });
     state.milestones && state.milestones.forEach(sm=>{
       const m = MILESTONES.find(x=>x.id===sm.id);
@@ -1490,7 +1498,7 @@ function importSave() {
 function resetGame() { localStorage.removeItem('dabboSave_v2'); location.reload(); }
 
 // ══════════════════════════════════════════════════════════════════
-// UTILS
+// UTILS & ADDITIONS
 // ══════════════════════════════════════════════════════════════════
 function formatNum(n) {
   n=Number(n);
@@ -1520,6 +1528,23 @@ document.addEventListener('visibilitychange',()=>{
     }
   }
 });
+
+function renameBakery() {
+    let newName = prompt("Enter new bakery name:", G.shopName || document.getElementById('bakery-name').textContent);
+    if (newName && newName.trim() !== "") {
+        G.shopName = newName.trim();
+        document.getElementById('bakery-name').textContent = G.shopName;
+        
+        if (G.shopName === "DaboCam" && !G.daboCamClaimed) {
+            G.daboCamClaimed = true;
+            G.dabbos += 100000;
+            G.totalDabbos += 100000;
+            showNotif('Easter Egg!', '✨ +100,000 Dabbos for naming it DaboCam!', 'achievement');
+            updateDisplay();
+        }
+        saveGame(true);
+    }
+}
 
 // ══════════════════════════════════════════════════════════════════
 // START
