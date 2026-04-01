@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dabbo Clicker™</title>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown-dark: #2a1a0a;
+    --brown-mid: #4a2e10;
+    --brown-light: #7a4e28;
+    --gold: #c8a050;
+    --gold-light: #f0c870;
+    --gold-dark: #8a6020;
+    --parchment: #e8d5a0;
+    --parchment-dark: #c8b070;
+    --green-dark: #1a3a10;
+    --panel-bg: rgba(20,10,5,0.92);
+    --border-ornate: #c8a050;
+    --text-light: #f5e8c0;
+    --text-gold: #f0c870;
+    --red-accent: #c04030;
+    --shadow: 0 4px 24px rgba(0,0,0,0.7);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0500;
+    font-family: 'Crimson Text', serif;
+    color: var(--text-light);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    background: linear-gradient(180deg, #3a2008 0%, #1a0d04 100%);
+    border-bottom: 2px solid var(--gold-dark);
+    padding: 4px 12px;
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    z-index: 100;
+  }
+  #topbar .logo { color: var(--gold-light); font-weight: 900; font-size: 15px; letter-spacing:1px; text-shadow: 0 0 10px rgba(200,160,80,0.5);}
+  #topbar a { color: var(--gold); text-decoration: none; opacity: 0.85; transition: opacity 0.2s;}
+  #topbar a:hover { opacity:1; color: var(--gold-light);}
+  #topbar .sep { color: var(--gold-dark); }
+  #topbar .spacer { flex:1; }
+
+  /* ── MAIN LAYOUT ── */
+  #game {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 320px 1fr 260px;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* ── LEFT PANEL (Bakery / Cookie) ── */
+  #left {
+    background: linear-gradient(180deg, #1e0e05 0%, #120803 100%);
+    border-right: 2px solid var(--gold-dark);
+    display: flex; flex-direction: column; align-items: center;
+    overflow: hidden; position: relative;
+    box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
+  }
+  #bakery-name {
+    font-family: 'Cinzel', serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--text-gold);
+    text-align: center;
+    padding: 10px 10px 0;
+    text-shadow: 0 0 8px rgba(200,160,80,0.4);
+    letter-spacing: 1px;
+  }
+  #cookie-count {
+    font-family: 'Cinzel', serif;
+    font-size: 26px; font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(200,160,80,0.6), 0 2px 4px rgba(0,0,0,0.8);
+    text-align: center;
+    line-height: 1.1;
+    padding: 4px 10px 0;
+  }
+  #cookie-count span { font-size: 14px; color: var(--gold); display: block; font-weight: 400;}
+  #dabbo-wrap {
+    position: relative; flex: 1; display: flex; align-items: center; justify-content: center;
+    width: 100%; cursor: pointer;
+  }
+  #dabbo-img {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: drop-shadow(0 0 20px rgba(200,160,80,0.5));
+    transition: transform 0.08s ease;
+    position: relative; z-index: 2;
+  }
+  #dabbo-img:active { transform: scale(0.93); }
+  #dabbo-img.clicked { animation: dabboPop 0.15s ease; }
+  @keyframes dabboPop { 0%{transform:scale(1)} 50%{transform:scale(0.88)} 100%{transform:scale(1)} }
+  .click-cursor {
+    position: absolute; pointer-events: none; z-index: 10;
+    width: 36px; height: 36px;
+    image-rendering: pixelated;
+    animation: floatUp 0.7s ease-out forwards;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0); opacity:1; }
+    100% { transform: translateY(-80px); opacity:0; }
+  }
+  .click-number {
+    position: absolute; pointer-events: none; z-index: 11;
+    font-family: 'Cinzel', serif; font-weight: 900;
+    color: var(--gold-light);
+    text-shadow: 0 0 6px rgba(0,0,0,0.9), 0 1px 2px #000;
+    font-size: 18px;
+    animation: floatUpNum 0.7s ease-out forwards;
+  }
+  @keyframes floatUpNum {
+    0%{transform:translateY(0) scale(1);opacity:1;}
+    100%{transform:translateY(-70px) scale(1.4);opacity:0;}
+  }
+  #grandma-row {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;
+    padding: 8px; width: 100%;
+    min-height: 48px;
+  }
+  .grandma-icon { width: 32px; height: 32px; object-fit: cover; border-radius: 4px; border: 1px solid var(--gold-dark); }
+
+  #worker-row {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;
+    padding: 0 8px 8px; width: 100%; min-height: 40px;
+  }
+  .worker-icon { width: 28px; height: 28px; object-fit: cover; border-radius: 3px; border: 1px solid #5a3a20; opacity: 0.85; }
+
+  #tip-box {
+    background: rgba(40,20,5,0.9);
+    border-top: 1px solid var(--gold-dark);
+    padding: 8px 12px;
+    width: 100%;
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-gold);
+    min-height: 46px;
+    text-align: center;
+    line-height: 1.4;
+    transition: opacity 0.5s;
+  }
+
+  /* ── MIDDLE PANEL (Minigame / News) ── */
+  #middle {
+    display: flex; flex-direction: column;
+    background: linear-gradient(180deg, #180d05 0%, #0e0803 100%);
+    overflow: hidden;
+    border-right: 2px solid var(--gold-dark);
+  }
+  #news-ticker {
+    background: linear-gradient(90deg, #2a1008, #1a0a04, #2a1008);
+    border-bottom: 1px solid var(--gold-dark);
+    border-top: 1px solid var(--gold-dark);
+    padding: 6px 0;
+    overflow: hidden; position: relative; height: 34px;
+    flex-shrink: 0;
+  }
+  #news-inner {
+    display: inline-block;
+    white-space: nowrap;
+    font-family: 'Cinzel', serif;
+    font-size: 12px; color: var(--gold-light);
+    animation: ticker 35s linear infinite;
+  }
+  @keyframes ticker { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
+
+  #option-bar {
+    display: flex; gap: 1px;
+    background: var(--gold-dark);
+    flex-shrink: 0;
+  }
+  .opt-btn {
+    background: linear-gradient(180deg,#3a2008,#1a0d04);
+    border: none; color: var(--text-gold);
+    font-family: 'Cinzel', serif; font-size: 13px;
+    padding: 7px 18px; cursor: pointer;
+    flex: 1; transition: background 0.2s;
+    border-right: 1px solid var(--gold-dark);
+    letter-spacing: 0.5px;
+  }
+  .opt-btn:hover { background: linear-gradient(180deg,#5a3a18,#2a1608);}
+  .opt-btn.active { background: linear-gradient(180deg,#2a1a08,#100802); color: var(--gold-light); }
+
+  #mid-content { flex:1; overflow-y: auto; overflow-x: hidden; padding: 16px; }
+  #mid-content::-webkit-scrollbar { width: 6px; }
+  #mid-content::-webkit-scrollbar-track { background: #0a0500;}
+  #mid-content::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius:3px;}
+
+  /* Stats panel */
+  .stat-section { margin-bottom: 18px; }
+  .stat-section h3 {
+    font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700;
+    color: var(--gold); border-bottom: 1px solid var(--gold-dark);
+    padding-bottom: 4px; margin-bottom: 8px; letter-spacing: 1px;
+  }
+  .stat-row { display: flex; justify-content: space-between; font-size: 14px; padding: 2px 0; color: var(--parchment);}
+  .stat-val { color: var(--gold-light); font-weight: 600;}
+
+  /* Upgrades panel */
+  #upgrades-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .upgrade-btn {
+    width: 52px; height: 52px; border: 2px solid var(--gold-dark);
+    border-radius: 6px; overflow: hidden; cursor: pointer;
+    position: relative; transition: border-color 0.2s, transform 0.15s;
+    background: #1a0d04;
+    flex-shrink: 0;
+  }
+  .upgrade-btn:hover { border-color: var(--gold-light); transform: scale(1.08); z-index: 5; }
+  .upgrade-btn.locked { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); }
+  .upgrade-btn.purchased { border-color: var(--gold); box-shadow: 0 0 8px rgba(200,160,80,0.4); }
+  .upgrade-btn img { width: 100%; height: 100%; object-fit: cover; }
+  .upgrade-btn .up-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.7));
+    display: flex; align-items: flex-end; justify-content: center;
+    font-size: 8px; color: var(--gold-light); font-family: 'Cinzel', serif;
+    padding-bottom: 2px; line-height: 1;
+  }
+  .upgrade-tooltip {
+    position: fixed; z-index: 999;
+    background: rgba(10,5,0,0.97); border: 2px solid var(--gold);
+    padding: 10px 14px; border-radius: 8px; max-width: 220px;
+    pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.9);
+    font-size: 13px; color: var(--parchment); display: none;
+  }
+  .upgrade-tooltip strong { color: var(--gold-light); font-family:'Cinzel',serif; font-size:13px; display:block; margin-bottom:4px;}
+  .upgrade-tooltip .cost { color: #aaffaa; font-size: 12px; margin-top: 4px;}
+
+  /* ── RIGHT PANEL (Store) ── */
+  #right {
+    background: linear-gradient(180deg, #1a0d05 0%, #0e0803 100%);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  #store-header {
+    background: linear-gradient(180deg,#3a2008,#1a0d04);
+    border-bottom: 2px solid var(--gold-dark);
+    padding: 8px 12px;
+    font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900;
+    color: var(--gold-light); text-align: center;
+    letter-spacing: 2px; text-shadow: 0 0 10px rgba(200,160,80,0.4);
+    flex-shrink: 0;
+  }
+  #buy-bar {
+    display: flex; gap: 1px; background: var(--gold-dark);
+    border-bottom: 2px solid var(--gold-dark); flex-shrink: 0;
+  }
+  .buy-btn {
+    flex:1; background: linear-gradient(180deg,#2a1a08,#100a03);
+    border: none; color: var(--gold); font-family:'Cinzel',serif;
+    font-size: 12px; padding: 4px 0; cursor: pointer; transition: background 0.2s;
+  }
+  .buy-btn:hover { background: linear-gradient(180deg,#4a2a10,#200f05); }
+  .buy-btn.active { background: linear-gradient(180deg,#1a0d04,#080402); color: var(--gold-light); text-decoration: underline; }
+
+  #buildings-list { flex:1; overflow-y: auto; overflow-x: hidden; }
+  #buildings-list::-webkit-scrollbar { width: 4px; }
+  #buildings-list::-webkit-scrollbar-thumb { background: var(--gold-dark); }
+
+  .building-row {
+    display: flex; align-items: center; gap: 0;
+    border-bottom: 1px solid rgba(200,160,80,0.15);
+    cursor: pointer; transition: background 0.15s; position: relative;
+    min-height: 56px;
+  }
+  .building-row:hover { background: rgba(200,160,80,0.08); }
+  .building-row.locked { opacity: 0.4; cursor: not-allowed; }
+  .building-row.can-afford { background: rgba(200,160,80,0.05); }
+  .building-row.can-afford:hover { background: rgba(200,160,80,0.12);}
+  .b-icon-wrap {
+    width: 64px; min-width: 64px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.3); border-right: 1px solid rgba(200,160,80,0.2);
+    position: relative;
+  }
+  .b-icon { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; }
+  .b-count-badge {
+    position: absolute; bottom: 4px; right: 4px;
+    background: rgba(10,5,0,0.85); border: 1px solid var(--gold-dark);
+    color: var(--gold-light); font-family:'Cinzel',serif;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 4px; border-radius: 3px; min-width: 20px; text-align:center;
+  }
+  .b-info { flex:1; padding: 6px 8px; min-width: 0; }
+  .b-name { font-family:'Cinzel',serif; font-size:13px; color:var(--text-gold); font-weight:700; line-height:1.2;}
+  .b-cost { font-size: 12px; color: #aaffaa; margin-top: 1px; }
+  .b-cost.cant-afford { color: #ff8888; }
+  .b-cps { font-size: 11px; color: var(--gold-dark); margin-top: 1px; }
+
+  .building-tooltip {
+    position: fixed; z-index: 998;
+    background: rgba(10,5,0,0.97); border: 2px solid var(--gold);
+    padding: 10px 14px; border-radius: 8px; max-width: 200px;
+    pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.9);
+    font-size: 13px; color: var(--parchment); display:none;
+  }
+  .building-tooltip strong { color:var(--gold-light); font-family:'Cinzel',serif; display:block; margin-bottom:4px;}
+
+  /* Notifications */
+  #notif-area { position: fixed; bottom: 20px; left: 340px; z-index: 500; display:flex; flex-direction:column-reverse; gap:8px; pointer-events:none; }
+  .notif {
+    background: rgba(15,8,2,0.95); border-left: 4px solid var(--gold);
+    border: 1px solid var(--gold-dark); border-left: 4px solid var(--gold);
+    padding: 10px 14px; border-radius: 6px; max-width: 300px;
+    font-size: 13px; color: var(--parchment);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from{transform:translateX(-30px);opacity:0} to{transform:translateX(0);opacity:1} }
+  .notif strong { color: var(--gold-light); font-family:'Cinzel',serif; font-size:12px; display:block; margin-bottom:3px;}
+  .notif.achievement { border-left-color: #ffdd00; }
+  .notif.achievement strong { color: #ffdd00; }
+
+  /* Milestones bar */
+  #milestones {
+    background: linear-gradient(90deg,#1a0d04,#0a0500,#1a0d04);
+    border-top: 2px solid var(--gold-dark);
+    padding: 6px 12px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .milestone-badge {
+    background: rgba(200,160,80,0.15); border: 1px solid var(--gold-dark);
+    border-radius: 4px; padding: 2px 8px;
+    font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold);
+    white-space: nowrap;
+  }
+  .milestone-badge.earned { background: rgba(200,160,80,0.3); color: var(--gold-light); border-color: var(--gold);}
+
+  /* Final boss area */
+  #boss-area {
+    position: absolute; bottom: 130px; left: 50%; transform:translateX(-50%);
+    display: none; flex-direction:column; align-items:center; gap: 4px;
+    z-index: 20;
+  }
+  #boss-area.visible { display:flex; }
+  #boss-img { width: 80px; height: 80px; object-fit:cover; border-radius:8px; border:2px solid var(--red-accent); animation: bossBounce 1.5s ease-in-out infinite; }
+  @keyframes bossBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  #boss-label { font-family:'Cinzel',serif; font-size:10px; color:var(--red-accent); letter-spacing:1px;}
+
+  #upgrade-panel { padding:14px; }
+  #upgrade-panel h2 { font-family:'Cinzel',serif; font-size:15px; color:var(--gold-light); margin-bottom:12px; border-bottom:1px solid var(--gold-dark); padding-bottom:6px; letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="logo">Dabbo Clicker™</span>
+  <span class="sep">|</span>
+  <a href="#">Options</a>
+  <a href="#">Stats</a>
+  <a href="#">Info</a>
+  <a href="#">Legacy</a>
+  <span class="spacer"></span>
+  <span style="color:var(--gold);font-size:11px;">v. 1.000</span>
+</div>
+
+<!-- MAIN GAME -->
+<div id="game">
+
+  <!-- LEFT: Bakery -->
+  <div id="left">
+    <div id="bakery-name">Psychic Dabbo's Bakery</div>
+    <div id="cookie-count">
+      <span id="count-num">0</span>
+      <span id="cps-display">per second: 0</span>
+    </div>
+    <div id="dabbo-wrap">
+      <img id="dabbo-img" src="https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabbo.jpeg" alt="Dabbo" draggable="false">
+      <div id="boss-area">
+        <img id="boss-img" src="https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/surpriseddabo.png" alt="Boss Dabbo">
+        <span id="boss-label">⚠ BOSS DABBO ⚠</span>
+      </div>
+    </div>
+    <div id="grandma-row"></div>
+    <div id="worker-row"></div>
+    <div id="tip-box">Click the Dabbo to begin your empire!</div>
+  </div>
+
+  <!-- MIDDLE: Upgrades / Stats / Options -->
+  <div id="middle">
+    <div id="news-ticker">
+      <div id="news-inner">📰 Local Dabbo opens bakery downtown &nbsp;•&nbsp; Cookie connoisseurs flock to taste the legendary Dabbo bread &nbsp;•&nbsp; Economy booms as Dabbo supply rises &nbsp;•&nbsp; Scientists baffled by Dabbo's baking efficiency &nbsp;•&nbsp; Grandma Dabbos form union, demand extra flour &nbsp;•&nbsp; Dabbo Clicker named Game of the Year for 12th consecutive year &nbsp;•&nbsp; Overworked Dabbos spotted carrying 40-pound loaves &nbsp;•&nbsp; ████████ [REDACTED BY DABBO COUNCIL] &nbsp;•&nbsp;</div>
+    </div>
+    <div id="option-bar">
+      <button class="opt-btn active" onclick="switchPanel('upgrades')">Upgrades</button>
+      <button class="opt-btn" onclick="switchPanel('stats')">Stats</button>
+      <button class="opt-btn" onclick="switchPanel('options')">Options</button>
+    </div>
+    <div id="mid-content">
+      <!-- Upgrades panel -->
+      <div id="panel-upgrades">
+        <div id="upgrade-panel">
+          <h2>Available Upgrades</h2>
+          <div id="upgrades-grid"></div>
+        </div>
+      </div>
+      <!-- Stats panel -->
+      <div id="panel-stats" style="display:none">
+        <div class="stat-section">
+          <h3>🍪 Dabbo Production</h3>
+          <div class="stat-row"><span>Total Dabbos Baked</span><span class="stat-val" id="stat-total">0</span></div>
+          <div class="stat-row"><span>Dabbos per Second</span><span class="stat-val" id="stat-cps">0</span></div>
+          <div class="stat-row"><span>Dabbos per Click</span><span class="stat-val" id="stat-cpc">1</span></div>
+          <div class="stat-row"><span>Total Clicks</span><span class="stat-val" id="stat-clicks">0</span></div>
+        </div>
+        <div class="stat-section">
+          <h3>🏭 Buildings</h3>
+          <div id="stat-buildings"></div>
+        </div>
+        <div class="stat-section">
+          <h3>🏆 Upgrades Purchased</h3>
+          <div class="stat-row"><span>Upgrades bought</span><span class="stat-val" id="stat-upgrades">0</span></div>
+        </div>
+        <div class="stat-section">
+          <h3>⏱ Session</h3>
+          <div class="stat-row"><span>Time played</span><span class="stat-val" id="stat-time">0s</span></div>
+        </div>
+      </div>
+      <!-- Options panel -->
+      <div id="panel-options" style="display:none; padding:16px;">
+        <div class="stat-section">
+          <h3>⚙ Game Options</h3>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+            <button onclick="saveGame()" style="background:linear-gradient(180deg,#3a2008,#1a0d04);border:1px solid var(--gold-dark);color:var(--gold-light);font-family:'Cinzel',serif;font-size:13px;padding:8px 16px;cursor:pointer;border-radius:4px;">💾 Save Game</button>
+            <button onclick="exportSave()" style="background:linear-gradient(180deg,#3a2008,#1a0d04);border:1px solid var(--gold-dark);color:var(--gold-light);font-family:'Cinzel',serif;font-size:13px;padding:8px 16px;cursor:pointer;border-radius:4px;">📤 Export Save</button>
+            <button onclick="importSave()" style="background:linear-gradient(180deg,#3a2008,#1a0d04);border:1px solid var(--gold-dark);color:var(--gold-light);font-family:'Cinzel',serif;font-size:13px;padding:8px 16px;cursor:pointer;border-radius:4px;">📥 Import Save</button>
+            <button onclick="if(confirm('Wipe ALL progress?'))resetGame()" style="background:linear-gradient(180deg,#3a0808,#1a0404);border:1px solid #c04030;color:#ff8888;font-family:'Cinzel',serif;font-size:13px;padding:8px 16px;cursor:pointer;border-radius:4px;">🗑 Wipe Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="milestones"></div>
+  </div>
+
+  <!-- RIGHT: Store -->
+  <div id="right">
+    <div id="store-header">Store</div>
+    <div id="buy-bar">
+      <button class="buy-btn active" onclick="setBuyMode(1,this)">Buy 1</button>
+      <button class="buy-btn" onclick="setBuyMode(10,this)">Buy 10</button>
+      <button class="buy-btn" onclick="setBuyMode(100,this)">Buy 100</button>
+    </div>
+    <div id="buildings-list"></div>
+  </div>
+</div>
+
+<!-- Tooltips -->
+<div class="upgrade-tooltip" id="upg-tooltip"></div>
+<div class="building-tooltip" id="bld-tooltip"></div>
+
+<!-- Notifications -->
+<div id="notif-area"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════════════════════════════════
+const IMAGES = {
+  dabbo: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabbo.jpeg',
+  upgrade: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/daboupgrade.png',
+  clickpoint: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/daboclickpoint.png',
+  grandma: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabochef.png',
+  worker: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/overworkeddabo.png',
+  boss: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/surpriseddabo.png',
+};
+
+const UPGRADE_COLORS = [
+  '#c8a050','#50c8a0','#c85050','#5090c8','#c850c8',
+  '#a0c850','#c88050','#50c8c8','#8850c8','#c8c850',
+];
+
+let G = {
+  dabbos: 0,
+  totalDabbos: 0,
+  totalClicks: 0,
+  cpc: 1,
+  cps: 0,
+  upgradesBought: 0,
+  sessionStart: Date.now(),
+  lastSave: Date.now(),
+  lastVisit: Date.now(),
+};
+
+// BUILDINGS
+const BUILDINGS = [
+  { id:'cursor',    name:'Cursor',          icon: IMAGES.clickpoint, baseCost:15,    baseCps:0.1,  count:0, desc:'Grandma buys you a second cursor. Autoclicks!' },
+  { id:'grandma',   name:'Grandma Dabbo',   icon: IMAGES.grandma,    baseCost:100,   baseCps:0.5,  count:0, desc:'A grandma Dabbo who bakes dabbo-bread tirelessly.' },
+  { id:'worker',    name:'Overworked Dabbo',icon: IMAGES.worker,     baseCost:500,   baseCps:4,    count:0, desc:'Crushed by workload. Still bakes. Legend.' },
+  { id:'farm',      name:'Dabbo Farm',      icon: IMAGES.dabbo,      baseCost:2000,  baseCps:10,   count:0, desc:'Acres of Dabbos, carefully grown and harvested.' },
+  { id:'mine',      name:'Dabbo Mine',      icon: IMAGES.dabbo,      baseCost:7000,  baseCps:40,   count:0, desc:'Miners dig deep for rare Dabbo ore.' },
+  { id:'factory',   name:'Dabbo Factory',   icon: IMAGES.dabbo,      baseCost:20000, baseCps:100,  count:0, desc:'Industrial Dabbo production at scale.' },
+  { id:'bank',      name:'Dabbo Bank',      icon: IMAGES.dabbo,      baseCost:75000, baseCps:260,  count:0, desc:'Interest accrues in Dabbo-backed currency.' },
+  { id:'temple',    name:'Dabbo Temple',    icon: IMAGES.dabbo,      baseCost:200000,baseCps:440,  count:0, desc:'Holy Dabbos bless the bakes.' },
+  { id:'wizard',    name:'Wizard Dabbo',    icon: IMAGES.boss,       baseCost:600000,baseCps:1200, count:0, desc:'Casts forbidden dabbo-bread spells.' },
+  { id:'shipment',  name:'Dabbo Shipment',  icon: IMAGES.boss,       baseCost:1500000,baseCps:2600,count:0, desc:'From outer Dabbo-space, a fresh supply arrives.' },
+  { id:'alchemy',   name:'Dabbo Alchemist', icon: IMAGES.boss,       baseCost:4000000,baseCps:7000,count:0, desc:'Transmutes anything into dabbo-bread.' },
+  { id:'portal',    name:'Dabbo Portal',    icon: IMAGES.boss,       baseCost:10000000,baseCps:16000,count:0, desc:'Opens rifts to infinite Dabbo dimensions.' },
+];
+
+// 200 UPGRADES
+const BASE_UPGRADES = [];
+const upgradeTypes = [
+  { name:'Cursor Grease', desc:'Fingers become lightning. +1 per click.', effect: g => g.cpc += 1 },
+  { name:'Dabbo Flour', desc:'Higher quality flour. +25% CPS.', effect: g => { g.cpsMulti = (g.cpsMulti||1)*1.25; } },
+  { name:'Grandma Union', desc:'Grandmas unionize. +50% grandma output.', effect: g => { BUILDINGS[1].cpsMulti=(BUILDINGS[1].cpsMulti||1)*1.5; } },
+  { name:'Dabbo Goggles', desc:'Dabbos see better. +10% all CPS.', effect: g => { g.cpsMulti = (g.cpsMulti||1)*1.1; } },
+  { name:'Magic Oven', desc:'Oven knows your deepest wishes. +30% CPS.', effect: g => { g.cpsMulti = (g.cpsMulti||1)*1.3; } },
+  { name:'Ultra Click', desc:'Each click now a power click. +5 per click.', effect: g => g.cpc += 5 },
+  { name:'Dabbo Essence', desc:'Mystical forces. +40% all CPS.', effect: g => { g.cpsMulti = (g.cpsMulti||1)*1.4; } },
+  { name:'Quantum Dabbos', desc:'Dabbos exist in many places. +60% CPS.', effect: g => { g.cpsMulti = (g.cpsMulti||1)*1.6; } },
+  { name:'Dabbo Brain', desc:'Collective intelligence. +25% CPS.', effect: g => { g.cpsMulti = (g.cpsMulti||1)*1.25; } },
+  { name:'Iron Fist', desc:'Strike the dabbo harder. +15 per click.', effect: g => g.cpc += 15 },
+];
+// Generate 200 upgrades across 20 tiers x 10 types
+for(let tier=0; tier<20; tier++){
+  for(let t=0; t<10; t++){
+    const base = upgradeTypes[t];
+    const cost = Math.floor(100 * Math.pow(8, tier) * (1 + t*0.3));
+    BASE_UPGRADES.push({
+      id: `upg_${tier}_${t}`,
+      name: tier===0 ? base.name : `${base.name} ${['II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX'][tier-1]||tier+1}`,
+      desc: base.desc,
+      cost,
+      tier,
+      typeIdx: t,
+      color: UPGRADE_COLORS[t % UPGRADE_COLORS.length],
+      effect: base.effect,
+      purchased: false,
+      unlocked: false,
+    });
+  }
+}
+
+let buyMode = 1;
+let panelMode = 'upgrades';
+let currentTip = '';
+let tipTimer = 0;
+let saveTimer = 0;
+let tickCount = 0;
+
+const TIPS = [
+  "That dabbo's looking tastier every click! 🍞",
+  "Customers are lining up around the block!",
+  "Your dabbo bread is unmatched! Keep baking!",
+  "Sources say your dabbos are achieving sentience.",
+  "The Queen ordered 1000 dabbo loaves. Impressive!",
+  "Dabbo sales are through the roof! Hire more grandmas!",
+  "Scientists can't explain why dabbo bread is this good.",
+  "You've been featured in Dabbo Weekly magazine!",
+  "Competitors are furious. Your dabbos are just better.",
+  "Legend speaks of a dabbo so perfect it transcends bread.",
+  "Your grandmas are working overtime. Send them flowers.",
+  "The stock market? All dabbo-backed securities now.",
+  "A pilgrimage of dabbos arrives from distant lands.",
+  "Dabbo bread: officially declared a wonder of the world.",
+  "Your empire spans dimensions. Reality is dabbo now.",
+  "Even the final boss dabbo is impressed. A little.",
+  "An army of overworked dabbos marches in your name!",
+  "They say the universe began with a single dabbo click.",
+];
+
+// ══════════════════════════════════════════════════════════════════
+// INIT & RENDER
+// ══════════════════════════════════════════════════════════════════
+function init() {
+  loadGame();
+  recalcCps();
+  renderBuildings();
+  renderUpgrades();
+  renderMilestones();
+  updateDisplay();
+  setInterval(gameTick, 100);
+  setInterval(autoSaveCheck, 5000);
+  setInterval(rotateTip, 8000);
+  rotateTip();
+
+  // Offline earnings
+  const now = Date.now();
+  const away = (now - (G.lastVisit||now)) / 1000;
+  if(away > 10 && G.cps > 0) {
+    const earned = Math.floor(away * G.cps);
+    G.dabbos += earned;
+    G.totalDabbos += earned;
+    showNotif('Offline Earnings', `You were away ${formatTime(away)} and baked ${formatNum(earned)} dabbos!`, 'achievement');
+  }
+  G.lastVisit = now;
+}
+
+function gameTick() {
+  tickCount++;
+  const gain = G.cps / 10;
+  G.dabbos += gain;
+  G.totalDabbos += gain;
+
+  // Unlock upgrades
+  let changed = false;
+  BASE_UPGRADES.forEach(u => {
+    if(!u.unlocked && G.totalDabbos >= u.cost * 0.1) {
+      u.unlocked = true; changed = true;
+    }
+  });
+  if(changed && panelMode==='upgrades') renderUpgrades();
+
+  // Update display every 2 ticks
+  if(tickCount%2===0) updateDisplay();
+  if(tickCount%20===0) updateBuildingAffordability();
+  if(tickCount%50===0) updateStatsPanel();
+  if(tickCount%100===0) renderGrandmaRow();
+  if(tickCount%300===0) rotateTip();
+
+  // Boss appear at 1M dabbos
+  const boss = document.getElementById('boss-area');
+  if(G.totalDabbos >= 1000000) boss.classList.add('visible');
+
+  // Dabbo image hue shift based on total
+  const hue = Math.min(360, Math.floor(G.totalDabbos / 1000));
+  document.getElementById('dabbo-img').style.filter = `drop-shadow(0 0 20px rgba(200,160,80,0.5)) hue-rotate(${hue}deg)`;
+
+  tipTimer++;
+}
+
+function autoSaveCheck() {
+  saveGame(true);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CLICKING
+// ══════════════════════════════════════════════════════════════════
+document.getElementById('dabbo-img').addEventListener('click', function(e) {
+  G.dabbos += G.cpc;
+  G.totalDabbos += G.cpc;
+  G.totalClicks++;
+  updateDisplay();
+  spawnClickEffect(e);
+
+  // Animate
+  this.classList.remove('clicked');
+  void this.offsetWidth;
+  this.classList.add('clicked');
+  setTimeout(()=>this.classList.remove('clicked'), 200);
+
+  // Milestone check
+  checkMilestones();
+});
+
+function spawnClickEffect(e) {
+  const wrap = document.getElementById('dabbo-wrap');
+  const rect = wrap.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  // Click cursor image
+  const img = document.createElement('img');
+  img.src = IMAGES.clickpoint;
+  img.className = 'click-cursor';
+  img.style.left = (x - 18) + 'px';
+  img.style.top = (y - 18) + 'px';
+  wrap.appendChild(img);
+  setTimeout(()=>img.remove(), 700);
+
+  // Number
+  const num = document.createElement('div');
+  num.className = 'click-number';
+  num.textContent = '+' + formatNum(G.cpc);
+  num.style.left = (x + 10) + 'px';
+  num.style.top = (y - 10) + 'px';
+  wrap.appendChild(num);
+  setTimeout(()=>num.remove(), 700);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DISPLAY UPDATE
+// ══════════════════════════════════════════════════════════════════
+function updateDisplay() {
+  document.getElementById('count-num').textContent = formatNum(Math.floor(G.dabbos)) + ' dabbos';
+  document.getElementById('cps-display').textContent = 'per second: ' + formatNum(G.cps.toFixed(1));
+}
+
+function updateBuildingAffordability() {
+  BUILDINGS.forEach((b,i) => {
+    const cost = getBuildingCost(b);
+    const row = document.querySelector(`.building-row[data-id="${b.id}"]`);
+    if(!row) return;
+    const costEl = row.querySelector('.b-cost');
+    if(costEl) {
+      costEl.textContent = '🍞 ' + formatNum(cost);
+      costEl.className = 'b-cost' + (G.dabbos >= cost ? '' : ' cant-afford');
+    }
+    row.classList.toggle('can-afford', G.dabbos >= cost);
+  });
+}
+
+function updateStatsPanel() {
+  document.getElementById('stat-total').textContent = formatNum(Math.floor(G.totalDabbos));
+  document.getElementById('stat-cps').textContent = formatNum(G.cps.toFixed(1));
+  document.getElementById('stat-cpc').textContent = formatNum(G.cpc);
+  document.getElementById('stat-clicks').textContent = formatNum(G.totalClicks);
+  document.getElementById('stat-upgrades').textContent = G.upgradesBought;
+  const elapsed = Math.floor((Date.now() - G.sessionStart) / 1000);
+  document.getElementById('stat-time').textContent = formatTime(elapsed);
+
+  const sb = document.getElementById('stat-buildings');
+  sb.innerHTML = BUILDINGS.filter(b=>b.count>0).map(b=>
+    `<div class="stat-row"><span>${b.name}</span><span class="stat-val">${b.count}</span></div>`
+  ).join('') || '<div style="color:#8a6020;font-size:13px;">No buildings yet.</div>';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BUILDINGS
+// ══════════════════════════════════════════════════════════════════
+function getBuildingCost(b) {
+  return Math.floor(b.baseCost * Math.pow(1.15, b.count));
+}
+
+function getBuildingCostN(b, n) {
+  let total = 0;
+  for(let i=0;i<n;i++) total += Math.floor(b.baseCost * Math.pow(1.15, b.count+i));
+  return total;
+}
+
+function buyBuilding(b) {
+  const n = buyMode;
+  const cost = n===1 ? getBuildingCost(b) : getBuildingCostN(b,n);
+  if(G.dabbos < cost) { showNotif('Not Enough!', `Need ${formatNum(cost)} dabbos.`); return; }
+  G.dabbos -= cost;
+  b.count += n;
+  recalcCps();
+  renderBuildings();
+  renderGrandmaRow();
+  checkMilestones();
+  updateDisplay();
+  showNotif('Purchased!', `Bought ${n}x ${b.name}! CPS +${formatNum((b.baseCps*(b.cpsMulti||1)*n).toFixed(1))}`);
+}
+
+function recalcCps() {
+  G.cpsMulti = G.cpsMulti || 1;
+  let total = 0;
+  BUILDINGS.forEach(b => {
+    total += b.count * b.baseCps * (b.cpsMulti||1);
+  });
+  G.cps = total * (G.cpsMulti || 1);
+}
+
+function renderBuildings() {
+  const list = document.getElementById('buildings-list');
+  list.innerHTML = '';
+  BUILDINGS.forEach(b => {
+    const cost = buyMode===1 ? getBuildingCost(b) : getBuildingCostN(b, buyMode);
+    const canAfford = G.dabbos >= cost;
+    const cpsEach = b.baseCps * (b.cpsMulti||1);
+
+    const row = document.createElement('div');
+    row.className = 'building-row' + (canAfford?' can-afford':'');
+    row.dataset.id = b.id;
+
+    row.innerHTML = `
+      <div class="b-icon-wrap">
+        <img class="b-icon" src="${b.icon}" onerror="this.src='${IMAGES.dabbo}'">
+        <div class="b-count-badge">${b.count}</div>
+      </div>
+      <div class="b-info">
+        <div class="b-name">${b.name}</div>
+        <div class="b-cost${canAfford?'':' cant-afford'}">🍞 ${formatNum(cost)}</div>
+        <div class="b-cps">${formatNum(cpsEach.toFixed(1))} CPS each</div>
+      </div>`;
+
+    row.addEventListener('click', () => buyBuilding(b));
+    row.addEventListener('mouseenter', (e) => showBldTooltip(b, e));
+    row.addEventListener('mousemove', (e) => moveBldTooltip(e));
+    row.addEventListener('mouseleave', hideBldTooltip);
+    list.appendChild(row);
+  });
+}
+
+function showBldTooltip(b, e) {
+  const t = document.getElementById('bld-tooltip');
+  t.innerHTML = `<strong>${b.name}</strong>${b.desc}<br><span style="color:#aaffaa;font-size:12px;margin-top:4px;display:block;">Owned: ${b.count} | CPS: ${formatNum((b.count*b.baseCps*(b.cpsMulti||1)).toFixed(1))}</span>`;
+  t.style.display = 'block';
+  moveBldTooltip(e);
+}
+function moveBldTooltip(e) {
+  const t = document.getElementById('bld-tooltip');
+  t.style.left = (e.clientX - 210) + 'px';
+  t.style.top = (e.clientY + 10) + 'px';
+}
+function hideBldTooltip() { document.getElementById('bld-tooltip').style.display='none'; }
+
+// ══════════════════════════════════════════════════════════════════
+// UPGRADES
+// ══════════════════════════════════════════════════════════════════
+function renderUpgrades() {
+  const grid = document.getElementById('upgrades-grid');
+  grid.innerHTML = '';
+  const visible = BASE_UPGRADES.filter(u => u.unlocked && !u.purchased);
+  const recent = BASE_UPGRADES.filter(u => u.purchased).slice(-4);
+
+  if(visible.length === 0 && recent.length===0) {
+    grid.innerHTML = '<div style="color:#8a6020;font-size:13px;font-style:italic;">Bake more dabbos to unlock upgrades!</div>';
+    return;
+  }
+
+  // Show purchased recent (dimmed)
+  recent.forEach(u => {
+    const btn = makeUpgradeBtn(u, true);
+    grid.appendChild(btn);
+  });
+  // Show available
+  visible.slice(0,30).forEach(u => {
+    const btn = makeUpgradeBtn(u, false);
+    grid.appendChild(btn);
+  });
+}
+
+function makeUpgradeBtn(u, purchased) {
+  const btn = document.createElement('div');
+  btn.className = 'upgrade-btn' + (purchased?' purchased':'') + (G.dabbos < u.cost && !purchased?' locked':'');
+  btn.style.borderColor = u.color;
+
+  btn.innerHTML = `
+    <img src="${IMAGES.upgrade}" style="filter:hue-rotate(${u.typeIdx*36}deg)" onerror="this.style.background='${u.color}'">
+    <div class="up-overlay">${u.tier+1}</div>`;
+
+  if(!purchased) {
+    btn.addEventListener('click', () => buyUpgrade(u));
+    btn.addEventListener('mouseenter', (e) => showUpgTooltip(u, e));
+    btn.addEventListener('mousemove', (e) => moveUpgTooltip(e));
+    btn.addEventListener('mouseleave', hideUpgTooltip);
+  }
+  return btn;
+}
+
+function buyUpgrade(u) {
+  if(G.dabbos < u.cost) { showNotif('Not Enough!',`Need ${formatNum(u.cost)} dabbos for this upgrade.`); return; }
+  G.dabbos -= u.cost;
+  u.purchased = true;
+  G.upgradesBought++;
+  u.effect(G);
+  recalcCps();
+  renderUpgrades();
+  updateDisplay();
+  showNotif('Upgrade!', `${u.name} purchased! ${u.desc}`, 'achievement');
+}
+
+function showUpgTooltip(u,e) {
+  const t = document.getElementById('upg-tooltip');
+  const canAfford = G.dabbos >= u.cost;
+  t.innerHTML = `<strong>${u.name}</strong>${u.desc}<div class="cost" style="color:${canAfford?'#aaffaa':'#ff8888'}">🍞 ${formatNum(u.cost)}</div>`;
+  t.style.display = 'block';
+  moveUpgTooltip(e);
+}
+function moveUpgTooltip(e) {
+  const t = document.getElementById('upg-tooltip');
+  t.style.left = (e.clientX+12)+'px';
+  t.style.top = (e.clientY+12)+'px';
+}
+function hideUpgTooltip() { document.getElementById('upg-tooltip').style.display='none'; }
+
+// ══════════════════════════════════════════════════════════════════
+// GRANDMA / WORKER ROW
+// ══════════════════════════════════════════════════════════════════
+function renderGrandmaRow() {
+  const row = document.getElementById('grandma-row');
+  const count = Math.min(BUILDINGS[1].count, 12);
+  row.innerHTML = '';
+  for(let i=0;i<count;i++){
+    const img = document.createElement('img');
+    img.src = IMAGES.grandma;
+    img.className = 'grandma-icon';
+    img.title = 'Grandma Dabbo';
+    row.appendChild(img);
+  }
+
+  const wrow = document.getElementById('worker-row');
+  const wcount = Math.min(BUILDINGS[2].count, 10);
+  wrow.innerHTML = '';
+  for(let i=0;i<wcount;i++){
+    const img = document.createElement('img');
+    img.src = IMAGES.worker;
+    img.className = 'worker-icon';
+    img.title = 'Overworked Dabbo';
+    wrow.appendChild(img);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MILESTONES
+// ══════════════════════════════════════════════════════════════════
+const MILESTONES = [
+  { id:'m1', label:'🍞 First Dabbo', req:1, earned:false },
+  { id:'m2', label:'🍞 100 Dabbos', req:100, earned:false },
+  { id:'m3', label:'🍞 1K Dabbos', req:1000, earned:false },
+  { id:'m4', label:'🍞 10K Dabbos', req:10000, earned:false },
+  { id:'m5', label:'🍞 100K Dabbos', req:100000, earned:false },
+  { id:'m6', label:'🍞 1M Dabbos', req:1000000, earned:false },
+  { id:'m7', label:'🍞 10M Dabbos', req:10000000, earned:false },
+  { id:'m8', label:'🍞 1B Dabbos', req:1000000000, earned:false },
+  { id:'m9', label:'🖱 100 Clicks', req:null, earnedClicks:100, earned:false },
+  { id:'m10',label:'🖱 1K Clicks', req:null, earnedClicks:1000, earned:false },
+];
+
+function checkMilestones() {
+  let any = false;
+  MILESTONES.forEach(m => {
+    if(m.earned) return;
+    if(m.req && G.totalDabbos >= m.req) { m.earned=true; any=true; showNotif('Milestone!',m.label+' reached!','achievement'); }
+    if(m.earnedClicks && G.totalClicks >= m.earnedClicks) { m.earned=true; any=true; showNotif('Milestone!',m.label+' reached!','achievement'); }
+  });
+  if(any) renderMilestones();
+}
+
+function renderMilestones() {
+  const el = document.getElementById('milestones');
+  el.innerHTML = MILESTONES.map(m=>
+    `<div class="milestone-badge${m.earned?' earned':''}">${m.label}</div>`
+  ).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TIPS
+// ══════════════════════════════════════════════════════════════════
+function rotateTip() {
+  const box = document.getElementById('tip-box');
+  const tip = TIPS[Math.floor(Math.random()*TIPS.length)];
+  box.style.opacity = 0;
+  setTimeout(()=>{ box.textContent = tip; box.style.opacity=1; }, 500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════════
+function showNotif(title, msg, type='') {
+  const area = document.getElementById('notif-area');
+  const el = document.createElement('div');
+  el.className = 'notif' + (type?' '+type:'');
+  el.innerHTML = `<strong>${title}</strong>${msg}`;
+  area.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity 0.5s'; setTimeout(()=>el.remove(),500); }, 4000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// UI CONTROLS
+// ══════════════════════════════════════════════════════════════════
+function setBuyMode(n, btn) {
+  buyMode = n;
+  document.querySelectorAll('.buy-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBuildings();
+}
+
+function switchPanel(name) {
+  panelMode = name;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('[id^="panel-"]').forEach(p=>p.style.display='none');
+  document.getElementById('panel-'+name).style.display='block';
+  if(name==='stats') updateStatsPanel();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════════════════════
+function saveGame(silent) {
+  const state = {
+    G: { dabbos:G.dabbos, totalDabbos:G.totalDabbos, totalClicks:G.totalClicks,
+         cpc:G.cpc, upgradesBought:G.upgradesBought, sessionStart:G.sessionStart,
+         cpsMulti:G.cpsMulti, lastVisit:Date.now() },
+    buildings: BUILDINGS.map(b=>({ id:b.id, count:b.count, cpsMulti:b.cpsMulti })),
+    upgrades: BASE_UPGRADES.map(u=>({ id:u.id, purchased:u.purchased, unlocked:u.unlocked })),
+    milestones: MILESTONES.map(m=>({ id:m.id, earned:m.earned })),
+  };
+  try { localStorage.setItem('dabboSave', JSON.stringify(state)); } catch(e){}
+  if(!silent) showNotif('Saved!','Your dabbo empire is safe. 💾');
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem('dabboSave');
+    if(!raw) return;
+    const state = JSON.parse(raw);
+    Object.assign(G, state.G);
+    state.buildings.forEach(sb => {
+      const b = BUILDINGS.find(x=>x.id===sb.id);
+      if(b){ b.count=sb.count; b.cpsMulti=sb.cpsMulti||1; }
+    });
+    state.upgrades.forEach(su => {
+      const u = BASE_UPGRADES.find(x=>x.id===su.id);
+      if(u){ u.purchased=su.purchased; u.unlocked=su.unlocked; if(u.purchased)u.effect(G); }
+    });
+    state.milestones && state.milestones.forEach(sm=>{
+      const m = MILESTONES.find(x=>x.id===sm.id);
+      if(m) m.earned=sm.earned;
+    });
+  } catch(e){ console.warn('Save load failed',e); }
+}
+
+function exportSave() {
+  saveGame(true);
+  const raw = localStorage.getItem('dabboSave')||'';
+  const enc = btoa(raw);
+  const ta = document.createElement('textarea');
+  ta.value = enc;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  ta.remove();
+  showNotif('Exported!', 'Save code copied to clipboard.');
+}
+
+function importSave() {
+  const code = prompt('Paste your save code:');
+  if(!code) return;
+  try {
+    const raw = atob(code.trim());
+    localStorage.setItem('dabboSave', raw);
+    location.reload();
+  } catch(e){ showNotif('Error','Invalid save code.'); }
+}
+
+function resetGame() {
+  localStorage.removeItem('dabboSave');
+  location.reload();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════
+function formatNum(n) {
+  n = Number(n);
+  if(n >= 1e15) return (n/1e15).toFixed(2)+'Qa';
+  if(n >= 1e12) return (n/1e12).toFixed(2)+'T';
+  if(n >= 1e9)  return (n/1e9).toFixed(2)+'B';
+  if(n >= 1e6)  return (n/1e6).toFixed(2)+'M';
+  if(n >= 1e3)  return (n/1e3).toFixed(1)+'K';
+  return Math.floor(n).toString();
+}
+function formatTime(s) {
+  s = Math.floor(s);
+  if(s<60) return s+'s';
+  if(s<3600) return Math.floor(s/60)+'m '+s%60+'s';
+  return Math.floor(s/3600)+'h '+Math.floor(s%3600/60)+'m';
+}
+
+// Handle tab visibility (offline earnings)
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden) G.lastVisit = Date.now();
+  else {
+    const away = (Date.now() - G.lastVisit) / 1000;
+    if(away > 5 && G.cps > 0) {
+      const earned = Math.floor(away * G.cps);
+      G.dabbos += earned;
+      G.totalDabbos += earned;
+      showNotif('Welcome back!', `You baked ${formatNum(earned)} dabbos while away!`, 'achievement');
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// START
+// ══════════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
