@@ -115,6 +115,25 @@
   }
   #dabbo-img:active { transform: scale(0.93); }
   @keyframes dabboPop { 0%{transform:scale(1)} 50%{transform:scale(0.88)} 100%{transform:scale(1)} }
+  
+  /* Cursor Orbit Effects */
+  #cursor-orbit {
+      position: absolute;
+      width: 180px; height: 180px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 3;
+      animation: spinOrbit 10s linear infinite;
+  }
+  @keyframes spinOrbit { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+  .orbit-cursor {
+      position: absolute;
+      width: 24px; height: 24px;
+      image-rendering: pixelated;
+      transform: rotate(-45deg);
+  }
+
   .click-cursor {
     position: absolute; pointer-events: none; z-index: 10;
     width: 36px; height: 36px;
@@ -158,13 +177,25 @@
   #boost-track { flex:1; background: rgba(0,0,0,0.5); border-radius: 4px; height: 8px; overflow:hidden; }
   #boost-label { font-family:'Cinzel',serif; font-size:10px; color:gold; white-space:nowrap; }
 
+  /* Chef UI */
+  #chef-ui {
+    width: 100%; height: 40px; background: rgba(0,0,0,0.5); border-top: 1px solid var(--gold-dark);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    gap: 4px; padding: 0 10px; flex-shrink: 0;
+  }
+  .chef-sprite {
+    width: 24px; height: 24px; object-fit: cover; border-radius: 50%;
+    animation: cookBounce 0.4s alternate infinite ease-in-out;
+  }
+  @keyframes cookBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+
   /* Buildings viewer in left */
   #buildings-viewer {
     width: 100%;
     border-top: 1px solid var(--gold-dark);
     background: rgba(0,0,0,0.3);
     overflow-y: auto;
-    max-height: 130px;
+    max-height: 110px;
     flex-shrink: 0;
   }
   #buildings-viewer::-webkit-scrollbar { width: 4px; }
@@ -225,8 +256,8 @@
   .opt-btn {
     background: linear-gradient(180deg,#3a2008,#1a0d04);
     border: none; color: var(--text-gold);
-    font-family: 'Cinzel', serif; font-size: 12px;
-    padding: 7px 12px; cursor: pointer;
+    font-family: 'Cinzel', serif; font-size: 11px;
+    padding: 7px 8px; cursor: pointer;
     flex: 1; transition: background 0.2s;
     border-right: 1px solid var(--gold-dark);
     letter-spacing: 0.5px;
@@ -380,21 +411,25 @@
   #birth-screen.active { display: flex; }
   #birth-screen h1 { font-family:'Cinzel',serif; font-size:30px; color:var(--gold-light); margin-bottom:4px; text-shadow: 0 0 30px rgba(200,160,80,0.6); }
   #birth-screen .bp-count { font-family:'Cinzel',serif; font-size:18px; color:gold; margin-bottom:20px; }
-  .birth-upgrades-grid { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; max-width:700px; }
+  .birth-upgrades-grid { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; max-width:900px; }
   .birth-upg-card {
     background: linear-gradient(180deg,#0a0a20,#050510);
     border: 2px solid #334;
     border-radius: 10px; padding:16px; width:180px;
     cursor:pointer; transition:all 0.3s; text-align:center;
+    position: relative;
   }
-  .birth-upg-card:hover:not(.bought):not(.cant) { border-color:var(--gold); box-shadow:0 0 20px rgba(200,160,80,0.3); transform:scale(1.04); }
+  .birth-upg-card:hover:not(.bought):not(.cant) { border-color:var(--gold); box-shadow:0 0 20px rgba(200,160,80,0.3); transform:scale(1.04); z-index: 10; }
   .birth-upg-card.bought { opacity:0.5; border-color:#556; cursor:default; }
   .birth-upg-card.cant { opacity:0.4; cursor:not-allowed; }
   .birth-upg-card .buc-name { font-family:'Cinzel',serif; font-size:13px; color:var(--gold-light); margin-bottom:6px; }
   .birth-upg-card .buc-desc { font-size:12px; color:var(--parchment); line-height:1.4; margin-bottom:8px; }
   .birth-upg-card .buc-cost { font-family:'Cinzel',serif; font-size:14px; color:gold; }
   .birth-upg-card.bought .buc-cost { color:#888; }
-  #birth-continue-btn { margin-top:28px; background:linear-gradient(180deg,#1a0d04,#0a0500); border:2px solid var(--gold); color:var(--gold-light); font-family:'Cinzel',serif; font-size:16px; padding:12px 36px; cursor:pointer; border-radius:6px; transition:all 0.3s; }
+  .birth-upg-card .buc-req { font-size:9px; color:#c04030; margin-top:4px; display:none; }
+  .birth-upg-card.cant .buc-req { display:block; }
+
+  #birth-continue-btn { margin-top:28px; background:linear-gradient(180deg,#1a0d04,#0a0500); border:2px solid var(--gold); color:var(--gold-light); font-family:'Cinzel',serif; font-size:16px; padding:12px 36px; cursor:pointer; border-radius:6px; transition:all 0.3s; margin-bottom: 40px; }
   #birth-continue-btn:hover { background:linear-gradient(180deg,#3a2008,#1a0d04); }
 
   /* Rebirth counter badge */
@@ -408,6 +443,21 @@
   /* ── OPTIONS PANEL ── */
   #panel-options { padding:16px; }
   
+  /* ── PLANETS PANEL ── */
+  #panel-planets { padding:16px; display: none; }
+  #planets-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top:10px;}
+  .planet-card {
+      width: 120px; background: linear-gradient(180deg,#2a1008,#100502);
+      border: 1px solid var(--gold-dark); border-radius: 6px; padding: 10px; text-align: center;
+      cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .planet-card:hover:not(.locked) { border-color: var(--gold-light); box-shadow: 0 0 12px rgba(200,160,80,0.5); transform: scale(1.05); }
+  .planet-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+  .planet-card.owned { border-color: #50c8a0; background: linear-gradient(180deg,#1a2a18,#0a1005); }
+  .planet-card .p-name { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold-light); font-weight: 700; margin-bottom: 4px; }
+  .planet-card .p-bonus { font-size: 10px; color: #aaffaa; margin-bottom: 4px; }
+  .planet-card .p-cost { font-size: 10px; color: var(--parchment); }
+
   /* ── SKINS PANEL ── */
   #panel-skins { padding:16px; display: none; }
   .skin-card {
@@ -442,6 +492,16 @@
   
   /* Loading Screen */
   @keyframes spinLoad { 100% { transform:rotate(360deg); } }
+
+  /* Mod Menu */
+  #mod-menu {
+      display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+      background: rgba(10,0,0,0.95); border: 2px solid #ff0000; z-index: 10000; padding: 20px;
+      border-radius: 8px; box-shadow: 0 0 30px rgba(255,0,0,0.5); text-align: center;
+  }
+  #mod-menu h3 { color: #ff4444; font-family: 'Cinzel', serif; margin-bottom: 15px; }
+  #mod-menu button { background: #330000; color: white; border: 1px solid red; padding: 5px 10px; margin: 5px; cursor: pointer; border-radius: 4px; }
+  #mod-menu button:hover { background: #660000; }
 </style>
 </head>
 <body>
@@ -451,13 +511,21 @@
     <div style="color:var(--gold);font-family:'Cinzel',serif;margin-top:20px;font-size:24px;" id="loading-text">Loading...</div>
 </div>
 
+<div id="mod-menu">
+    <h3>DaboKash Mod Menu ⚡</h3>
+    <button onclick="G.dabbos += 1e18; G.totalDabbos += 1e18; updateDisplay();">+1 Quintillion Dabbos</button>
+    <button onclick="G.birthPoints += 500; showNotif('Hacked!', '+500 BP');">+500 Birth Points</button>
+    <button onclick="G.rebirths += 10; document.getElementById('rb-num').textContent = G.rebirths; showNotif('Hacked!', '+10 Rebirths');">+10 Rebirths</button>
+    <button onclick="document.getElementById('mod-menu').style.display='none';">Close</button>
+</div>
+
 <div id="topbar">
   <span class="logo">Dabbo Clicker™</span>
   <span class="sep">|</span>
   <button onclick="if(G.totalDabbos>=1e12) document.getElementById('rebirth-prompt').classList.add('active'); else showNotif('Locked', '1 Trillion Dabbos required to Rebirth');" style="background:linear-gradient(180deg,#c8a050,#8a6020); color:#000; border:none; padding:2px 8px; border-radius:4px; font-family:'Cinzel',serif; font-weight:bold; cursor:pointer; margin-left:10px;">Rebirth!</button>
   <span style="color:var(--gold);font-size:11px; margin-left:10px;" id="rebirth-badge">Rebirth #<span id="rb-num">0</span></span>
   <span class="spacer"></span>
-  <span style="color:var(--gold);font-size:11px;">v. 2.000</span>
+  <span style="color:var(--gold);font-size:11px;">v. 2.100</span>
 </div>
 
 <div id="game">
@@ -470,12 +538,14 @@
     </div>
     <div id="dabbo-wrap">
       <div id="dabbo-bg"></div>
+      <div id="cursor-orbit"></div>
       <img id="dabbo-img" src="https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabbo.jpeg" alt="Dabbo" draggable="false">
       <div id="golden-dabbo">
         <img src="https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabbo.jpeg" alt="Golden Dabbo">
         <div class="golden-label">✨ GOLDEN ✨</div>
       </div>
     </div>
+    <div id="chef-ui"></div>
     <div id="boost-bar">
       <span id="boost-label">⚡ 2× Boost!</span>
       <div id="boost-track"><div id="boost-fill" style="width:100%"></div></div>
@@ -486,7 +556,7 @@
 
   <div id="middle">
     <div id="news-ticker">
-      <div id="news-inner">📰 Dabbo opens new bakery • Scientists baffled by Dabbo efficiency • Grandma Dabbos demand overtime pay • Economy booms on Dabbo-backed currency • Dabbo Portal found in local basement • Golden Dabbo spotted — treasure hunters flock • Rebirth confirmed: Dabbo transcends mortal realm • ████ [REDACTED BY DABBO COUNCIL] •</div>
+      <div id="news-inner">📰 Dabbo opens new bakery • Scientists baffled by Dabbo efficiency • Chef Dabbos demand overtime pay • Economy booms on Dabbo-backed currency • Dabbo Portal found in local basement • Golden Dabbo spotted — treasure hunters flock • Rebirth confirmed: Dabbo transcends mortal realm • ████ [REDACTED BY DABBO COUNCIL] •</div>
     </div>
     <div id="upgrades-topbar">
       <h3 id="upgrades-title">⚗ UPGRADES</h3>
@@ -495,8 +565,9 @@
     <div id="option-bar">
       <button class="opt-btn active" id="btn-info" onclick="switchPanel('info')">Info</button>
       <button class="opt-btn" id="btn-stats" onclick="switchPanel('stats')">Stats</button>
-      <button class="opt-btn" id="btn-options" onclick="switchPanel('options')">Options</button>
+      <button class="opt-btn" id="btn-planets" onclick="switchPanel('planets')">Planets</button>
       <button class="opt-btn" id="btn-skins" onclick="switchPanel('skins')">Skins</button>
+      <button class="opt-btn" id="btn-options" onclick="switchPanel('options')">Opts</button>
     </div>
     <div id="mid-content">
       <div id="panel-info" style="padding:14px;">
@@ -533,6 +604,15 @@
           <div class="stat-row"><span>Upgrades bought</span><span class="stat-val" id="stat-upgrades">0</span></div>
         </div>
       </div>
+      
+      <div id="panel-planets">
+        <div class="stat-section" style="padding:0;">
+          <h3 id="planets-title">🪐 Dabbo Planets Empire</h3>
+          <div style="font-size:12px; color:var(--parchment); margin-bottom:10px;">Expand your empire across the cosmos. Each planet grants a massive permanent global CPS multiplier!</div>
+          <div id="planets-grid"></div>
+        </div>
+      </div>
+
       <div id="panel-options" style="display:none; padding:16px;">
         <div class="stat-section" style="padding:0;">
           <h3>⚙ Game Options</h3>
@@ -549,9 +629,14 @@
                   <input type="checkbox" id="toggle-particles" onchange="G.hideParticles=this.checked; saveGame(true);"> Hide Click Particles
               </label>
           </div>
-          <div style="margin-top: 10px; margin-bottom: 20px;">
+          <div style="margin-top: 10px;">
               <label style="color:var(--gold-light); font-size:13px; font-family:'Cinzel',serif; cursor:pointer;">
                   <input type="checkbox" id="toggle-skin-rotate" onchange="G.skinRotateOnClick=this.checked; saveGame(true);"> Change Skin on Click
+              </label>
+          </div>
+          <div style="margin-top: 10px; margin-bottom: 20px;">
+              <label style="color:var(--gold-light); font-size:13px; font-family:'Cinzel',serif; cursor:pointer;">
+                  <input type="checkbox" id="toggle-mute-music" onchange="G.muteMusic=this.checked; saveGame(true); handleAudioToggle();"> Mute Rapper Music
               </label>
           </div>
 
@@ -615,6 +700,8 @@
   <button id="birth-continue-btn" onclick="startAfterBirth()">Begin Anew →</button>
 </div>
 
+<audio id="rapper-audio" src="https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/dabosong.mp3"></audio>
+
 <script>
 // ══════════════════════════════════════════════════════════════════
 // CONSTANTS & IMAGES & TRANSLATIONS
@@ -623,37 +710,46 @@ const IMAGES = {
   dabbo: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabbo.jpeg',
   upgrade: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/daboupgrade.png',
   clickpoint: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/daboclickpoint.png',
-  grandma: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabochef.png',
+  chef: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/dabochef.png',
   worker: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/overworkeddabo.png',
   boss: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/surpriseddabo.png',
   stressed: 'https://raw.githubusercontent.com/UGBONTOP/Dabbo-Clicker/main/surpriseddabo.png',
+  // New Additions
+  milkman: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/milkmandabo.png',
+  nut: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/nutdabo.png',
+  rapper: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/rapperdabo.png',
+  smoking: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/smokingdabo.png',
+  student: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/studentdabo.png',
+  thug: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/thugdabo.png',
+  ultimate: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/newdaboupgradesstuff/ultimateduo.png'
 };
 
 const SKINS = [
     {id:'default', url: IMAGES.dabbo, name: 'Dabbo'},
-    {id:'grandma', url: IMAGES.grandma, name: 'Grandma'},
+    {id:'chef', url: IMAGES.chef, name: 'Chef'},
     {id:'worker', url: IMAGES.worker, name: 'Worker'},
     {id:'boss', url: IMAGES.boss, name: 'Boss'},
     {id:'stressed', url: IMAGES.stressed, name: 'Stressed'},
-    {id:'lilcarlos', url: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/IMG_20251110_112248.jpg', name: 'Lil Carlos'}
+    {id:'lilcarlos', url: 'https://cdn.jsdelivr.net/gh/UGBONTOP/Dabbo-Clicker@main/IMG_20251110_112248.jpg', name: 'Lil Carlos'},
+    {id:'rapper', url: IMAGES.rapper, name: 'Rapper'}
 ];
 
 const TRANSLATIONS = {
   en: {
     bakery: "Big Dabo Boy Bakery", store: "Store", upgrades: "⚗ UPGRADES", 
-    info: "Info", stats: "Stats", options: "Options", skins: "Skins",
+    info: "Info", stats: "Stats", planets: "Planets", options: "Opts", skins: "Skins",
     buy1: "Buy 1", buy10: "Buy 10", buy100: "Buy 100",
     empire: "🏠 Your Empire", milestones: "🏆 Milestones"
   },
   es: {
     bakery: "Panadería del Gran Chico Dabo", store: "Tienda", upgrades: "⚗ MEJORAS", 
-    info: "Info", stats: "Estadísticas", options: "Opciones", skins: "Pieles",
+    info: "Info", stats: "Estadísticas", planets: "Planetas", options: "Opc", skins: "Pieles",
     buy1: "Comprar 1", buy10: "Comprar 10", buy100: "Comprar 100",
     empire: "🏠 Tu Imperio", milestones: "🏆 Logros"
   }
 };
 
-const UPGRADE_COLORS = ['#c8a050','#50c8a0','#c85050','#5090c8','#c850c8','#a0c850','#c88050','#50c8c8','#8850c8','#c8c850'];
+const UPGRADE_COLORS = ['#c8a050','#50c8a0','#c85050','#5090c8','#c850c8','#a0c850','#c88050','#50c8c8','#8850c8','#c8c850', '#ffaa00'];
 
 // ══════════════════════════════════════════════════════════════════
 // GAME STATE
@@ -679,6 +775,8 @@ let G = {
   permCpsMulti: 1,
   permStartDabbos: 0,
   permBuildingDiscount: 0,
+  // Planets
+  planetsUnlocked: [],
   // Boost
   boostActive: false,
   boostTimeLeft: 0,
@@ -689,6 +787,7 @@ let G = {
   lang: 'en',
   hideParticles: false,
   skinRotateOnClick: false,
+  muteMusic: false,
   currentSkin: 'default',
   // Renaming additions
   shopName: null,
@@ -707,7 +806,7 @@ function makeBuildingDefs() {
   const diff = getDifficultyMult();
   return [
     { id:'cursor',    name:'Cursor',           icon:IMAGES.clickpoint, baseCost:Math.floor(15*diff),    baseCps:1,     count:0, cpsMulti:1, desc:'An auto-clicking cursor. Each one clicks for you.' },
-    { id:'grandma',   name:'Grandma Dabbo',    icon:IMAGES.grandma,    baseCost:Math.floor(100*diff),   baseCps:1.0,   count:0, cpsMulti:1, desc:'Grandma bakes tirelessly — 1 dabbo/sec each.' },
+    { id:'chef',      name:'Chef Dabbo',       icon:IMAGES.chef,       baseCost:Math.floor(100*diff),   baseCps:1.0,   count:0, cpsMulti:1, desc:'Chef bakes tirelessly — 1 dabbo/sec each.' },
     { id:'worker',    name:'Overworked Dabbo', icon:IMAGES.worker,     baseCost:Math.floor(500*diff),   baseCps:5,     count:0, cpsMulti:1, desc:'Crushed by workload. Still bakes. Legend.' },
     { id:'farm',      name:'Dabbo Farm',       icon:IMAGES.dabbo,      baseCost:Math.floor(3000*diff),  baseCps:12,    count:0, cpsMulti:1, desc:'Acres of Dabbos, grown and harvested.' },
     { id:'mine',      name:'Dabbo Mine',       icon:IMAGES.dabbo,      baseCost:Math.floor(12000*diff), baseCps:47,    count:0, cpsMulti:1, desc:'Miners dig deep for rare Dabbo ore.' },
@@ -721,18 +820,26 @@ function makeBuildingDefs() {
     { id:'tower',     name:'Dabbo Tower',      icon:IMAGES.dabbo,      baseCost:Math.floor(250000000*diff), baseCps:85000,   count:0, cpsMulti:1, desc:'A towering monolith of baked goods.' },
     { id:'castle',    name:'Dabbo Castle',     icon:IMAGES.boss,       baseCost:Math.floor(1000000000*diff), baseCps:400000,   count:0, cpsMulti:1, desc:'A fortress made of pure crust.' },
     { id:'planet',    name:'Dabbo Planet',     icon:IMAGES.boss,       baseCost:Math.floor(50000000000*diff), baseCps:2000000, count:0, cpsMulti:1, desc:'An entire planet of Dabbo.' },
+    // NEW ONES ADDED AT THE END FOR INSANE SCALING
+    { id:'milkman',   name:'Milkman Dabbo',    icon:IMAGES.milkman,    baseCost:Math.floor(1e12*diff), baseCps:10000000, count:0, cpsMulti:1, desc:'Delivers the finest cosmic milk for your bread.' },
+    { id:'student',   name:'Student Dabbo',    icon:IMAGES.student,    baseCost:Math.floor(5e13*diff), baseCps:85000000, count:0, cpsMulti:1, desc:'Studies quantum baking theory all night.' },
+    { id:'nut',       name:'Nut Dabbo',        icon:IMAGES.nut,        baseCost:Math.floor(2e15*diff), baseCps:600000000, count:0, cpsMulti:1, desc:'A tough nut to crack, produces extremely hard bread.' },
+    { id:'smoking',   name:'Smoking Dabbo',    icon:IMAGES.smoking,    baseCost:Math.floor(1e17*diff), baseCps:4500000000, count:0, cpsMulti:1, desc:'Smokes the bread for that rich, hazy flavor.' },
+    { id:'thug',      name:'Thug Dabbo',       icon:IMAGES.thug,       baseCost:Math.floor(5e18*diff), baseCps:35000000000, count:0, cpsMulti:1, desc:'Extorts other dimensions for their raw flour.' },
+    { id:'rapper',    name:'Rapper Dabbo',     icon:IMAGES.rapper,     baseCost:Math.floor(2e20*diff), baseCps:250000000000, count:0, cpsMulti:1, desc:'Spits hot fire, literally baking millions of dabbos instantly.' },
+    { id:'ultimate',  name:'Ultimate Duo',     icon:IMAGES.ultimate,   baseCost:Math.floor(1e23*diff), baseCps:5000000000000, count:0, cpsMulti:1, desc:'The peak of Dabbo evolution. Unfathomable power.' },
   ];
 }
 let BUILDINGS = makeBuildingDefs();
 
 // ══════════════════════════════════════════════════════════════════
-// UPGRADES — 26 tiers × 10 = 260 upgrades
+// UPGRADES — 26 tiers × 11 = 286 upgrades
 // ══════════════════════════════════════════════════════════════════
 const upgradeTypes = [
   // [name, desc, effect fn, clicksRequired to REVEAL, cost base]
   { name:'Cursor Grease',   desc:'+1 per click.',                       effect: g=>g.cpc+=1,                                      req:10,    cost:100   },
   { name:'Dabbo Flour',     desc:'+15% global CPS.',                    effect: g=>g.cpsMulti=(g.cpsMulti||1)*1.15,               req:25,    cost:300   },
-  { name:'Grandma Union',   desc:'+40% Grandma output.',                effect: g=>BUILDINGS[1].cpsMulti=(BUILDINGS[1].cpsMulti||1)*1.4, req:50, cost:800 },
+  { name:'Chef Union',      desc:'+40% Chef output.',                   effect: g=>BUILDINGS[1].cpsMulti=(BUILDINGS[1].cpsMulti||1)*1.4, req:50, cost:800 },
   { name:'Dabbo Goggles',   desc:'+10% all CPS.',                       effect: g=>g.cpsMulti=(g.cpsMulti||1)*1.10,               req:75,    cost:2000  },
   { name:'Magic Oven',      desc:'+20% CPS.',                           effect: g=>g.cpsMulti=(g.cpsMulti||1)*1.20,               req:150,   cost:8000  },
   { name:'Ultra Click',     desc:'+3 per click.',                       effect: g=>g.cpc+=3,                                      req:200,   cost:15000 },
@@ -740,15 +847,16 @@ const upgradeTypes = [
   { name:'Quantum Dabbos',  desc:'+30% CPS.',                           effect: g=>g.cpsMulti=(g.cpsMulti||1)*1.30,               req:800,   cost:300000},
   { name:'Dabbo Brain',     desc:'+20% CPS.',                           effect: g=>g.cpsMulti=(g.cpsMulti||1)*1.20,               req:1500,  cost:1500000},
   { name:'Iron Fist',       desc:'+8 per click.',                       effect: g=>g.cpc+=8,                                      req:3000,  cost:8000000},
+  { name:'Greasy Forehead', desc:'Massive +50 per click.',              effect: g=>g.cpc+=50,                                     req:5000,  cost:50000000}
 ];
 
 const BASE_UPGRADES = [];
 const TIER_NAMES = ['','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI','XXII','XXIII','XXIV','XXV','XXVI'];
 const TIER_MULT = [1, 5, 25, 100, 500, 3000];
-for(let i=6; i<26; i++) { TIER_MULT.push(TIER_MULT[i-1]*4); } // Expand multiplier array infinitely basically
+for(let i=6; i<26; i++) { TIER_MULT.push(TIER_MULT[i-1]*4); }
 
 for(let tier=0; tier<26; tier++){
-  for(let t=0; t<10; t++){
+  for(let t=0; t<upgradeTypes.length; t++){
     const base = upgradeTypes[t];
     const cost = Math.floor(base.cost * TIER_MULT[tier]);
     const clickReq = base.req * Math.pow(3, tier); 
@@ -768,18 +876,47 @@ for(let tier=0; tier<26; tier++){
 }
 
 // ══════════════════════════════════════════════════════════════════
-// BIRTH UPGRADES
+// BIRTH UPGRADES (GENERATED UP TO 200)
 // ══════════════════════════════════════════════════════════════════
 const BIRTH_UPGRADES = [
-  { id:'b1', name:'Starter Stash',     desc:'Begin each run with 500 extra dabbos.',      cost:2, effect: g=>g.permStartDabbos+=500,      bought:false },
-  { id:'b2', name:'Clicker Genes',     desc:'Permanent +2 dabbo per click.',               cost:3, effect: g=>g.permCpcBonus+=2,           bought:false },
-  { id:'b3', name:'Cosmic Flour',      desc:'Permanent +8% global CPS.',                  cost:4, effect: g=>g.permCpsMulti*=1.08,        bought:false },
-  { id:'b4', name:'Builder Discount',  desc:'Buildings cost 5% less forever.',             cost:5, effect: g=>g.permBuildingDiscount+=0.05,bought:false },
-  { id:'b5', name:'Golden Touch',      desc:'Golden Dabbos last 3 minutes instead of 2.', cost:6, effect: g=>{ /* handled in boost */ },   bought:false },
-  { id:'b6', name:'Deep Roots',        desc:'Permanent +15% CPS.',                         cost:8, effect: g=>g.permCpsMulti*=1.15,        bought:false },
-  { id:'b7', name:'Ancestral Click',   desc:'Permanent +5 dabbo per click.',               cost:10,effect: g=>g.permCpcBonus+=5,           bought:false },
-  { id:'b8', name:'Void Channels',     desc:'Permanent +25% global CPS.',                 cost:12,effect: g=>g.permCpsMulti*=1.25,        bought:false },
+  { id:'b1', name:'Starter Stash',     desc:'Begin each run with 500 extra dabbos.',      cost:2, req:null, effect: g=>g.permStartDabbos+=500,      bought:false },
+  { id:'b2', name:'Clicker Genes',     desc:'Permanent +2 dabbo per click.',               cost:3, req:null, effect: g=>g.permCpcBonus+=2,           bought:false },
+  { id:'b3', name:'Cosmic Flour',      desc:'Permanent +8% global CPS.',                  cost:4, req:null, effect: g=>g.permCpsMulti*=1.08,        bought:false },
+  { id:'b4', name:'Builder Discount',  desc:'Buildings cost 5% less forever.',             cost:5, req:null, effect: g=>g.permBuildingDiscount+=0.05,bought:false },
+  { id:'b5', name:'Golden Touch',      desc:'Golden Dabbos last 3 minutes instead of 2.', cost:6, req:null, effect: g=>{ /* handled in boost */ },   bought:false },
+  { id:'b6', name:'Deep Roots',        desc:'Permanent +15% CPS.',                         cost:8, req:'b3', effect: g=>g.permCpsMulti*=1.15,        bought:false },
+  { id:'b7', name:'Ancestral Click',   desc:'Permanent +5 dabbo per click.',               cost:10,req:'b2', effect: g=>g.permCpcBonus+=5,           bought:false },
+  { id:'b8', name:'Void Channels',     desc:'Permanent +25% global CPS.',                 cost:12,req:'b6', effect: g=>g.permCpsMulti*=1.25,        bought:false },
 ];
+
+// Generate the remaining nodes up to 200
+for(let i=9; i<=200; i++) {
+    let parentId = `b${Math.max(1, Math.floor(i - Math.sqrt(i)))}`; // Creates a complex dependency web
+    let bType = i % 3;
+    let cost = Math.floor(10 + (i * 1.5));
+    if(bType === 0) {
+        BIRTH_UPGRADES.push({ id:`b${i}`, name:`Cosmic Node ${i}`, desc:`Permanent +${Math.floor(i/2)}% global CPS.`, cost:cost, req:parentId, effect: g=>g.permCpsMulti*=(1+(i/2)/100), bought:false });
+    } else if(bType === 1) {
+        BIRTH_UPGRADES.push({ id:`b${i}`, name:`Ancestral Tap ${i}`, desc:`Permanent +${i} click power.`, cost:cost, req:parentId, effect: g=>g.permCpcBonus+=i, bought:false });
+    } else {
+        BIRTH_UPGRADES.push({ id:`b${i}`, name:`Initial Burst ${i}`, desc:`Start with +${i*1000} dabbos.`, cost:cost, req:parentId, effect: g=>g.permStartDabbos+=(i*1000), bought:false });
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PLANETS (GENERATED 100 PLANETS)
+// ══════════════════════════════════════════════════════════════════
+const PLANETS = [];
+for(let i=1; i<=100; i++) {
+    PLANETS.push({
+        id: `p${i}`, 
+        name: `Sector ${i} Prime`,
+        desc: `Increases global CPS by ${i * 10}%`,
+        cost: Math.pow(10, 12 + Math.floor(i/2)), // Starts at 1 Trillion, scales monstrously
+        bonus: i * 0.10, // multiplier addition
+        req: i === 1 ? null : `p${i-1}`
+    });
+}
 
 let buyMode = 1;
 let panelMode = 'info';
@@ -797,6 +934,8 @@ const MILESTONES = [
   { id:'m6',  label:'🍞 1M Dabbos',      req:1000000,    type:'dabbos',  earned:false },
   { id:'m7',  label:'🍞 1B Dabbos',      req:1e9,        type:'dabbos',  earned:false },
   { id:'m8',  label:'🍞 1T Dabbos',      req:1e12,       type:'dabbos',  earned:false },
+  { id:'m8b', label:'🍞 1Qa Dabbos',     req:1e15,       type:'dabbos',  earned:false },
+  { id:'m8c', label:'🍞 1Qi Dabbos',     req:1e18,       type:'dabbos',  earned:false },
   { id:'m9',  label:'🖱 10 Clicks',      req:10,         type:'clicks',  earned:false },
   { id:'m10', label:'🖱 100 Clicks',     req:100,        type:'clicks',  earned:false },
   { id:'m11', label:'🖱 1K Clicks',      req:1000,       type:'clicks',  earned:false },
@@ -807,7 +946,7 @@ const MILESTONES = [
 
 const TIPS = [
   "That dabbo's looking tastier every click!",
-  "Grandmas need love — and more flour.",
+  "Chef Dabbos need love — and more flour.",
   "Golden Dabbos are rare. Click fast when you see one!",
   "Rebirth makes things harder, but you come back stronger.",
   "Birth Points are permanent — spend wisely.",
@@ -815,7 +954,21 @@ const TIPS = [
   "Sources say your dabbos are achieving sentience.",
   "Competitors are furious. Your dabbos are just better.",
   "A pilgrimage of Dabbos arrives from distant lands.",
-  "Even the final boss Dabbo is impressed. A little.",
+  "Even the final Ultimate Duo is impressed. A little.",
+  "Greasy forehead clicks hit different.",
+];
+
+const NEWS_POOL = [
+    {req: ()=>true, text: "📰 Dabbo opens new bakery, local economy stabilized."},
+    {req: ()=>true, text: "📰 Scientists baffled by Dabbo efficiency, 'It defies physics' claims expert."},
+    {req: ()=>BUILDINGS.find(b=>b.id==='chef').count > 10, text: "📰 Local Chef Dabbos demand overtime pay, threaten to withhold the dough."},
+    {req: ()=>G.totalDabbos > 1e6, text: "📰 Economy booms on Dabbo-backed currency!"},
+    {req: ()=>BUILDINGS.find(b=>b.id==='portal').count > 0, text: "📰 Dabbo Portal found in local basement, strange noises heard within."},
+    {req: ()=>G.rebirths > 0, text: "📰 Rebirth confirmed: Dabbo transcends mortal realm."},
+    {req: ()=>G.planetsUnlocked && G.planetsUnlocked.length > 0, text: "📰 Dabbo Empire expands to new planets. Aliens forced to bake."},
+    {req: ()=>BUILDINGS.find(b=>b.id==='rapper').count > 0, text: "📰 Rapper Dabbo drops new single: 'Dough & Flow', tops all charts."},
+    {req: ()=>BUILDINGS.find(b=>b.id==='ultimate').count > 0, text: "📰 Ultimate Duo spotted manipulating reality to bake more bread."},
+    {req: ()=>G.totalClicks > 5000, text: "📰 Reports of Greasy Foreheads increasing globally."}
 ];
 
 // ══════════════════════════════════════════════════════════════════
@@ -828,22 +981,27 @@ function init() {
   document.getElementById('lang-select').value = G.lang || 'en';
   document.getElementById('toggle-particles').checked = G.hideParticles;
   document.getElementById('toggle-skin-rotate').checked = G.skinRotateOnClick;
+  document.getElementById('toggle-mute-music').checked = G.muteMusic;
+  if(!G.planetsUnlocked) G.planetsUnlocked = [];
+  
   updateLang();
   setSkin(G.currentSkin || 'default');
   renderSkinsPanel();
 
-  // applyPermUpgrades(); // Commented out to fix duping on reload!
   recalcCps();
   renderBuildings();
   renderUpgrades();
   renderMilestones();
   renderBuildingsViewer();
+  renderPlanetsPanel();
   updateDisplay();
   scheduleGoldenDabbo();
   setInterval(gameTick, 100);
   setInterval(()=>saveGame(true), 5000);
   setInterval(()=>rotateTip(), 9000);
+  setInterval(updateNewsTicker, 15000);
   rotateTip();
+  updateNewsTicker();
 
   const now = Date.now();
   const away = (now - (G.lastVisit||now)) / 1000;
@@ -858,6 +1016,7 @@ function init() {
   // Remove loading screen after delay
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
+    if(G.shopName === "DaboKash") document.getElementById('mod-menu').style.display='block';
   }, 1500);
 }
 
@@ -869,6 +1028,7 @@ function updateLang() {
   document.getElementById('upgrades-title').textContent = t.upgrades;
   document.getElementById('btn-info').textContent = t.info;
   document.getElementById('btn-stats').textContent = t.stats;
+  document.getElementById('btn-planets').textContent = t.planets;
   document.getElementById('btn-options').textContent = t.options;
   document.getElementById('btn-skins').textContent = t.skins;
   document.getElementById('btn-buy1').textContent = t.buy1;
@@ -938,6 +1098,7 @@ function gameTick() {
   if(ugChanged && panelMode==='info') renderUpgrades();
 
   if(tickCount%2===0) updateDisplay();
+  if(tickCount%10===0) { updateVisualCursors(); updateChefUI(); }
   if(tickCount%20===0) updateBuildingAffordability();
   if(tickCount%50===0) { updateStatsPanel(); renderBuildingsViewer(); }
   if(tickCount%300===0) renderUpgrades();
@@ -947,17 +1108,83 @@ function gameTick() {
     G.rebirthPromptShown = true;
     document.getElementById('rebirth-prompt').classList.add('active');
   }
+  
+  // Random Rapper Audio trigger
+  if(tickCount%200===0 && !G.muteMusic) {
+      const rapperCount = BUILDINGS.find(b=>b.id==='rapper')?.count || 0;
+      if(rapperCount > 0 && Math.random() < 0.1) {
+          const audio = document.getElementById('rapper-audio');
+          if(audio.paused) {
+              audio.volume = 0.5;
+              audio.play().catch(e=>{});
+              setTimeout(()=>{ audio.pause(); }, 15000); // Play for 15s occasionally
+          }
+      }
+  }
 
   checkMilestones();
 }
 
+function handleAudioToggle() {
+    const audio = document.getElementById('rapper-audio');
+    if(G.muteMusic) {
+        audio.pause();
+    }
+}
+
+function updateNewsTicker() {
+    const validNews = NEWS_POOL.filter(n => n.req());
+    if(validNews.length > 0) {
+        const picked = validNews[Math.floor(Math.random() * validNews.length)];
+        const inner = document.getElementById('news-inner');
+        inner.textContent = picked.text + " • " + validNews[Math.floor(Math.random() * validNews.length)].text + " • ";
+    }
+}
+
 // ══════════════════════════════════════════════════════════════════
-// DISPLAY
+// DISPLAY & UI ELEMENTS
 // ══════════════════════════════════════════════════════════════════
 function updateDisplay() {
   const boostM = G.boostActive ? G.boostMulti : 1;
   document.getElementById('count-num').textContent = formatNum(Math.floor(G.dabbos)) + ' dabbos';
   document.getElementById('cps-display').textContent = 'per second: ' + formatNum((G.cps*boostM).toFixed(1)) + (G.boostActive?' ⚡':'');
+}
+
+function updateVisualCursors() {
+    let count = BUILDINGS.find(b=>b.id==='cursor').count;
+    let visCount = Math.min(count, 30); // Cap at 30 to prevent lag
+    let orbit = document.getElementById('cursor-orbit');
+    while(orbit.children.length < visCount) {
+        let c = document.createElement('img');
+        c.src = IMAGES.clickpoint;
+        c.className = 'orbit-cursor';
+        orbit.appendChild(c);
+    }
+    while(orbit.children.length > visCount) {
+        orbit.removeChild(orbit.lastChild);
+    }
+    let r = 110; 
+    for(let i=0; i<orbit.children.length; i++) {
+        let angle = (i / visCount) * Math.PI * 2;
+        orbit.children[i].style.left = (Math.cos(angle)*r + 90 - 12) + 'px';
+        orbit.children[i].style.top = (Math.sin(angle)*r + 90 - 12) + 'px';
+    }
+}
+
+function updateChefUI() {
+    let count = BUILDINGS.find(b=>b.id==='chef').count;
+    let visCount = Math.min(count, 15);
+    let ui = document.getElementById('chef-ui');
+    while(ui.children.length < visCount) {
+        let c = document.createElement('img');
+        c.src = IMAGES.chef;
+        c.className = 'chef-sprite';
+        c.style.animationDelay = (Math.random()*0.5) + 's';
+        ui.appendChild(c);
+    }
+    while(ui.children.length > visCount) {
+        ui.removeChild(ui.lastChild);
+    }
 }
 
 function updateBuildingAffordability() {
@@ -966,7 +1193,7 @@ function updateBuildingAffordability() {
     const row = document.querySelector(`.building-row[data-id="${b.id}"]`);
     if(!row) return;
     const canReveal = G.totalDabbos >= b.baseCost * 0.5 || b.count > 0;
-    if(!canReveal) return; // Ignore unrevealed elements
+    if(!canReveal) return; 
 
     const costEl = row.querySelector('.b-cost');
     if(costEl) { costEl.textContent='🍞 '+formatNum(cost); costEl.className='b-cost'+(G.dabbos>=cost?'':' cant-afford'); }
@@ -1026,7 +1253,15 @@ function buyBuilding(b) {
 function recalcCps() {
   let total = 0;
   BUILDINGS.forEach(b => { total += b.count * b.baseCps * (b.cpsMulti||1); });
-  G.cps = total * (G.cpsMulti||1) * (G.permCpsMulti||1);
+  
+  // Planet Multipliers
+  let planetMulti = 1;
+  G.planetsUnlocked.forEach(pid => {
+      let p = PLANETS.find(x => x.id === pid);
+      if(p) planetMulti += p.bonus;
+  });
+
+  G.cps = total * (G.cpsMulti||1) * (G.permCpsMulti||1) * planetMulti;
 }
 
 function renderBuildings() {
@@ -1097,6 +1332,45 @@ function renderInfoPanel() {
 }
 
 // ══════════════════════════════════════════════════════════════════
+// PLANETS PANEL LOGIC
+// ══════════════════════════════════════════════════════════════════
+function renderPlanetsPanel() {
+    const grid = document.getElementById('planets-grid');
+    grid.innerHTML = '';
+    
+    PLANETS.forEach(p => {
+        const isOwned = G.planetsUnlocked.includes(p.id);
+        const reqMet = !p.req || G.planetsUnlocked.includes(p.req);
+        const canAfford = G.totalDabbos >= p.cost;
+        
+        const card = document.createElement('div');
+        card.className = 'planet-card' + (isOwned ? ' owned' : '') + (!isOwned && !reqMet ? ' locked' : '');
+        card.innerHTML = `
+            <div class="p-name">${p.name}</div>
+            <div class="p-bonus">${p.desc}</div>
+            ${isOwned ? '<div class="p-cost" style="color:gold;">✓ Conquered</div>' : `<div class="p-cost">Cost: ${formatNum(p.cost)} dabbos</div>`}
+            ${!reqMet ? `<div style="font-size:8px;color:#f55;margin-top:2px;">Req: ${PLANETS.find(x=>x.id===p.req).name}</div>` : ''}
+        `;
+        
+        if(!isOwned && reqMet) {
+            card.addEventListener('click', () => {
+                if(G.dabbos >= p.cost) {
+                    G.dabbos -= p.cost;
+                    G.planetsUnlocked.push(p.id);
+                    recalcCps();
+                    renderPlanetsPanel();
+                    updateDisplay();
+                    showNotif('Planet Conquered!', `${p.name} is yours. CPS Boosted!`, 'achievement');
+                } else {
+                    showNotif('Not Enough Dabbos', `Need ${formatNum(p.cost)}`, '');
+                }
+            });
+        }
+        grid.appendChild(card);
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════
 // UPGRADES
 // ══════════════════════════════════════════════════════════════════
 function renderUpgrades() {
@@ -1104,13 +1378,12 @@ function renderUpgrades() {
   row.innerHTML = '';
 
   BASE_UPGRADES.forEach(u => {
-    if(u.purchased) return; // don't show purchased in top bar
+    if(u.purchased) return; 
     const btn = document.createElement('div');
     const revealed = G.totalClicks >= u.clickReq;
     const canAfford = G.dabbos >= u.cost;
 
     if(!revealed) {
-      // Blacked out — not yet revealed by clicks
       btn.className = 'upgrade-btn blacked';
       btn.innerHTML = `<div style="width:100%;height:100%;background:#000;"></div>`;
       btn.title = `Locked — need ${formatNum(u.clickReq)} clicks`;
@@ -1189,7 +1462,6 @@ document.getElementById('dabbo-img').addEventListener('click', function(e) {
   this.style.animation='dabboPop 0.15s ease';
   setTimeout(()=>this.style.animation='',200);
   checkMilestones();
-  // Re-render upgrades occasionally to update blackout states
   if(G.totalClicks % 10 === 0) renderUpgrades();
 });
 
@@ -1207,7 +1479,7 @@ function spawnClickEffect(e, amt) {
   let x = e.clientX-rect.left;
   let y = e.clientY-rect.top;
   
-  if(!e.clientX) { x = rect.width/2; y = rect.height/2; } // for spacebar
+  if(!e.clientX) { x = rect.width/2; y = rect.height/2; } 
   
   const img = document.createElement('img');
   img.src = IMAGES.clickpoint; img.className='click-cursor';
@@ -1224,10 +1496,8 @@ function spawnClickEffect(e, amt) {
 // ══════════════════════════════════════════════════════════════════
 let goldenTimer = null;
 let goldenVisible = false;
-let goldenClickCounted = false;
 
 function scheduleGoldenDabbo() {
-  // 15–25 minutes random interval
   const minMs = 15 * 60 * 1000;
   const maxMs = 25 * 60 * 1000;
   const delay = minMs + Math.random() * (maxMs - minMs);
@@ -1239,14 +1509,12 @@ function showGoldenDabbo() {
   goldenVisible = true;
   const el = document.getElementById('golden-dabbo');
   const wrap = document.getElementById('dabbo-wrap');
-  // Random position
   const margin = 70;
   const ww = wrap.offsetWidth - margin*2;
   const wh = wrap.offsetHeight - margin*2;
   el.style.left = (margin + Math.random()*ww) + 'px';
   el.style.top  = (margin + Math.random()*wh) + 'px';
   el.style.display = 'block';
-  // Auto-disappear after 30 seconds if not clicked
   setTimeout(()=>hideGoldenDabbo(false), 30000);
   showNotif('✨ Golden Dabbo!', 'A rare Golden Dabbo has appeared! Click it fast!', 'golden-notif');
 }
@@ -1263,7 +1531,6 @@ function hideGoldenDabbo(clicked) {
     document.getElementById('boost-bar').classList.add('active');
     document.getElementById('boost-fill').style.width = '100%';
     showNotif('⚡ 2× BOOST!', `Golden Dabbo activated! ${boostDuration/60} min of double production!`, 'golden-notif');
-    // Milestone
     const m = MILESTONES.find(m=>m.id==='m13');
     if(m && !m.earned) { m.earned=true; showNotif('Milestone!','✨ First Golden Dabbo clicked!','achievement'); renderMilestones(); }
   }
@@ -1302,13 +1569,11 @@ function dismissRebirthPrompt() {
 
 function doRebirth() {
   document.getElementById('rebirth-prompt').classList.remove('active');
-  // Determine birth points (1 per rebirth, minimum 1)
-  const bpGained = 1;
+  const bpGained = Math.max(1, Math.floor(Math.log10(G.totalDabbos) - 11)); // Gives more BP later
   G.birthPoints += bpGained;
   G.rebirths++;
   document.getElementById('rb-num').textContent = G.rebirths;
 
-  // Show rebirth animation screen
   const rs = document.getElementById('rebirth-screen');
   rs.classList.add('active');
   const dabboImg = document.getElementById('rebirth-dabbo');
@@ -1316,7 +1581,6 @@ function doRebirth() {
   document.getElementById('rebirth-text').textContent = 'The Dabbo Transcends...';
   document.getElementById('rebirth-sub').textContent = 'As the eons of bread-baking fade away, a stressed Dabbo emerges from the cosmic flour...';
 
-  // Fade to stressed
   setTimeout(()=>{
     dabboImg.style.opacity='0';
     setTimeout(()=>{
@@ -1327,7 +1591,6 @@ function doRebirth() {
     }, 1000);
   }, 2500);
 
-  // After 5s, go to birth point screen
   setTimeout(()=>{
     rs.classList.remove('active');
     showBirthScreen();
@@ -1345,10 +1608,26 @@ function renderBirthUpgrades() {
   grid.innerHTML = '';
   BIRTH_UPGRADES.forEach(u => {
     const canAfford = G.birthPoints >= u.cost;
+    let reqMet = true;
+    let reqName = "";
+    if(u.req) {
+        const reqUpg = BIRTH_UPGRADES.find(x => x.id === u.req);
+        if(reqUpg) {
+            reqMet = reqUpg.bought;
+            reqName = reqUpg.name;
+        }
+    }
+    
     const card = document.createElement('div');
-    card.className = 'birth-upg-card' + (u.bought?' bought':'') + (!u.bought&&!canAfford?' cant':'');
-    card.innerHTML = `<div class="buc-name">${u.name}</div><div class="buc-desc">${u.desc}</div><div class="buc-cost">${u.bought?'✓ Bought':u.cost+' BP'}</div>`;
-    if(!u.bought && canAfford) {
+    card.className = 'birth-upg-card' + (u.bought?' bought':'') + (!u.bought&&(!canAfford||!reqMet)?' cant':'');
+    card.innerHTML = `
+        <div class="buc-name">${u.name}</div>
+        <div class="buc-desc">${u.desc}</div>
+        <div class="buc-cost">${u.bought?'✓ Bought':u.cost+' BP'}</div>
+        ${!reqMet ? `<div class="buc-req">Requires: ${reqName}</div>` : ''}
+    `;
+    
+    if(!u.bought && canAfford && reqMet) {
       card.addEventListener('click', ()=>{
         G.birthPoints -= u.cost;
         G.totalBPSpent = (G.totalBPSpent||0)+u.cost;
@@ -1364,7 +1643,6 @@ function renderBirthUpgrades() {
 
 function startAfterBirth() {
   document.getElementById('birth-screen').classList.remove('active');
-  // Reset run state
   G.dabbos = 0;
   G.totalDabbos = 0;
   G.totalClicks = 0;
@@ -1380,21 +1658,19 @@ function startAfterBirth() {
   G.permCpsMulti = 1;
   G.permStartDabbos = 0;
   G.permBuildingDiscount = 0;
+  G.planetsUnlocked = [];
 
-  // Reset upgrades
   BASE_UPGRADES.forEach(u=>{ u.purchased=false; u.unlocked=false; });
-  // Reset milestones (except rebirth one and golden)
   MILESTONES.forEach(m=>{ if(m.type!=='rebirth') m.earned=false; });
-  // Rebuild buildings with new difficulty
   BUILDINGS = makeBuildingDefs();
 
-  // Apply perm upgrades fresh
   applyPermUpgrades();
   recalcCps();
   renderBuildings();
   renderUpgrades();
   renderMilestones();
   renderBuildingsViewer();
+  renderPlanetsPanel();
   updateDisplay();
   document.getElementById('rb-num').textContent = G.rebirths;
   saveGame(true);
@@ -1438,6 +1714,7 @@ function switchPanel(name) {
   document.getElementById('panel-'+name).style.display='block';
   if(name==='stats') updateStatsPanel();
   if(name==='info') { renderInfoPanel(); renderMilestones(); }
+  if(name==='planets') { renderPlanetsPanel(); }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1450,6 +1727,7 @@ function saveGame(silent) {
     upgrades: BASE_UPGRADES.map(u=>({ id:u.id, purchased:u.purchased, unlocked:u.unlocked })),
     milestones: MILESTONES.map(m=>({ id:m.id, earned:m.earned })),
     birthUpgrades: BIRTH_UPGRADES.map(u=>({ id:u.id, bought:u.bought })),
+    planets: G.planetsUnlocked
   };
   try { localStorage.setItem('dabboSave_v2', JSON.stringify(state)); } catch(e){}
   if(!silent) showNotif('Saved!','Your dabbo empire is safe. 💾');
@@ -1461,13 +1739,14 @@ function loadGame() {
     if(!raw) return;
     const state = JSON.parse(raw);
     Object.assign(G, state.G);
+    if(state.planets) G.planetsUnlocked = state.planets;
     state.buildings.forEach(sb => {
       const b = BUILDINGS.find(x=>x.id===sb.id);
       if(b){ b.count=sb.count; b.cpsMulti=sb.cpsMulti||1; if(sb.baseCost) b.baseCost=sb.baseCost; }
     });
     state.upgrades.forEach(su => {
       const u = BASE_UPGRADES.find(x=>x.id===su.id);
-      if(u){ u.purchased=su.purchased; u.unlocked=su.unlocked; /* if(u.purchased) u.effect(G); Removed to prevent duping! */ }
+      if(u){ u.purchased=su.purchased; u.unlocked=su.unlocked; }
     });
     state.milestones && state.milestones.forEach(sm=>{
       const m = MILESTONES.find(x=>x.id===sm.id);
@@ -1502,6 +1781,8 @@ function resetGame() { localStorage.removeItem('dabboSave_v2'); location.reload(
 // ══════════════════════════════════════════════════════════════════
 function formatNum(n) {
   n=Number(n);
+  if(n>=1e24) return (n/1e24).toFixed(2)+'Sp';
+  if(n>=1e21) return (n/1e21).toFixed(2)+'Sx';
   if(n>=1e18) return (n/1e18).toFixed(2)+'Qi';
   if(n>=1e15) return (n/1e15).toFixed(2)+'Qa';
   if(n>=1e12) return (n/1e12).toFixed(2)+'T';
@@ -1542,6 +1823,12 @@ function renameBakery() {
             showNotif('Easter Egg!', '✨ +100,000 Dabbos for naming it DaboCam!', 'achievement');
             updateDisplay();
         }
+        
+        if (G.shopName === "DaboKash") {
+            document.getElementById('mod-menu').style.display = 'block';
+            showNotif('Dev Access Granted', 'Mod Menu unlocked.', 'golden-notif');
+        }
+
         saveGame(true);
     }
 }
