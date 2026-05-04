@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<script>
+    (function() {
+        if (window.location.hash === '#crunch') {
+            // Valid — strip the #crunch from the URL bar so it looks clean
+            window.history.replaceState(null, '', window.location.pathname);
+        } else {
+            // No hash or wrong hash — redirect to bye.html
+            window.location.replace('bye.html');
+        }
+    })();
+</script>
+
+<meta property="og:title" content="Crunch Education Tools" />
+<meta property="og:description" content="Crunchingmath.org offers many free lessons these include Algebra, History, English, and other topics of your choice." />
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/UGBONTOP/crunchingmath@main/images/crunchmathfr.png" />
+<meta property="og:url" content="https://crunchingmath.web.app" />
+<meta property="og:type" content="website" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Desmos Learning | Crunchmath.org </title>
+    <link rel="icon" type="image/png" href="images/crunchmathfr.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* =========================================
+           CRUNCH GLASS OS - DESIGN SYSTEM 3.0
+           (ULTRA-MODERN REVAMP)
+           ========================================= */
+
+        :root {
+            /* CORE COLORS (Default Obsidian Neon) */
+            --bg-deep: #030305;
+            --accent-primary: #8b5cf6; /* Vibrant Violet */
+            --accent-secondary: #3b82f6; /* Azure Blue */
+            --accent-glow: rgba(139, 92, 246, 0.7);
+            
+            /* TEXT */
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            
+            /* GLASS VARIABLES 3.0 */
+            --glass-base: rgba(15, 15, 20, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-highlight: rgba(255, 255, 255, 0.12);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(30px);
+            
+            /* DIMENSIONS */
+            --sidebar-width: 90px;
+            --card-radius: 20px;
+            
+            /* FONTS */
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        /* --- THEME DEFINITIONS --- */
+
+        /* Light Mode */
+        body.theme-light {
+            --bg-deep: #f8fafc;
+            --accent-primary: #4f46e5;
+            --accent-secondary: #0284c7;
+            --accent-glow: rgba(79, 70, 229, 0.4);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --glass-base: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-highlight: rgba(0, 0, 0, 0.05);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        body.theme-midnight { --bg-deep: #020617; --accent-primary: #38bdf8; --accent-secondary: #1d4ed8; --accent-glow: rgba(56, 189, 248, 0.6); --glass-base: rgba(10, 15, 30, 0.5); }
+        body.theme-forest { --bg-deep: #022c22; --accent-primary: #10b981; --accent-secondary: #047857; --accent-glow: rgba(16, 185, 129, 0.6); --glass-base: rgba(5, 40, 30, 0.5); }
+        body.theme-sunrise { --bg-deep: #2a1b15; --accent-primary: #fb923c; --accent-secondary: #be123c; --accent-glow: rgba(251, 146, 60, 0.6); --glass-base: rgba(40, 15, 10, 0.5); }
+        body.theme-magma { --bg-deep: #1a0505; --accent-primary: #ef4444; --accent-secondary: #991b1b; --accent-glow: rgba(239, 68, 68, 0.6); --glass-base: rgba(40, 5, 5, 0.5); }
+        body.theme-cyberpunk { --bg-deep: #0a0a00; --accent-primary: #eab308; --accent-secondary: #f59e0b; --accent-glow: rgba(234, 179, 8, 0.7); --glass-base: rgba(20, 20, 5, 0.6); --glass-border: rgba(255, 255, 0, 0.2); }
+        body.theme-vaporwave { --bg-deep: #12001f; --accent-primary: #d946ef; --accent-secondary: #06b6d4; --accent-glow: rgba(217, 70, 239, 0.7); --glass-base: rgba(30, 0, 40, 0.5); }
+        body.theme-dracula { --bg-deep: #0b0a14; --accent-primary: #a855f7; --accent-secondary: #ff5555; --accent-glow: rgba(168, 85, 247, 0.6); --glass-base: rgba(20, 15, 35, 0.5); }
+        body.theme-neon-pink { --bg-deep: #1a0010; --accent-primary: #ff007f; --accent-secondary: #ff00ff; --accent-glow: rgba(255, 0, 127, 0.8); --glass-base: rgba(30, 0, 15, 0.5); }
+        body.theme-matrix { --bg-deep: #001100; --accent-primary: #00ff00; --accent-secondary: #008800; --accent-glow: rgba(0, 255, 0, 0.7); --glass-base: rgba(0, 15, 0, 0.6); --glass-border: rgba(0, 255, 0, 0.3); }
+        body.theme-ocean { --bg-deep: #001020; --accent-primary: #00ffff; --accent-secondary: #0088ff; --accent-glow: rgba(0, 255, 255, 0.7); --glass-base: rgba(0, 15, 30, 0.5); }
+        body.theme-synthwave { --bg-deep: #0d0221; --accent-primary: #ff00a0; --accent-secondary: #00d2ff; --accent-glow: rgba(255, 0, 160, 0.8); --glass-base: rgba(15, 5, 30, 0.6); }
+
+        /* Legacy UI Overrides */
+        body.legacy-ui .action-card:hover, body.legacy-ui .game-card:hover {
+            transform: scale(1.02);
+            box-shadow: none;
+        }
+
+        /* GLOBAL RESET */
+        *, *::before, *::after { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        input, textarea, select { user-select: text; }
+
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background-color: var(--bg-deep); color: var(--text-main);
+            font-family: var(--font-body); transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s ease;
+        }
+
+        /* GLOW EFFECTS */
+        body.enable-glow .btn-pri:hover { box-shadow: 0 0 25px var(--accent-glow); }
+        body.enable-glow .brand-icon:hover { box-shadow: 0 0 35px var(--accent-primary); }
+
+        /* BACKGROUND ELEMENTS */
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.9; transition: opacity 0.5s ease; }
+        .ui-noise { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); z-index: 1; pointer-events: none; mix-blend-mode: overlay; }
+        .ambient-glow { position: fixed; top: -10%; left: -10%; width: 120vw; height: 120vh; background: radial-gradient(circle at 50% 50%, var(--accent-glow) 0%, transparent 60%); opacity: 0.12; z-index: 0; pointer-events: none; animation: ambientDrift 20s ease-in-out infinite alternate; }
+        @keyframes ambientDrift { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.1) translate(2%, 2%); } }
+        #customBgLayer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 1; opacity: 1; filter: brightness(0.4) blur(12px); display: none; transition: background-image 0.5s ease; }
+
+        /* =========================================
+           LOGIN / TITLE SCREEN (REVAMPED)
+           ========================================= */
+        #loginScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .login-box {
+            background: linear-gradient(135deg, var(--glass-base), rgba(0,0,0,0.5));
+            border: 1px solid var(--glass-border);
+            border-radius: 40px; padding: 60px 50px; width: 100%; max-width: 480px;
+            text-align: center; box-shadow: var(--glass-shadow), 0 0 40px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden;
+        }
+
+        .login-box::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0.2; pointer-events: none; z-index: 0;
+        }
+
+        .login-title {
+            position: relative; z-index: 1;
+            font-family: var(--font-display); font-size: 4rem; font-weight: 900; line-height: 0.9;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-primary) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px;
+            letter-spacing: -2px;
+        }
+
+        .login-subtitle { position: relative; z-index: 1; color: var(--text-muted); margin-bottom: 40px; font-weight: 400; font-size: 1.1rem; }
+        
+        .login-input {
+            position: relative; z-index: 1;
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; padding: 18px 24px; border-radius: 16px; margin-bottom: 15px;
+            font-family: var(--font-body); font-size: 1.05rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .login-input:focus { border-color: var(--accent-primary); box-shadow: 0 0 20px var(--accent-glow); outline: none; transform: translateY(-2px); background: rgba(0,0,0,0.6); }
+        
+        .login-btn {
+            position: relative; z-index: 1;
+            width: 100%; background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            color: #fff; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1.1rem; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); margin-bottom: 15px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 2px;
+        }
+        .login-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px var(--accent-glow); filter: brightness(1.2); }
+        
+        .login-skip { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); }
+        .login-skip:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.05); box-shadow: none; }
+        .login-error { position: relative; z-index: 1; color: #ff4757; font-size: 0.95rem; margin-bottom: 15px; font-weight: 600; min-height: 20px; }
+
+        /* =========================================
+           FLOATING DOCK SYSTEM (NEW)
+           ========================================= */
+        #appWrapper { display: none; width: 100%; height: 100vh; position: relative; z-index: 10; transition: all 0.5s ease; opacity: 0; }
+        
+        .sidebar-rail { 
+            background: var(--glass-base); 
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); 
+            border: 1px solid var(--glass-border); 
+            display: flex; align-items: center; justify-content: flex-start; 
+            z-index: 100; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); gap: 15px; flex-shrink: 0; 
+            box-shadow: var(--glass-shadow);
+            border-radius: 30px;
+            margin: 20px;
+        }
+        
+        .brand-icon { width: 56px; height: 56px; border-radius: 18px; overflow: hidden; margin-bottom: 0; cursor: pointer; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .brand-icon:hover { transform: scale(1.15) rotate(10deg); }
+        
+        .nav-group { display: flex; gap: 15px; align-items: center; }
+        .nav-item { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted); transition: all 0.3s ease; cursor: pointer; position: relative; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; transform: translateY(-3px); }
+        .nav-item.active-nav { color: #fff; background: var(--accent-primary); box-shadow: 0 0 15px var(--accent-glow); }
+        .nav-item[data-tooltip]:hover::after { content: attr(data-tooltip); position: absolute; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-family: var(--font-body); font-weight: 600; white-space: nowrap; pointer-events: none; opacity: 0; animation: fadeInTooltip 0.3s forwards; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        
+        @keyframes fadeInTooltip { to { opacity: 1; } }
+
+        /* DOCK POSITIONING VARIANTS (Floating) */
+        #appWrapper.pos-left { flex-direction: row; }
+        #appWrapper.pos-left .sidebar-rail { width: var(--sidebar-width); height: calc(100vh - 40px); flex-direction: column; padding: 25px 0; }
+        #appWrapper.pos-left .nav-group { flex-direction: column; width: 100%; }
+        #appWrapper.pos-left .brand-icon { margin-bottom: 25px; }
+        #appWrapper.pos-left .nav-spacer { margin-top: auto; }
+        #appWrapper.pos-left .nav-item[data-tooltip]:hover::after { left: 75px; top: 50%; transform: translateY(-50%); }
+
+        #appWrapper.pos-right { flex-direction: row-reverse; }
+        #appWrapper.pos-right .sidebar-rail { width: var(--sidebar-width); height: calc(100vh - 40px); flex-direction: column; padding: 25px 0; }
+        #appWrapper.pos-right .nav-group { flex-direction: column; width: 100%; }
+        #appWrapper.pos-right .brand-icon { margin-bottom: 25px; }
+        #appWrapper.pos-right .nav-spacer { margin-top: auto; }
+        #appWrapper.pos-right .nav-item[data-tooltip]:hover::after { right: 75px; top: 50%; transform: translateY(-50%); }
+
+        #appWrapper.pos-bottom { flex-direction: column-reverse; }
+        #appWrapper.pos-bottom .sidebar-rail { width: calc(100vw - 40px); height: var(--sidebar-width); flex-direction: row; padding: 0 25px; }
+        #appWrapper.pos-bottom .nav-group { flex-direction: row; width: auto; }
+        #appWrapper.pos-bottom .brand-icon { margin-bottom: 0; margin-right: 25px; }
+        #appWrapper.pos-bottom .nav-spacer { margin-top: 0; margin-left: auto; }
+        #appWrapper.pos-bottom .nav-item[data-tooltip]:hover::after { bottom: 75px; left: 50%; transform: translateX(-50%); }
+
+        #appWrapper.pos-top { flex-direction: column; }
+        #appWrapper.pos-top .sidebar-rail { width: calc(100vw - 40px); height: var(--sidebar-width); flex-direction: row; padding: 0 25px; }
+        #appWrapper.pos-top .nav-group { flex-direction: row; width: auto; }
+        #appWrapper.pos-top .brand-icon { margin-bottom: 0; margin-right: 25px; }
+        #appWrapper.pos-top .nav-spacer { margin-top: 0; margin-left: auto; }
+        #appWrapper.pos-top .nav-item[data-tooltip]:hover::after { top: 75px; left: 50%; transform: translateX(-50%); }
+
+        /* =========================================
+           MAIN CONTENT AREA
+           ========================================= */
+        .main-stage { flex-grow: 1; position: relative; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; height: 100%; padding: 20px 40px 40px 20px; }
+        #appWrapper.pos-left .main-stage { padding-left: 0; }
+        #appWrapper.pos-right .main-stage { padding-right: 0; }
+        #appWrapper.pos-top .main-stage { padding-top: 0; }
+        #appWrapper.pos-bottom .main-stage { padding-bottom: 0; }
+
+        /* ONLINE STATUS PILL */
+        .status-bar-container { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 20px; position: sticky; top: 0; z-index: 50; padding-top: 10px; }
+        .online-pill {
+            background: var(--glass-base); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border);
+            padding: 10px 20px; border-radius: 100px; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+        .online-pill:hover { border-color: var(--accent-primary); box-shadow: 0 0 20px var(--accent-glow); }
+        .pulse-dot { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; animation: pulseDot 2s infinite; }
+        @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+        /* HERO VIEW */
+        #view-home { min-height: calc(100% - 60px); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.5s ease; display: none; }
+        #view-home.active { display: flex; opacity: 1; }
+
+        .hero-title { font-family: var(--font-display); font-size: 7vw; font-weight: 900; line-height: 0.9; text-align: center; background: linear-gradient(135deg, #fff 0%, var(--accent-primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); letter-spacing: -3px; text-transform: lowercase; }
+        .hero-version { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 8px; color: var(--text-muted); margin-bottom: 50px; font-weight: 700; background: var(--glass-base); padding: 5px 20px; border-radius: 100px; border: 1px solid var(--glass-border); }
+
+        .quick-actions { display: flex; gap: 25px; perspective: 1200px; flex-wrap: wrap; justify-content: center; max-width: 1200px; }
+
+        /* SLEEK NEW ACTION CARDS */
+        .action-card {
+            width: 200px; height: 140px; background: linear-gradient(145deg, var(--glass-base), rgba(0,0,0,0.3)); border: 1px solid var(--glass-border); border-radius: 24px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; backdrop-filter: blur(20px);
+            position: relative; z-index: 1; overflow: hidden; box-shadow: var(--glass-shadow);
+        }
+        .action-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 60%); opacity: 0; transition: opacity 0.4s ease; z-index: -1; }
+        .action-card:hover { transform: translateY(-10px) rotateX(10deg); border-color: var(--accent-primary); box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--accent-glow); }
+        .action-card:hover::before { opacity: 0.3; }
+
+        .ac-icon { font-size: 3rem; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        .action-card:hover .ac-icon { transform: scale(1.3) translateY(-5px); }
+        .ac-label { font-weight: 700; font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 1px; color: var(--text-main); text-transform: uppercase; }
+
+        /* GAMES VIEW */
+        #view-games { padding: 20px 40px; max-width: 2400px; margin: 0 auto; display: none; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        #view-games.active { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* COMBINED LAYOUT STATES */
+        .main-stage.combined-mode #view-home { min-height: 60vh; padding-top: 40px; display: flex; opacity: 1; }
+        .main-stage.combined-mode #view-games { display: block; opacity: 1; padding-top: 0; animation: none; }
+
+        .view-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; }
+        .vh-title { font-family: var(--font-display); font-size: 4rem; font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; }
+        .vh-pill { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 12px; font-weight: 600; color: var(--text-muted); font-family: var(--font-body); }
+
+        /* COMMAND PALETTE SEARCH UI */
+        .search-bar-ui {
+            background: var(--glass-base); border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 10px; display: flex; gap: 15px; margin-bottom: 40px; box-shadow: var(--glass-shadow); backdrop-filter: var(--glass-blur); align-items: center;
+            transition: all 0.3s ease;
+        }
+        .search-bar-ui:focus-within { border-color: var(--accent-primary); box-shadow: 0 10px 40px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow); transform: translateY(-2px); }
+
+        .sb-icon { font-size: 1.5rem; padding-left: 15px; color: var(--text-muted); }
+        .sb-input { flex-grow: 1; background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; padding: 10px 5px; font-family: var(--font-body); font-weight: 500; }
+        .sb-input::placeholder { color: rgba(255,255,255,0.3); }
+        .sb-sort { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: #fff; padding: 12px 20px; border-radius: 14px; font-family: var(--font-body); cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .sb-sort:hover { background: rgba(255,255,255,0.1); }
+        .sb-btn { background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: #fff; border: none; padding: 0 30px; border-radius: 14px; font-weight: 800; font-family: var(--font-display); text-transform: uppercase; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); letter-spacing: 1px; }
+        .sb-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent-glow); }
+
+        /* =========================================
+           THE NEW GAME GRID & TAIL CHASE CARDS
+           ========================================= */
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 25px; padding-bottom: 100px; }
+
+        .game-card {
+            aspect-ratio: 1 / 1; 
+            background: var(--glass-base); 
+            border-radius: 24px; 
+            position: relative; 
+            overflow: hidden;
+            border: 1px solid transparent; 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            cursor: pointer; 
+            z-index: 1; 
+            padding: 4px; /* Space for glowing border */
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+        }
+
+        /* The Animated Tail Chase Glowing Border */
+        .game-card::before {
+            content: ''; 
+            position: absolute; 
+            top: 50%; left: 50%; 
+            width: 150%; height: 150%;
+            background: conic-gradient(from 0deg, transparent 70%, var(--accent-primary) 100%);
+            transform-origin: center;
+            animation: tailChase 2s linear infinite; 
+            opacity: 0; 
+            z-index: 0;
+            transition: opacity 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        
+        .game-card:hover::before { opacity: 1; }
+        
+        /* The inner card covering the middle of the conic gradient */
+        .game-card::after {
+            content: ''; 
+            position: absolute; 
+            inset: 3px;
+            background: var(--bg-deep); 
+            border-radius: 20px; 
+            z-index: 1;
+            transition: background 0.3s ease;
+        }
+
+        .game-card:hover::after { background: rgba(0,0,0,0.8); }
+
+        .game-card img { 
+            position: relative; z-index: 2;
+            width: 100%; height: 100%; object-fit: cover; 
+            border-radius: 18px;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease; 
+            filter: brightness(0.85) contrast(1.1); 
+        }
+        
+        .gc-info { 
+            position: absolute; bottom: 3px; left: 3px; width: calc(100% - 6px); 
+            padding: 20px 15px 12px 15px; 
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, transparent); 
+            border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            display: flex; justify-content: space-between; align-items: flex-end; z-index: 3; 
+        }
+        
+        .gc-title { font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,1); line-height: 1.1; }
+
+        .game-card:hover { z-index: 50; transform: scale(1.1) translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px var(--accent-glow); }
+        .game-card:hover img { transform: scale(1.15); filter: brightness(1.2) contrast(1.1); }
+        .game-card:hover .gc-info { transform: translateY(0); }
+
+        @keyframes tailChase { 
+            0% { transform: translate(-50%, -50%) rotate(0deg); } 
+            100% { transform: translate(-50%, -50%) rotate(360deg); } 
+        }
+
+        .heart-toggle { font-size: 1.3rem; opacity: 0.5; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; color: #fff; }
+        .heart-toggle:hover { opacity: 1; transform: scale(1.4); color: #ec4899; filter: drop-shadow(0 0 5px #ec4899); }
+        .heart-toggle.active { color: #ec4899; opacity: 1; filter: drop-shadow(0 0 5px #ec4899); }
+
+        #favSection { display: none; margin-bottom: 60px; }
+        .section-label { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; color: var(--accent-primary); font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .section-label::before { content:''; width: 12px; height: 12px; background: var(--accent-primary); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow); }
+
+        /* =========================================
+           MODALS (GLOSSY DIALOGS 3.0)
+           ========================================= */
+        .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .gloss-modal { background: var(--glass-base); border: 1px solid var(--glass-border); width: 100%; max-width: 600px; border-radius: 32px; padding: 40px; box-shadow: var(--glass-shadow), 0 0 40px rgba(0,0,0,0.8); position: relative; transform: scale(0.95) translateY(20px); animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; overflow: hidden; }
+        .gloss-modal::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); }
+        
+        @keyframes scaleIn { to { transform: scale(1) translateY(0); } }
+        
+        .gm-header { font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px; color: var(--text-main); }
+        .form-row { margin-bottom: 25px; }
+        .form-row label { display: block; margin-bottom: 10px; font-weight: 700; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .input-glass { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 16px; border-radius: 16px; font-family: var(--font-body); font-size: 1rem; transition: all 0.3s ease; }
+        .input-glass:focus { border-color: var(--accent-primary); background: rgba(0,0,0,0.5); box-shadow: 0 0 15px var(--accent-glow); }
+        select.input-glass { appearance: none; cursor: pointer; }
+        select.input-glass option { background: #0f1014; }
+        .gm-footer { display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; }
+        .btn-act { padding: 14px 28px; border-radius: 14px; font-weight: 700; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .btn-sec { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); }
+        .btn-sec:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        .btn-pri { background: var(--accent-primary); color: #fff; }
+        .btn-pri:hover { background: var(--accent-secondary); transform: translateY(-2px); box-shadow: 0 10px 20px var(--accent-glow); }
+        .btn-dang { background: #ef4444; color: #fff; }
+
+        /* OS SETTINGS MENU */
+        .gloss-modal.settings-modal { max-width: 900px; height: 600px; padding: 0; display: flex; overflow: hidden; }
+        .os-settings-layout { display: flex; width: 100%; height: 100%; }
+        .os-sidebar { width: 240px; background: rgba(0,0,0,0.4); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; display: flex; flex-direction: column; gap: 10px; }
+        .os-tab-btn { text-align: left; background: transparent; border: none; color: var(--text-muted); padding: 14px 20px; border-radius: 12px; cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .os-tab-btn:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateX(5px); }
+        .os-tab-btn.active { background: var(--accent-primary); color: #fff; box-shadow: 0 5px 15px var(--accent-glow); }
+        .os-content-area { flex-grow: 1; padding: 40px; overflow-y: auto; background: linear-gradient(135deg, transparent, rgba(0,0,0,0.2)); }
+        .os-section { display: none; animation: fadeIn 0.4s ease; }
+        .os-section.active { display: block; }
+        .setting-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .setting-item:hover { border-color: rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); transform: translateY(-2px); }
+        .setting-label h4 { margin: 0 0 5px 0; font-size: 1.1rem; font-family: var(--font-display); }
+        .setting-label p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+        .file-upload-ui { display: inline-block; padding: 10px 20px; background: rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); }
+        .file-upload-ui:hover { background: var(--accent-primary); border-color: var(--accent-primary); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; border: 2px solid var(--bg-deep); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+        /* IN-PAGE LAUNCHER */
+        #inPageLauncher { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; flex-direction: column; }
+        .ipl-bar { height: 60px; background: rgba(10,10,15,0.9); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; padding: 0 30px; justify-content: space-between; backdrop-filter: blur(20px); }
+        .ipl-back-btn { background: var(--accent-primary); border: none; color: white; padding: 8px 20px; border-radius: 12px; cursor: pointer; font-weight: 800; font-family: var(--font-display); font-size: 1rem; transition: 0.3s; }
+        .ipl-back-btn:hover { background: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); transform: scale(1.05); }
+        #inPageFrame { flex-grow: 1; width: 100%; border: none; background: #000; }
+
+        /* MUSIC TOGGLE BUTTON */
+        #musicToggleBtn {
+            position: fixed; bottom: 30px; right: 30px; z-index: 500;
+            width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--glass-border);
+            background: var(--glass-base); backdrop-filter: var(--glass-blur); color: #fff; font-size: 1.8rem;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: var(--glass-shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #musicToggleBtn:hover { transform: scale(1.15) rotate(15deg); background: var(--accent-primary); border-color: var(--accent-primary); box-shadow: 0 10px 30px var(--accent-glow); }
+
+        /* =========================================
+           DOWNLOAD TOAST NOTIFICATION
+           ========================================= */
+        #downloadToast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--glass-base); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 20px 30px; z-index: 99999; display: flex; align-items: flex-start; gap: 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--accent-glow);
+            max-width: 450px; width: 90%;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+            opacity: 0; pointer-events: none;
+        }
+        #downloadToast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
+        .toast-icon { font-size: 2rem; flex-shrink: 0; line-height: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+        .toast-body { display: flex; flex-direction: column; gap: 5px; }
+        .toast-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text-main); }
+        .toast-msg { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .toast-close { margin-left: auto; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 0 0 0 10px; flex-shrink: 0; transition: color 0.2s; }
+        .toast-close:hover { color: #fff; }
+
+        /* Glowing C Logo */
+        .glowing-c {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 18px;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body class="enable-glow theme-midnight">
+
+    <audio id="bgMusic" src="music/background.mp3" loop></audio>
+    <button id="musicToggleBtn" onclick="toggleMusic()" title="Toggle Background Music">🔇</button>
+
+    <div id="loginScreen">
+        <div class="login-box">
+            <h1 class="login-title">CRUNCH<br>ARCADE</h1>
+            <p class="login-subtitle">Sign in to sync your game data!</p>
+            <div id="loginError" class="login-error"></div>
+            <input type="text" id="usernameInput" class="login-input" placeholder="Username">
+            <input type="password" id="passwordInput" class="login-input" placeholder="Password">
+            <button class="login-btn" onclick="handleLogin()">Login</button>
+            <button class="login-btn login-skip" onclick="skipLogin()">Play as Guest</button>
+        </div>
+    </div>
+
+    <div id="customBgLayer"></div>
+    <div class="ui-noise"></div>
+    <div class="ambient-glow"></div>
+    <canvas id="bgCanvas"></canvas>
+
+    <div id="inPageLauncher">
+        <div class="ipl-bar">
+            <div style="font-weight:900; font-family:var(--font-display); font-size:1.2rem; color:var(--text-main); letter-spacing:2px;">CRUNCH ARCADE</div>
+            <button class="ipl-back-btn" onclick="closeInPageGame()">Terminate Game</button>
+        </div>
+        <iframe id="inPageFrame" src=""></iframe>
+    </div>
+
+    <div id="downloadToast">
+        <div class="toast-icon">⚡</div>
+        <div class="toast-body">
+            <div class="toast-title">System Alert</div>
+            <div class="toast-msg">You are downloading a testing build. Features may be unstable. (OUTDATED)</div>
+        </div>
+        <button class="toast-close" onclick="document.getElementById('downloadToast').classList.remove('show')">✕</button>
+    </div>
+
+    <div id="appWrapper" class="pos-left">
+        
+        <nav class="sidebar-rail">
+            <div class="brand-icon" onclick="showHomeView()" title="Home">
+                <div class="glowing-c">C</div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-item" onclick="showGamesView()" data-tooltip="Games"><span>🕹️</span></div>
+                <div class="nav-item" onclick="launchGame('soundboard/soundboard.html')" data-tooltip="Soundboard"><span>🎧</span></div>          
+                <div class="nav-item" onclick="launchGame('ytbypass/crunchytbypass.html')" data-tooltip="YT Bypass"><span>📺</span></div>
+                <div class="nav-item" onclick="downloadCrunchHTML()" data-tooltip="Download HTML"><span>💾</span></div>
+            </div>
+
+            <div class="nav-group nav-spacer">
+                <div class="nav-item" onclick="toggleOverlay('logOverlay')" data-tooltip="Patch Notes"><span>📝</span></div>
+                <div class="nav-item" onclick="toggleOverlay('suggestOverlay')" data-tooltip="Feedback"><span>💬</span></div>
+                <div class="nav-item" onclick="toggleOverlay('settingsOverlay')" data-tooltip="Settings"><span>⚙️</span></div>
+                <div class="nav-item" onclick="handleLogout()" data-tooltip="Disconnect" id="signOutBtn" style="display:none;"><span>🚪</span></div>
+            </div>
+        </nav>
+
+        <main class="main-stage">
+            
+            <div class="status-bar-container">
+                <div id="onlineStatus" class="online-pill">
+                    <span class="pulse-dot"></span>
+                    <span id="onlineCountText">connecting have fun</span>
+                </div>
+            </div>
+
+            <section id="view-home" class="active">
+                <h1 class="hero-title">crunch<br>arcade.</h1>
+                <div class="hero-version">Testsite</div>
+                
+                <div class="search-bar-ui" style="max-width: 700px; width: 100%; margin: 0 auto 50px auto; padding: 8px 15px; border-radius: 100px;">
+                    <span class="sb-icon">🔍</span>
+                    <input type="text" class="sb-input" id="homeSearch" placeholder="Initiate global search..." oninput="homeSearchGames(event)">
+                </div>
+
+                <div class="quick-actions">
+                    <div class="action-card" onclick="showGamesView()">
+                        <div class="ac-icon">🎮</div>
+                        <div class="ac-label">Games</div>
+                    </div>
+                    <div class="action-card" onclick="launchGame('crunchtools/crunchtalkv3.html')">
+                        <div class="ac-icon">💬</div>
+                        <div class="ac-label">Crunch Talk</div>
+                    </div>	
+                    <div class="action-card" onclick="launchGame('crunchtools/crunchreddit.html')">
+                        <div class="ac-icon">🌐</div>
+                        <div class="ac-label">Crunch Reddit ripoff</div>
+                    </div>						
+                     <div class="action-card" onclick="launchGame('soundboard/soundboard.html')">
+                        <div class="ac-icon">🔈</div>
+                        <div class="ac-label">Soundboard</div>
+                    </div>
+                    <div class="action-card" onclick="downloadCrunchHTML()">
+                        <div class="ac-icon">⬇️</div>
+                        <div class="ac-label">Save as HTML</div>
+                    </div>
+                </div>
+
+                <div id="homeFavorites" style="margin-top: 80px; width: 100%; max-width: 1600px; padding: 0 20px;">
+                    <div class="section-label">Pinned Favorites</div>
+                    <div class="games-grid" id="homeFavGrid" style="padding-bottom: 50px;"></div>
+                </div>
+            </section>
+
+            <section id="view-games">
+                <div class="view-header">
+                    <h2 class="vh-title">Games</h2>
+                    <div class="vh-pill" id="gameCounter">dabo</div>
+                </div>
+
+                <div class="search-bar-ui">
+                    <span class="sb-icon">🔍</span>
+                    <input type="text" class="sb-input" id="gameSearch" placeholder="Locate game software..." onkeyup="searchGames()">
+                    <select id="sortSelect" class="sb-sort" onchange="sortGames()">
+                        <option value="default">Default Index</option>
+                        <option value="az">A to Z</option>
+                        <option value="za">Z to A</option>
+                    </select>
+                    <button class="sb-btn" onclick="playRandomGame()">Randomize</button>
+                </div>
+
+                <div id="favSection">
+                    <div class="section-label">Active Favorites</div>
+                    <div class="games-grid" id="favGrid"></div>
+                </div>
+
+                <div class="games-grid" id="gameGrid">
+                    <div class="game-card" onclick="launchGame('games/Terraria.html')">
+                        <img src="images/terraria.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Terraria 1.0</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Terraria 1.0')">❤</span></div>
+                    </div>		
+                    <div class="game-card" onclick="launchGame('games/gorillatag.html')">
+                        <img src="images/gtag.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Gorilla Tag</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Gorilla Tag')">❤</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('https://cuphead-firebase-port.firebaseapp.com')">
+                        <img src="images/cuphead.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Cuphead</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Cuphead')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://bendy-firebase-port.firebaseapp.com')">
+                        <img src="images/bendy.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bendy</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bendy')">❤</span></div>
+                    </div>		
+                    <div class="game-card" onclick="launchGame('https://amandafireport.web.app')">
+                        <img src="images/atg.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Amanda The Adventurer</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Amanda The Adventurer')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://gettingoverdih-fireport.web.app')">
+                        <img src="images/goit.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Getting Over it</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Getting Over it')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://thatsnotmyneighbor-sdih.web.app')">
+                        <img src="images/thatsnmn.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Thats not my Neighbor</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Thats not my Neighbor')">❤</span></div>
+                    </div>					
+                    <div class="game-card" onclick="launchGame('games/rocketgoal.io.html')">
+                        <img src="images/rocketgoal-io.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Rocket Goal.io</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Rocket Goal.io')">❤</span></div>
+                    </div>						
+                    <div class="game-card" onclick="launchGame('games/BESTGAMEEVER.html')">
+                        <img src="images/10outta10game.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">STEAL A BRAINROT (10/10)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'STEAL A BRAINROT (10/10)')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/snake.html')">
+                        <img src="images/snake.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Snake</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Snake')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/sonicmania.html')">
+                        <img src="https://media.wired.com/photos/59959e1936f7ad2c225a9620/1:1/w_1281,h_1281,c_limit/Sonic_Mania_Key_HP.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic Mania</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic Mania')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/subwaysurfers.html')">
+                        <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/de/5b/45/de5b45e8-9600-89df-9dd1-19db35ffcdec/7321170849491.png/800x800cc.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Subway Surfers</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Subway Surfers')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/basketballstars.html')">
+                        <img src="images/subwaysurfers.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Basketball Stars</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Basketball Stars')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/crossyr.html')">
+                        <img src="images/cror.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Crossy Road</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Crossy Road')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Crossy-Road/index.html')">
+                        <img src="images/cror.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Crossy Road (Alt)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Crossy Road (Alt)')">❤</span></div>
+
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/webdashers.html')">
+                        <img src="images/gd.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Geometry Dash (ACTUAL)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Geometry Dash (ACTUAL)')">❤</span></div>
+
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/gd.html')">
+                        <img src="images/gd.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Geometry Dash (OG)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Geometry Dash (OG)')">❤</span></div>
+
+
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/retrobowl.html')">
+                        <img src="images/rb.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Retrobowl</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Retrobowl')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/slitherio.html')">
+                        <img src="images/sio.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Slither.IO</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Slither.IO')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/stickmanhook.html')">
+                        <img src="images/smh.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Stickman Hook</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Stickman Hook')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/angrybirds.html')">
+                        <img src="images/ab.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Angry Birds</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Angry Birds')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/slope.html')">
+                        <img src="images/slope.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Slope</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Slope')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/bloonstds3.html')">
+                        <img src="images/bltd3.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bloons TD3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bloons TD3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/templerun2.html')">
+                        <img src="images/tr2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Temple Run 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Temple Run 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/clusterrush.html')">
+                        <img src="images/cr.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Cluster Rush</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Cluster Rush')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/bitlife.html')">
+                        <img src="images/bll.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bitlife</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bitlife')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/deltarune.html')">
+                        <img src="images/ud.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Deltarune</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Deltarune')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/1v1lol.html')">
+                        <img src="images/1v1lol.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">1v1.lol</span><span class="heart-toggle" onclick="toggleFav(event, this, '1v1.lol')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fnaf2.html')">
+                        <img src="images/fnaf2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fnaf 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fnaf 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fnaf3.html')">
+                        <img src="images/fnaf3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fnaf 3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fnaf 3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fnaf4.html')">
+                        <img src="images/fnaf4.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fnaf 4</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fnaf 4')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/FnafUNC.html')">
+                        <img src="images/fnafunc.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fnaf UNC</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fnaf UNC')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/FNaF.html')">
+                        <img src="images/fnaf.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fnaf</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fnaf')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/FNF.html')">
+                        <img src="images/fnf.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Friday Night Funkin</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Friday Night Funkin')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/slowroads.html')">
+                        <img src="images/sr.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Slow Roads</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Slow Roads')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/undertaley.html')">
+                        <img src="images/udy.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Undertale Yellow</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Undertale Yellow')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mc188.html')">
+                        <img src="images/mc.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Minecraft (1.8.8)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Minecraft (1.8.8)')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mc173.html')">
+                        <img src="images/mc.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Minecraft (Beta 1.7.3)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Minecraft (Beta 1.7.3)')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/snowrider.html')">
+                        <img src="images/snowrider.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Snow Rider 3D</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Snow Rider 3D')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/run3.html')">
+                        <img src="images/run3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Run 3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Run 3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ragdollarchers.html')">
+                        <img src="images/ragdollarchers.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Ragdoll Archers</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Ragdoll Archers')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/escaperoad.html')">
+                        <img src="images/escaperoad.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Escape Road</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Escape Road')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/doom.html')">
+                        <img src="images/doom.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">DOOM</span><span class="heart-toggle" onclick="toggleFav(event, this, 'DOOM')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ovo.html')">
+                        <img src="images/ovo.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">OVO</span><span class="heart-toggle" onclick="toggleFav(event, this, 'OVO')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/cc3.html')">
+                        <img src="images/cc3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Crazy Cattle 3D</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Crazy Cattle 3D')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/rsd.html')">
+                        <img src="images/rsd.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Rocket Soccer Derby</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Rocket Soccer Derby')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/skis.html')">
+                        <img src="images/skis.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Skibidi Shooter</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Skibidi Shooter')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/smk.html')">
+                        <img src="images/smk.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Smash Karts</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Smash Karts')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fallout.html')">
+                        <img src="images/fallout.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fallout</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fallout')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/buildnowgg.html')">
+                        <img src="images/buildnowgg.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Buildnow.gg</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Buildnow.gg')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ddcr.html')">
+                        <img src="images/ddcr.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Derby Crashout Racing</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Derby Crashout Racing')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Doge-Miner/index.html')">
+                        <img src="images/dm.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Doge Miner</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Doge Miner')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/cookieclicker.html')">
+                        <img src="images/ccl.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Cookie Clicker</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Cookie Clicker')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/baldibasics.html')">
+                        <img src="images/bbr.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Baldi Basics</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Baldi Basics')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/polytrack.html')">
+                        <img src="images/polytrack.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Poly Track</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Poly Track')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/halflife.html')">
+                        <img src="images/halflife.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Half-Life</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Half-Life')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/stickmina.html')">
+                        <img src="images/stickmina.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Henry Stickmin Airship</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Henry Stickmin Airship')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/stickmind.html')">
+                        <img src="images/stickmind.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Henry Stickmin Steal the Diamond</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Henry Stickmin Steal the Diamond')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/stickminb.html')">
+                        <img src="images/stickminb.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Henry Stickmin Breaking the Bank</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Henry Stickmin Breaking the Bank')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/stickminesp.html')">
+                        <img src="images/stickminesp.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Henry Stickmin Escape the Prison</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Henry Stickmin Escape the Prison')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/jetpackjoyride.html')">
+                        <img src="images/jetpackjoyride.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Jetpack Joy Ride</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Jetpack Joy Ride')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/osu.html')">
+                        <img src="images/osu.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">OSU!</span><span class="heart-toggle" onclick="toggleFav(event, this, 'OSU!')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/pvz.html')">
+                        <img src="images/pvz.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Plants VS Zombies</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Plants VS Zombies')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/happywheels.html')">
+                        <img src="images/happywheels.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Happy Wheels</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Happy Wheels')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/badparenting.html')">
+                        <img src="images/badparenting.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bad Parenting</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bad Parenting')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fruitninja.html')">
+                        <img src="images/fruitninja.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fruit Ninja</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fruit Ninja')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/granny.html')">
+                        <img src="images/granny.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Granny</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Granny')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mariokart64.html')">
+                        <img src="images/mariokart64.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Mario Kart 64</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Mario Kart 64')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/nbalive2000.html')">
+                        <img src="images/nbalive2000.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">NBA Live 2000</span><span class="heart-toggle" onclick="toggleFav(event, this, 'NBA Live 2000')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/papermario.html')">
+                        <img src="images/papermario.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Paper Mario</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Paper Mario')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/sm64.html')">
+                        <img src="images/sm64.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Super Mario 64</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Super Mario 64')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/footballbros.html')">
+                        <img src="images/footballbros.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Football Bros</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Football Bros')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/nfl2002.html')">
+                        <img src="images/nfl2002.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Maddenn NFL 2002</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Maddenn NFL 2002')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Sonic.html')">
+                        <img src="images/sonic.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Sonic2.html')">
+                        <img src="images/sonic2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/sonic3hedgehog.html')">
+                        <img src="images/sonic3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic 3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic 3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/sandboxels.html')">
+                        <img src="images/sandboxels.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sandboxels</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sandboxels')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/infinitecraft.html')">
+                        <img src="images/infinitecraft.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Infinite Craft</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Infinite Craft')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/riddlems.html')">
+                        <img src="images/riddlems.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Riddle Middle School</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Riddle Middle School')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/madstuntc2.html')">
+                        <img src="images/stuntcars2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Mad Stunt Cars 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Mad Stunt Cars 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/jetskiracing.html')">
+                        <img src="images/jsrace.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Jet Ski Racing</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Jet Ski Racing')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/dino.html')">
+                        <img src="images/dino.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Google Dino Game</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Google Dino Game')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/dokidoki.html')">
+                        <img src="images/dokiew.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Doki Doki Literature Club</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Doki Doki Literature Club')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/driftboss.html')">
+                        <img src="images/driftboss.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Drift Boss</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Drift Boss')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/drifthunters.html')">
+                        <img src="images/drifthunters.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Drift Hunters</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Drift Hunters')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/basketballlegends.html')">
+                        <img src="images/basketballlegnds.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Basketball Legends</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Basketball Legends')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/bfdibranches.html')">
+                        <img src="images/bfb.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">BFDI: Branches</span><span class="heart-toggle" onclick="toggleFav(event, this, 'BFDI: Branches')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/2048.html')">
+                        <img src="images/2048.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">2048</span><span class="heart-toggle" onclick="toggleFav(event, this, '2048')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ducklife.html')">
+                        <img src="images/ducklife2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Duck Life</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Duck Life')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/parappatherapper.html')">
+                        <img src="images/ptr.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Parappa The Rapper</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Parappa The Rapper')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/residentevil.html')">
+                        <img src="images/rse.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Resident Evil</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Resident Evil')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://angrybirds-firebaseport.firebaseapp.com')">
+                        <img src="images/abr.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">AngryBirds Remastered</span><span class="heart-toggle" onclick="toggleFav(event, this, 'AngryBirds Remastered')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://scrapmetal3-firebase-port.firebaseapp.com')">
+                        <img src="images/sm3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Scrap Metal 3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Scrap Metal 3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/wordle.html')">
+                        <img src="images/wordle.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Wordle</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Wordle')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/indev.html')">
+                        <img src="images/indev.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Minecraft Indev</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Minecraft Indev')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/hobo.html')">
+                        <img src="images/hobo.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Hobo</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Hobo')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/grant2.html')">
+                        <img src="images/gt2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Gran Turismo 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Gran Turismo 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/dk64.html')">
+                        <img src="images/dk64.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Donkey Kong 64</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Donkey Kong 64')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/zmm.html')">
+                        <img src="images/zmm.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Zelda: Majora's Mask</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Zelda: Majora\'s Mask')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/pizzatower.html')">
+                        <img src="images/pzt.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Pizza Tower</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Pizza Tower')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/amongus.html')">
+                        <img src="images/amgus.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Among Us</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Among Us')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/baconmaydie.html')">
+                        <img src="images/bmd.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bacon May Die</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bacon May Die')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/basketballfrvr.html')">
+                        <img src="images/bfv.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Basketball (FRVR)</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Basketball (FRVR)')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/maskedforcesunlimited.html')">
+                        <img src="images/mfu.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Masked Forces: Unlimited</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Masked Forces: Unlimited')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/moto3xm.html')">
+                        <img src="images/m3mm.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Moto 3XM</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Moto 3XM: ?')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/motox3mpoolparty.html')">
+                        <img src="images/m3mp.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Moto 3XM: Pool Party</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Moto 3XM: Pool Party')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/moto3xmspookyland.html')">
+                        <img src="images/m3ms.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Moto 3XM: Spooky</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Moto 3XM: Spooky')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/moto3xmm.html')">
+                        <img src="images/m3m.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Moto 3XM: Winter</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Moto 3XM: Winter')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ovo2.html')">
+                        <img src="images/ovo2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">OVO 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'OVO 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/paperio.html')">
+                        <img src="images/paperio.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Paper.io</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Paper.io')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/melonplayground.html')">
+                        <img src="images/mp.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Melon Playground</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Melon Playground')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('https://repo-fired-baseit.firebaseapp.com')">
+                        <img src="images/repo.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">R.E.P.O</span><span class="heart-toggle" onclick="toggleFav(event, this, 'R.E.P.O')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/aquaparkio.html')">
+                        <img src="images/aquaparkio.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Aqua Park.io</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Aqua Park.io')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/asmallworldcup.html')">
+                        <img src="images/asmwc.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">A Small World Cup</span><span class="heart-toggle" onclick="toggleFav(event, this, 'A Small World Cup')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/badbodyguards.html')">
+                        <img src="images/badbg.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bad Bodyguards</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bad Bodyguards')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/basketslamdunk2.html')">
+                        <img src="images/bbsd.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Basket Ball Slam Dunk 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Basket Ball Slam Dunk 2')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/blockblast.html')">
+                        <img src="images/blockblast.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Block Blast</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Block Blast')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Brawlstars.html')">
+                        <img src="images/brawlstairs.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Brawl Stars</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Brawl Stars')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/clashofvikings.html')">
+                        <img src="images/clashov.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Clash of Vikings</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Clash of Vikings')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/civiballs.html')">
+                        <img src="images/civiball.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Civi Balls</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Civi Balls')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/carcrash3.html')">
+                        <img src="images/mp.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Car Crash Simulator 3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Car Crash Simulator 3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/crazymotorcycle.html')">
+                        <img src="images/crazym.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Crazy Motorcycle</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Crazy Motorcycle')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/cuttr.html')">
+                        <img src="images/cuttr.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Cut the Rope</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Cut the Rope')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/drivemad.html')">
+                        <img src="images/drivemad.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Drive Mad</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Drive Mad')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fnafpizzas.html')">
+                        <img src="images/fnafpizzas.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Fnaf Pizzzeria Sim</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Fnaf Pizzzeria Sim')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/fnafsister.html')">
+                        <img src="images/fnafsister.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">FNAF Sister Location</span><span class="heart-toggle" onclick="toggleFav(event, this, 'FNAF Sister Location')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/highwayracer.html')">
+                        <img src="images/highwayracer.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Highway Racer</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Highway Racer')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mrracer.html')">
+                        <img src="images/mrracer.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Mr Racer</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Mr Racer')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mytd.html')">
+                        <img src="images/mytd.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">My Teardrop</span><span class="heart-toggle" onclick="toggleFav(event, this, 'My Teardrop')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/flappyb.html')">
+                        <img src="images/flappyb.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Flappy Bird</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Flappy Bird')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/oret.html')">
+                        <img src="images/oret.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Oregon Trail</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Oregon Trail')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/stumbleg.html')">
+                        <img src="images/stumbleg.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Stumble Guys</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Stumble Guys')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/bbbros.html')">
+                        <img src="images/bbbros.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Baseball Bros</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Baseball Bros')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/baskbros.html')">
+                        <img src="images/baskbros.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Basketball Bros</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Basketball Bros')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/basketrandom.html')">
+                        <img src="images/basketballrandom.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Basketball Random</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Basketball Random')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/tombofthemask.html')">
+                        <img src="images/tombofthemask.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Tomb Of The Mask</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Tomb Of The Mask')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/carkingarenea.html')">
+                        <img src="images/carkingarenea.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Car King Arena</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Car King Arena')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/realflightsim.html')">
+                        <img src="images/realflightsim.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Real Flight Sim</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Real Flight Sim')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/rbcol.html')">
+                        <img src="images/rbcol.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Retrobowl College</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Retrobowl College')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/roofts.html')">
+                        <img src="images/roofts.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Rooftop Sniper</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Rooftop Sniper')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/territorialio.html')">
+                        <img src="images/territorialio.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Territorial.io</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Territorial.io')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/waterpoolio.html')">
+                        <img src="images/waterpoolio.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Waterpool.io</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Waterpool.io')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/portal2d.html')">
+                        <img src="images/portal2d.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Portal 2D</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Portal 2D')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/puppethockey.html')">
+                        <img src="images/puppethockey.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Puppy Hockey</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Puppet Hockey')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ovo3.html')">
+                        <img src="images/ovo3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">OvO 3</span><span class="heart-toggle" onclick="toggleFav(event, this, 'OvO 3')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mario.html')">
+                        <img src="images/mario.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">NES Mario</span><span class="heart-toggle" onclick="toggleFav(event, this, 'NES Mario')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/FIFAS95.html')">
+                        <img src="images/fifa95.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">FIFA Soccer 95</span><span class="heart-toggle" onclick="toggleFav(event, this, 'FIFA Soccer 95')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/NBAHangtime.html')">
+                        <img src="images/nbaht.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">NBA Hangtime</span><span class="heart-toggle" onclick="toggleFav(event, this, 'NBA Hangtime')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/FIFA99.html')">
+                        <img src="images/fifa99.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">FIFA 99</span><span class="heart-toggle" onclick="toggleFav(event, this, 'FIFA 99')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Doom65.html')">
+                        <img src="images/Doom64.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Doom 64</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Doom 64')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/worldcup08.html')">
+                        <img src="images/worldcup08.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">World Cup 98</span><span class="heart-toggle" onclick="toggleFav(event, this, 'World Cup 98')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/mortalk4.html')">
+                        <img src="images/mortalk4.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Mortal Kombat 4</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Mortal Kombat 4')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/granny2.html')">
+                        <img src="images/granny2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Granny 2</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/granny3.html')">
+                        <img src="images/granny3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Granny 3</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/footballl.html')">
+                        <img src="images/footballl.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Soccer Legends</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/escaper2.html')">
+                        <img src="images/escaper2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Escape Road 2</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ducklifeb.html')">
+                        <img src="images/ducklifeb.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Ducklife Battle</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/crazyc3d.html')">
+                        <img src="images/crazyc3d.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Crazy Chicken 3D</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/bloon6.html')">
+                        <img src="images/bloon6.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bloons TD6</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/bowm.html')">
+                        <img src="images/bowm.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bow Masters</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/blockydd.html')">
+                        <img src="images/blockydd.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Blocky Demolition Derby</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/blockblast2.html')">
+                        <img src="images/blockblast2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Block Blast 2</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/ballh/index.html')">
+                        <img src="images/ballhop.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Ball Hop</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Stack/index.html')">
+                        <img src="images/stack.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Stack</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Hextris/index.html')">
+                        <img src="images/hextris.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Hextris</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Hacker-Tetris/index.html')">
+                        <img src="images/hackert.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Hacker Tetris</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/growag.html')">
+                        <img src="images/growag.jpeg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Grow a Garden</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Grow a Garden')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/soniccd.html')">
+                        <img src="images/soniccd.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic CD</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic CD')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/blackjack.html')">
+                        <img src="images/blackjack.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Black Jack</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Black Jack')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/deadfrontob.html')">
+                        <img src="images/deadfrontob.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Dead Frontier Outbreak</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Dead Frontier Outbreak')">❤</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/gunmayhem.html')">
+                        <img src="images/gunmayhem.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Gun Mayhem 1</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Gun Mayhem 1')">❤</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/pou.html')">
+                        <img src="images/pou.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Pou</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Pou')">❤</span></div>
+                    </div>	
+                    <div class="game-card" onclick="launchGame('games/crunchblox/index.html')">
+                        <img src="images/crunchblox.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Crunchblox 2009</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Crunchblox 2009')">❤</span></div>
+                    </div>		
+                    <div class="game-card" onclick="launchGame('games/learntf.html')">
+                        <img src="images/learntf.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Learn to Fly</span></div>
+                    </div>		
+                    <div class="game-card" onclick="launchGame('games/learntf2.html')">
+                        <img src="images/learntf2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Learn to Fly 2</span></div>
+                    </div>					
+                    <div class="game-card" onclick="launchGame('games/learntf3.html')">
+                        <img src="images/learntf3.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Learn to Fly 3</span></div>
+                    </div>					
+                    <div class="game-card" onclick="launchGame('games/papalwba.html')">
+                        <img src="images/papalwba.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Papa Louie: When Burgers Attck</span></div>
+                    </div>			
+                    <div class="game-card" onclick="launchGame('games/papalwpa.html')">
+                        <img src="images/papalwpa.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Papa Louie: When Pizzas Attck</span></div>
+                    </div>			
+                    <div class="game-card" onclick="launchGame('games/wrestleb.html')">
+                        <img src="images/wrestleb.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Wrestle Bros</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/uno.html')">
+                        <img src="images/uno.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Uno</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/madskillsmotocross2.html')">
+                        <img src="images/madskillsmotocross2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Mad Skills Moto Cross 2</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/kronkr.io.html')">
+                        <img src="images/kronkr.io.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Kronkr.io</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/gdsz.html')">
+                        <img src="images/gdsz.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Geometry Dash: Sub Zero</span></div>
+                    </div>		
+                    <div class="game-card" onclick="launchGame('games/getawso.html')">
+                        <img src="images/getawso.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Get Away Shootout</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Get Away Shootout')">❤</span></div>
+                    </div>					
+                    <div class="game-card" onclick="launchGame('games/papabakeria.html')">
+                        <img src="images/papasbakeria.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Papas Bakeria</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Papas Bakeria')">❤</span></div>
+                    </div>				
+                    <div class="game-card" onclick="launchGame('games/badts.html')">
+                        <img src="images/badts.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Bad Time Simulator</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Bad Time Simulator')">❤</span></div>
+                    </div>					
+                    <div class="game-card" onclick="launchGame('games/sonicrb2.html')">
+                        <img src="images/sonicrb2.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic Robo Blast 2</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic Robo Blast 2')">❤</span></div>
+                    </div>					
+                    <div class="game-card" onclick="launchGame('games/monkeym.html')">
+                        <img src="images/monkeymart.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Monkey Mart</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Monkey Mart')">❤</span></div>
+                    </div>		
+
+                    <div class="game-card" onclick="launchGame('games/epstein.html')">
+                        <img src="images/bige.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Five Night's at the Big E</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Five Night\'s at the Big E')">❤</span></div>
+                    </div>	
+
+                    <div class="game-card" onclick="launchGame('games/Sonic2011.html')">
+                        <img src="images/sonic.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic 2013</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic 2013')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/Sonic22011.html')">
+                        <img src="images/sonic2.jpg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sonic 2 2013</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sonic 2 2013')">❤</span></div>
+                    </div>
+
+                    <div class="game-card" onclick="launchGame('games/windowsxp.html')">
+                        <img src="images/windowsxp.jpeg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Windows XP</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Windows XP')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/sprunki.html')">
+                        <img src="images/sprunki.png" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Sprunki</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Sprunki')">❤</span></div>
+                    </div>
+                    <div class="game-card" onclick="launchGame('games/daboclicker.html')">
+                        <img src="images/dabbo.jpeg" loading="lazy">
+                        <div class="gc-info"><span class="gc-title">Dabo Clicker</span><span class="heart-toggle" onclick="toggleFav(event, this, 'Dabo Clicker')">❤</span></div>
+                    </div>
+
+                </div> 
+            </section>
+        </main>
+    </div>
+
+    <div id="logOverlay" class="modal-wrap">
+        <div class="gloss-modal">
+            <div class="gm-header">System Patch Notes</div>
+            <div style="line-height: 1.6; color: var(--text-muted); font-size: 1.05rem;">
+                <p><strong style="color: var(--accent-primary); font-size:1.2rem;">v3.0 Revamp</strong></p>
+                <ul style="padding-left: 20px;">
+                    <li>Entirely redesigned Glass OS with ultra-modern UI</li>
+                    <li>Added active online player tracking (guests included)</li>
+                    <li>Glowing animated hover states for all game modules</li>
+                    <li>Floating dynamic navigation dock</li>
+                </ul>
+                <div style="margin-top: 30px; display:flex; align-items:center; gap:10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                    <input type="checkbox" id="dontShowChangelog" style="transform: scale(1.2);">
+                    <label for="dontShowChangelog" style="margin:0;">Acknowledge and do not show again</label>
+                </div>
+            </div>
+            <div class="gm-footer">
+                <button class="btn-act btn-sec" onclick="toggleOverlay('logOverlay')">Dismiss</button>
+                <button class="btn-act btn-pri" id="logCloseOk">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="suggestOverlay" class="modal-wrap">
+        <div class="gloss-modal">
+            <div class="gm-header">Comms Link</div>
+            <div class="form-row">
+                <label>Transmit Suggestion (DO THIS AT HOME)</label>
+                <textarea id="suggestInput" class="input-glass" rows="5" placeholder="Request software or report anomalies..."></textarea>
+            </div>
+            <div class="gm-footer">
+                <button class="btn-act btn-sec" onclick="toggleOverlay('suggestOverlay')">Abort</button>
+                <button class="btn-act btn-pri" id="sendSuggestBtn" onclick="sendSuggestion()">Transmit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsOverlay" class="modal-wrap">
+        <div class="gloss-modal settings-modal">
+            <div class="os-settings-layout">
+                <div class="os-sidebar">
+                    <div style="font-weight:900; font-family:var(--font-display); font-size:1.5rem; margin-bottom:30px; color:var(--text-main); padding-left:10px;">CONFIG</div>
+                    <button class="os-tab-btn active" onclick="switchTab('tab-appearance')">Visuals</button>
+                    <button class="os-tab-btn" onclick="switchTab('tab-layout')">Layout</button>
+                    <button class="os-tab-btn" onclick="switchTab('tab-privacy')">Stealth</button>
+                    <button class="os-tab-btn" onclick="switchTab('tab-system')">System</button>
+                </div>
+
+                <div class="os-content-area">
+                    
+                    <div id="tab-appearance" class="os-section active">
+                        <h2 class="gm-header">Theme</h2>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Themes</h4>
+                                <p>Select visual spectrum</p>
+                            </div>
+                            <select id="themeSelect" class="input-glass" style="width:180px;" onchange="toggleThemeOptions()">
+                                <option value="default">Default</option>
+                                <option value="light">stupid light theme</option>
+                                <option value="gradient">cool laggy gradients</option>
+                                <option value="legacy">Legacy ig</option>
+                            </select>
+                        </div>
+
+                        <div id="gradientOptions" class="setting-item" style="display:none;">
+                            <div class="setting-label">
+                                <h4>Gradients</h4>
+                                <p>active gradient</p>
+                            </div>
+                            <select id="gradientSelect" class="input-glass" style="width:180px;">
+                                <option value="midnight">Midnight Azure</option>
+                                <option value="forest">Toxic Forest</option>
+                                <option value="sunrise">Solar Flare</option>
+                                <option value="magma">Magma Core</option>
+                                <option value="cyberpunk">Cyberpunk Yellow</option>
+                                <option value="vaporwave">Vaporwave Pink</option>
+                                <option value="dracula">Dracula Purple</option>
+                                <option value="neon-pink">Hot Pink</option>
+                                <option value="matrix">Digital Matrix</option>
+                                <option value="ocean">Ocean Pulse</option>
+                                <option value="synthwave">Synthwave Outrun</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Custom theme</h4>
+                                <p>Upload local theme stuff</p>
+                            </div>
+                            <div>
+                                <label for="bgUpload" class="file-upload-ui">📁 Upload</label>
+                                <input type="file" id="bgUpload" accept="image/*" style="display:none;" onchange="handleBgUpload(this)">
+                                <button class="file-upload-ui" style="margin-left:8px; background: rgba(239, 68, 68, 0.2); border-color: #ef4444;" onclick="clearCustomBg()">✖ Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-layout" class="os-section">
+                        <h2 class="gm-header">Interface Structure</h2>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Dock Position</h4>
+                                <p>where the sidebar goes</p>
+                            </div>
+                            <select id="dockPos" class="input-glass" style="width:180px;" onchange="updateDockPosition()">
+                                <option value="left">Left Edge</option>
+                                <option value="right">Right Edge</option>
+                                <option value="bottom">Bottom Dock</option>
+                                <option value="top">Top Bar</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Homescreen Layout</h4>
+                                <p>basically stupid</p>
+                            </div>
+                            <select id="homepageStyle" class="input-glass" style="width:180px;" onchange="applyHomepageStyle()">
+                                <option value="separate">game page diff area</option>
+                                <option value="combined">game page same area</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="tab-privacy" class="os-section">
+                        <h2 class="gm-header">Security / Cloak</h2>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Tab Masking</h4>
+                                <p>Camouflage browser tab</p>
+                            </div>
+                            <select id="cloakType" class="input-glass" style="width:180px;">
+                                <option value="desmos">Desmos</option>
+                                <option value="ixl">IXL Math</option>
+                                <option value="schoology">Schoology</option>
+                                <option value="clever">Clever</option>
+                                <option value="studysync">StudySync</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Auto-Cloak Protocol</h4>
+                                <p>Mask instantly on boot</p>
+                            </div>
+                            <select id="autoStealth" class="input-glass" style="width:180px;">
+                                <option value="false">Disabled</option>
+                                <option value="true">Enabled</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Game open Method</h4>
+                                <p>How games are launched</p>
+                            </div>
+                            <select id="launchMethod" class="input-glass" style="width:180px;">
+                                <option value="aboutblank">About:Blank (Classic)</option>
+                                <option value="blob">Blob Object (Secure)</option>
+                                <option value="window">Direct Window</option>
+                                <option value="inpage">In-Page Overlay</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Panic Trigger</h4>
+                                <p>Keybind to abort session</p>
+                            </div>
+                            <input type="text" id="panicKeyInput" class="input-glass" style="width:120px; text-align:center;" placeholder="None" readonly onkeydown="setPanicKey(event)">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Go to scared URL</h4>
+                                <p>target on panic key stupid</p>
+                            </div>
+                            <input type="text" id="panicUrlInput" class="input-glass" style="width:200px;" value="https://classroom.google.com">
+                        </div>
+                    </div>
+
+                    <div id="tab-system" class="os-section">
+                        <h2 class="gm-header">System Data</h2>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Session Lock</h4>
+                                <p>Prevent accidental closure</p>
+                            </div>
+                            <select id="preventClose" class="input-glass" style="width:180px;">
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Performance Profile</h4>
+                                <p>Manage hardware strain</p>
+                            </div>
+                            <select id="perfMode" class="input-glass" style="width:180px;" onchange="toggleOptimizer()">
+                                <option value="false">Maximum Fidelity</option>
+                                <option value="true">Battery Saver (Static)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Export Library Data</h4>
+                                <p>Download local save states</p>
+                            </div>
+                            <button class="btn-act btn-sec" onclick="exportSaveData()">⬇ Download JSON</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <h4>Restore Library Data</h4>
+                                <p>Inject previous save states</p>
+                            </div>
+                            <div>
+                                <label for="importUpload" class="btn-act btn-sec" style="cursor:pointer; display:inline-block;">⬆ Upload JSON</label>
+                                <input type="file" id="importUpload" accept=".json" style="display:none;" onchange="importSaveData(this)">
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 30px;">
+                            <button class="btn-act btn-sec" style="flex: 1;" onclick="toggleOverlay('settingsOverlay')">Abort</button>
+                            <button class="btn-act btn-pri" style="flex: 2;" onclick="saveSettings()">Apply Configuration</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    /* =========================================
+       FIREBASE INITIALIZATION & AUTH & PRESENCE
+       ========================================= */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdJdTyqGQIiizJ5_7o3w-ZqNlgsLDi5Dc",
+      authDomain: "crunch-arcade-login-data.firebaseapp.com",
+      projectId: "crunch-arcade-login-data",
+      storageBucket: "crunch-arcade-login-data.firebasestorage.app",
+      messagingSenderId: "359606673301",
+      appId: "1:359606673301:web:9ebd979cfb97675fb1a09c"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    let isSkipped = false;
+    let myPresenceId = localStorage.getItem('crunchPresenceId');
+    if(!myPresenceId) {
+        myPresenceId = Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('crunchPresenceId', myPresenceId);
+    }
+
+    // Detect Auth State
+    auth.onAuthStateChanged(user => {
+        if (user || isSkipped) {
+            document.getElementById('loginScreen').style.opacity = '0';
+            document.getElementById('loginScreen').style.transform = 'scale(1.1)';
+            document.getElementById('loginScreen').style.pointerEvents = 'none';
+            document.getElementById('appWrapper').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('appWrapper').style.opacity = '1';
+                document.getElementById('loginScreen').style.display = 'none';
+            }, 800);
+            
+            if(user) {
+                document.getElementById('signOutBtn').style.display = 'flex';
+                loadDataFromCloud(user.uid);
+            }
+            
+            // Start Presence System
+            startPresenceSystem();
+        }
+    });
+
+    /* --- PRESENCE (ONLINE USERS) SYSTEM --- */
+    function startPresenceSystem() {
+        // Write our presence first, THEN fetch so we count ourselves
+        updatePresence().then(() => fetchPresence());
+        setInterval(updatePresence, 20000); // ping every 20s
+        setInterval(fetchPresence, 15000);  // fetch every 15s (more responsive)
+
+        // Clean up on tab close
+        window.addEventListener('beforeunload', () => {
+            navigator.sendBeacon && db.collection('crunch_presence').doc(myPresenceId).delete().catch(e=>console.log(e));
+        });
+
+        // Also re-fetch when tab becomes visible again (e.g. switching back)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                updatePresence().then(() => fetchPresence());
+            }
+        });
+    }
+
+    function updatePresence() {
+        const user = auth.currentUser;
+        const isGuest = !user;
+        const displayName = isGuest ? 'Guest' : (user.displayName || user.email.split('@')[0]);
+        return db.collection('crunch_presence').doc(myPresenceId).set({
+            lastActive: Date.now(),
+            isGuest: isGuest,
+            name: displayName
+        }, { merge: true }).catch(err => console.log("Presence Error:", err));
+    }
+
+    function fetchPresence() {
+        // 90 seconds window — covers 20s ping interval with buffer
+        const windowMs = Date.now() - 90000;
+        db.collection('crunch_presence').where('lastActive', '>', windowMs).get()
+        .then(snap => {
+            let guests = 0;
+            let loggedIn = 0;
+            snap.forEach(doc => {
+                if(doc.data().isGuest) guests++;
+                else loggedIn++;
+            });
+            const total = guests + loggedIn;
+            let text;
+            if (total === 0) {
+                text = '🔴 No users online';
+            } else if (total === 1) {
+                text = `🟢 1 user online${guests === 1 ? ' (Guest)' : ''}`;
+            } else {
+                const parts = [];
+                if (loggedIn > 0) parts.push(`${loggedIn} logged in`);
+                if (guests > 0) parts.push(`${guests} guest${guests > 1 ? 's' : ''}`);
+                text = `🟢 ${total} online — ${parts.join(', ')}`;
+            }
+            document.getElementById('onlineCountText').innerText = text;
+        }).catch(err => {
+            console.log("Failed to fetch presence:", err);
+            document.getElementById('onlineCountText').innerText = "⚠️ Telemetry Offline";
+        });
+    }
+
+    function showLoginError(msg) {
+        document.getElementById('loginError').innerText = msg;
+    }
+
+    function handleLogin() {
+        const uname = document.getElementById('usernameInput').value.trim();
+        const pwd = document.getElementById('passwordInput').value.trim();
+        if(!uname || !pwd) return showLoginError("Credentials required.");
+        
+        const email = uname.toLowerCase() + "@crunch.local";
+        
+        auth.signInWithEmailAndPassword(email, pwd)
+        .catch(error => {
+            if(error.code === 'auth/user-not-found' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/invalid-credential') {
+                auth.createUserWithEmailAndPassword(email, pwd)
+                .then((userCred) => {
+                    syncDataToCloud(userCred.user.uid);
+                })
+                .catch(err => showLoginError(err.message));
+            } else if (error.code === 'auth/wrong-password') {
+                showLoginError("Invalid decryption key (Password incorrect).");
+            } else {
+                showLoginError(error.message);
+            }
+        });
+    }
+
+    function skipLogin() {
+        isSkipped = true;
+        document.getElementById('loginScreen').style.opacity = '0';
+        document.getElementById('loginScreen').style.transform = 'scale(1.1)';
+        document.getElementById('loginScreen').style.pointerEvents = 'none';
+        document.getElementById('appWrapper').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('appWrapper').style.opacity = '1';
+            document.getElementById('loginScreen').style.display = 'none';
+        }, 800);
+        startPresenceSystem();
+    }
+
+    function handleLogout() {
+        db.collection('crunch_presence').doc(myPresenceId).delete().then(() => {
+            auth.signOut().then(() => {
+                window.location.reload();
+            });
+        });
+    }
+
+    function syncDataToCloud(uid) {
+        if(!uid) return;
+        let data = {};
+        for(let i=0; i<localStorage.length; i++){
+            let key = localStorage.key(i);
+            data[key] = localStorage.getItem(key);
+        }
+        db.collection('users').doc(uid).set({ saveData: JSON.stringify(data) }, { merge: true });
+    }
+
+    function loadDataFromCloud(uid) {
+        if(!uid) return;
+        db.collection('users').doc(uid).get().then(doc => {
+            if(doc.exists && doc.data().saveData) {
+                try {
+                    let parsed = JSON.parse(doc.data().saveData);
+                    Object.keys(parsed).forEach(k => {
+                        localStorage.setItem(k, parsed[k]);
+                    });
+                    refreshFavorites();
+                } catch(e) { console.error("Cloud parsing failed"); }
+            } else {
+                syncDataToCloud(uid);
+            }
+        });
+    }
+
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function() {
+        originalSetItem.apply(this, arguments);
+        if(auth.currentUser) syncDataToCloud(auth.currentUser.uid);
+    };
+
+    /* =========================================
+       AUDIO SYSTEM
+       ========================================= */
+    let musicPlaying = false;
+    function toggleMusic() {
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicToggleBtn');
+        if(musicPlaying) {
+            audio.pause();
+            musicPlaying = false;
+            btn.innerText = "🔇";
+            btn.style.background = "var(--glass-base)";
+        } else {
+            audio.play().catch(e => console.log("Autoplay blocked"));
+            musicPlaying = true;
+            btn.innerText = "🎵";
+            btn.style.background = "var(--accent-primary)";
+        }
+    }
+
+    /* =========================================
+       BACKUP / RESTORE SYSTEM
+       ========================================= */
+    function exportSaveData() {
+        let data = {};
+        for(let i=0; i<localStorage.length; i++){
+            let key = localStorage.key(i);
+            data[key] = localStorage.getItem(key);
+        }
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'crunch_os_backup.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importSaveData(input) {
+        if(input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let parsed = JSON.parse(e.target.result);
+                    Object.keys(parsed).forEach(k => {
+                        localStorage.setItem(k, parsed[k]);
+                    });
+                    alert("Database imported successfully.");
+                    refreshFavorites();
+                } catch(err) {
+                    alert("Corrupted backup file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    /* =========================================
+       UI LOGIC & 3D TILT EFFECT
+       ========================================= */
+    function applyHomepageStyle() {
+        let style = document.getElementById('homepageStyle').value;
+        let mainStage = document.querySelector('.main-stage');
+        if (style === 'combined') {
+            mainStage.classList.add('combined-mode');
+            document.getElementById('view-home').style.display = 'flex';
+            document.getElementById('view-games').style.display = 'block';
+            document.getElementById('view-home').classList.add('active');
+            document.getElementById('view-games').classList.add('active');
+        } else {
+            mainStage.classList.remove('combined-mode');
+            document.getElementById('view-home').style.display = 'flex';
+            document.getElementById('view-home').classList.add('active');
+            document.getElementById('view-games').style.display = 'none';
+            document.getElementById('view-games').classList.remove('active');
+        }
+    }
+
+    function showHomeView() {
+        let style = document.getElementById('homepageStyle').value;
+        if (style === 'combined') document.querySelector('.main-stage').scrollTo({ top: 0, behavior: 'smooth' });
+        else {
+            document.getElementById('view-games').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('view-games').style.display = 'none';
+                document.getElementById('view-home').style.display = 'flex';
+                setTimeout(() => document.getElementById('view-home').classList.add('active'), 10);
+            }, 300);
+        }
+    }
+
+    function showGamesView() {
+        let style = document.getElementById('homepageStyle').value;
+        if (style === 'combined') document.getElementById('view-games').scrollIntoView({ behavior: 'smooth' });
+        else {
+            document.getElementById('view-home').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('view-home').style.display = 'none';
+                document.getElementById('view-games').style.display = 'block';
+                setTimeout(() => document.getElementById('view-games').classList.add('active'), 10);
+            }, 300);
+        }
+    }
+
+    function homeSearchGames(e) {
+        if(e.target.value.length > 0) {
+            showGamesView();
+            document.getElementById('gameSearch').value = e.target.value;
+            searchGames();
+            document.getElementById('gameSearch').focus();
+        }
+    }
+
+    /* PANIC HOTKEY FIX */
+    let currentPanicKey = localStorage.getItem('panicKey') || '';
+    function setPanicKey(e) {
+        e.preventDefault();
+        const key = e.key === ' ' ? 'Space' : e.key;
+        currentPanicKey = key;
+        e.target.value = key;
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' && e.target.id !== 'panicKeyInput') return;
+        if (e.target.tagName === 'TEXTAREA') return;
+        const pressedKey = e.key === ' ' ? 'Space' : e.key;
+        if (currentPanicKey && currentPanicKey.length > 0 && pressedKey === currentPanicKey && !e.repeat) {
+            let pUrl = document.getElementById('panicUrlInput').value || 'https://classroom.google.com';
+            if (!pUrl.startsWith('http')) pUrl = 'https://' + pUrl;
+            window.location.replace(pUrl);
+        }
+    });
+
+    /* --- CANVAS BACKGROUND ANIMATION --- */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let particleColorBase = '139, 92, 246'; 
+    let isOptimized = false; 
+
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width; this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 3 + 1; this.angle = Math.random() * Math.PI * 2;
+            this.spin = (Math.random() - 0.5) * 0.03; this.alpha = Math.random() * 0.5 + 0.1;
+            this.updateColor();
+        }
+        updateColor() { this.color = `rgba(${particleColorBase}, ${this.alpha})`; }
+        update() {
+            this.x += this.vx; this.y += this.vy; this.angle += this.spin;
+            if (this.x < 0) this.x = width; if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height; if (this.y > height) this.y = 0;
+            this.color = `rgba(${particleColorBase}, ${this.alpha})`;
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            const theme = document.getElementById('themeSelect').value;
+            const gradient = document.getElementById('gradientSelect').value;
+            if (theme === 'gradient' && gradient === 'magma') {
+                ctx.beginPath(); const s = this.size * 2; ctx.moveTo(this.x, this.y - s);
+                ctx.lineTo(this.x + s, this.y + s); ctx.lineTo(this.x - s, this.y + s);
+                ctx.closePath(); ctx.fill();
+            } else if (theme === 'gradient' && gradient === 'forest') {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+                ctx.beginPath(); ctx.ellipse(0, 0, this.size * 2, this.size, 0, 0, Math.PI * 2);
+                ctx.fill(); ctx.restore();
+            } else {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+    }
+
+    function initParticles() {
+        particles = []; const particleCount = Math.floor((width * height) / 12000); 
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+    }
+
+    function animate() {
+        if (isOptimized) return; 
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+
+    function toggleOptimizer() {
+        const val = document.getElementById('perfMode').value;
+        const canvasObj = document.getElementById('bgCanvas');
+        const noise = document.querySelector('.ui-noise');
+        isOptimized = (val === 'true');
+        
+        if (isOptimized) {
+            canvasObj.style.display = 'none';
+            noise.style.display = 'none';
+            document.body.classList.remove('enable-glow');
+        } else {
+            canvasObj.style.display = 'block';
+            noise.style.display = 'block';
+            if(document.getElementById('themeSelect').value !== 'legacy') document.body.classList.add('enable-glow');
+            resize(); initParticles(); animate();
+        }
+        localStorage.setItem('crunchOptimizer', val);
+    }
+
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    resize(); initParticles(); animate();
+
+    /* --- THEMES --- */
+    function toggleThemeOptions() {
+        const theme = document.getElementById('themeSelect').value;
+        const gradOpts = document.getElementById('gradientOptions');
+        gradOpts.style.display = (theme === 'gradient') ? 'flex' : 'none';
+        applyTheme();
+    }
+
+    function applyTheme() {
+        const theme = document.getElementById('themeSelect').value;
+        const gradient = document.getElementById('gradientSelect').value;
+        
+        document.body.className = ''; 
+        if(!isOptimized && theme !== 'legacy') document.body.classList.add('enable-glow');
+        if(theme === 'legacy') document.body.classList.add('legacy-ui');
+        
+        const currentDock = document.getElementById('dockPos').value || 'left';
+        document.getElementById('appWrapper').classList.add('pos-' + currentDock);
+        
+        if (theme === 'default' || theme === 'legacy') { document.body.classList.add('theme-midnight'); particleColorBase = '139, 92, 246'; } 
+        else if (theme === 'light') { document.body.classList.add('theme-light'); particleColorBase = '79, 70, 229'; }
+        else if (theme === 'gradient') {
+            document.body.classList.add('theme-' + gradient);
+            switch(gradient) {
+                case 'midnight': particleColorBase = '56, 189, 248'; break; 
+                case 'forest': particleColorBase = '74, 222, 128'; break; 
+                case 'sunrise': particleColorBase = '251, 146, 60'; break; 
+                case 'magma': particleColorBase = '252, 165, 165'; break;
+                case 'cyberpunk': particleColorBase = '234, 179, 8'; break;
+                case 'vaporwave': particleColorBase = '217, 70, 239'; break;
+                case 'dracula': particleColorBase = '168, 85, 247'; break;
+                case 'neon-pink': particleColorBase = '255, 0, 127'; break;
+                case 'matrix': particleColorBase = '0, 255, 0'; break;
+                case 'ocean': particleColorBase = '0, 255, 255'; break;
+                case 'synthwave': particleColorBase = '255, 0, 160'; break;
+                default: particleColorBase = '255, 255, 255';
+            }
+        }
+        initParticles(); 
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.os-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('.os-tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    function updateDockPosition() {
+        const pos = document.getElementById('dockPos').value;
+        const wrapper = document.getElementById('appWrapper');
+        wrapper.classList.remove('pos-left', 'pos-right', 'pos-bottom', 'pos-top');
+        wrapper.classList.add('pos-' + pos);
+        setTimeout(resize, 500);
+    }
+
+    function handleBgUpload(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0]; const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image(); img.src = e.target.result;
+                img.onload = function() {
+                    const c = document.createElement('canvas'); const ct = c.getContext('2d');
+                    let w = img.width, h = img.height; const mw = 1280, mh = 720;
+                    if (w > h) { if (w > mw) { h *= mw / w; w = mw; } } else { if (h > mh) { w *= mh / h; h = mh; } }
+                    c.width = w; c.height = h; ct.drawImage(img, 0, 0, w, h);
+                    const compressedUrl = c.toDataURL('image/jpeg', 0.6);
+                    
+                    const colorC = document.createElement('canvas'); const colorCt = colorC.getContext('2d');
+                    colorC.width = 1; colorC.height = 1; colorCt.drawImage(img, 0, 0, 1, 1);
+                    const p = colorCt.getImageData(0, 0, 1, 1).data;
+                    const accentColor = `rgb(${p[0]}, ${p[1]}, ${p[2]})`; const accentGlow = `rgba(${p[0]}, ${p[1]}, ${p[2]}, 0.7)`;
+                    
+                    applyCustomBg(compressedUrl); applyAdaptiveTheme(accentColor, accentGlow);
+                    try { localStorage.setItem('customBg', compressedUrl); localStorage.setItem('customAccent', accentColor); localStorage.setItem('customGlow', accentGlow); } catch (err) { alert("Image exceeded storage capacity."); }
+                };
+            }; reader.readAsDataURL(file);
+        }
+    }
+
+    function applyAdaptiveTheme(color, glow) {
+        document.documentElement.style.setProperty('--accent-primary', color);
+        document.documentElement.style.setProperty('--accent-glow', glow);
+        const match = color.match(/\d+/g);
+        if(match) { particleColorBase = `${match[0]}, ${match[1]}, ${match[2]}`; initParticles(); }
+    }
+
+    function applyCustomBg(dataUrl) {
+        const layer = document.getElementById('customBgLayer');
+        const c = document.getElementById('bgCanvas'); const noise = document.querySelector('.ui-noise'); const glow = document.querySelector('.ambient-glow');
+        if (dataUrl) {
+            layer.style.display = 'block'; layer.style.backgroundImage = `url(${dataUrl})`;
+            c.style.display = 'none'; if(noise) noise.style.display = 'none'; if(glow) glow.style.display = 'none';
+        } else {
+            layer.style.display = 'none'; const isOpt = document.getElementById('perfMode').value === 'true';
+            if (!isOpt) { c.style.display = 'block'; if(noise) noise.style.display = 'block'; if(glow) glow.style.display = 'block'; resize(); initParticles(); }
+        }
+    }
+
+    function clearCustomBg() {
+        localStorage.removeItem('customBg'); localStorage.removeItem('customAccent'); localStorage.removeItem('customGlow');
+        applyCustomBg(null); document.documentElement.style.removeProperty('--accent-primary'); document.documentElement.style.removeProperty('--accent-glow');
+        applyTheme(); document.getElementById('bgUpload').value = "";
+    }
+
+    const cloakData = {
+        ixl: { title: "IXL | Dashboard", icon: "https://www.ixl.com/favicon.ico" },
+        schoology: { title: "Schoology | Courses", icon: "https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico" },
+        clever: { title: "Clever | Portal", icon: "https://assets.clever.com/favicon.ico" },
+        desmos: { title: "Desmos | Graphing Calculator", icon: "https://www.desmos.com/assets/img/apps/graphing/favicon.ico" },
+        studysync: { title: "StudySync - Assignments", icon: "https://apps.studysync.com/favicon-studysync.ico" }
+    };
+
+    function toggleOverlay(id) { const overlay = document.getElementById(id); overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex'; }
+    function applyCloak(targetWindow) {
+        const choice = document.getElementById('cloakType').value; const data = cloakData[choice];
+        try { targetWindow.document.title = data.title; const link = targetWindow.document.createElement('link'); link.rel = 'icon'; link.href = data.icon; targetWindow.document.head.appendChild(link); } catch (e) { console.warn('Cloak failed:', e); }
+    }
+
+    function stealthMode() {
+        const win = window.open('about:blank', '_blank'); applyCloak(win);
+        const iframe = win.document.createElement('iframe'); iframe.style = "width:100vw; height:100vh; border:none; position:fixed; top:0; left:0;"; iframe.src = window.location.href; win.document.body.appendChild(iframe);
+        window.location.replace("https://google.com");
+    }
+
+    function closeInPageGame() { document.getElementById('inPageLauncher').style.display = 'none'; document.getElementById('inPageFrame').src = ''; }
+
+    async function launchGame(path) {
+        let launchMethod = localStorage.getItem('launchMethod') || 'aboutblank';
+        const shouldPreventClose = localStorage.getItem('preventClose') !== 'false';
+        const preventCloseScript = shouldPreventClose ? `<script>window.addEventListener('beforeunload', function(e){e.preventDefault();e.returnValue='';});<\/script>` : '';
+
+        if (launchMethod === 'inpage') { const launcher = document.getElementById('inPageLauncher'); const frame = document.getElementById('inPageFrame'); launcher.style.display = 'flex'; frame.src = path; }
+        else if (launchMethod === 'aboutblank') {
+            const win = window.open('about:blank', '_blank'); if (!win) return alert("Pop-up blocked! Allow pop-ups to initiate software."); applyCloak(win);
+            
+            if (shouldPreventClose) {
+                win.addEventListener('beforeunload', function (e) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                });
+            }
+
+            const iframe = win.document.createElement('iframe'); iframe.style = "width:100%; height:100%; border:none; position:fixed; top:0; left:0; margin:0; background: #000;"; iframe.src = path; iframe.allowFullscreen = true; win.document.body.appendChild(iframe);
+            const btn = win.document.createElement('button'); btn.textContent = '⛶ Fullscreen'; btn.style = "position:fixed; bottom:20px; right:20px; z-index:9999; background:rgba(0,0,0,0.8); color:white; border:1px solid rgba(255,255,255,0.2); padding:10px 18px; border-radius:12px; cursor:pointer; font-weight:700; font-family:sans-serif; backdrop-filter:blur(10px); transition: 0.3s;";
+            btn.onmouseover = () => btn.style.background = "rgba(255,255,255,0.2)"; btn.onmouseout = () => btn.style.background = "rgba(0,0,0,0.8)";
+            btn.onclick = () => { if (!win.document.fullscreenElement) { win.document.documentElement.requestFullscreen(); btn.textContent = '✕ Exit'; } else { win.document.exitFullscreen(); btn.textContent = '⛶ Fullscreen'; } };
+            win.document.body.appendChild(btn);
+            win.document.addEventListener('keydown', (e) => { if (e.key === 'F11') { e.preventDefault(); btn.click(); } });
+        }
+        else if (launchMethod === 'blob') {
+            if (path.startsWith('http')) {
+                const code = `<!DOCTYPE html><html style="width:100%;height:100%;"><head><title>System Load...</title>${preventCloseScript}</head><body style="margin:0;overflow:hidden;background:#000;"><iframe src="${path}" style="width:100vw; height:100vh; border:none;"></iframe></body></html>`;
+                const blobUrl = URL.createObjectURL(new Blob([code], { type: 'text/html' }));
+                const win = window.open(blobUrl, '_blank'); try { applyCloak(win); } catch(e) {}
+            } else {
+                try {
+                    const response = await fetch(path); if (!response.ok) throw new Error("Load failure");
+                    let code = await response.text();
+                    const link = document.createElement("a"); link.href = path; const fullPath = link.href; const basePath = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
+                    code = code.replace('<head>', '<head><base href="' + basePath + '">' + preventCloseScript);
+                    const blobUrl = URL.createObjectURL(new Blob([code], { type: 'text/html' }));
+                    const win = window.open(blobUrl, '_blank'); try { applyCloak(win); } catch(e) {}
+                } catch (err) { alert("Blob failure. Executing standard launch."); window.open(path, '_blank'); }
+            }
+        }
+        else { const win = window.open(path, '_blank'); if (!win) return alert("Pop-up blocked!"); try { applyCloak(win); } catch (e) {} }
+    }
+
+    function playRandomGame() { const cards = document.querySelectorAll('#gameGrid .game-card'); if (cards.length === 0) return; cards[Math.floor(Math.random() * cards.length)].click(); }
+
+    function searchGames() {
+        let input = document.getElementById('gameSearch').value.toLowerCase();
+        let cards = document.querySelectorAll('#gameGrid .game-card');
+        for (let card of cards) {
+            let label = card.querySelector('.gc-title').innerText.toLowerCase();
+            card.style.display = label.includes(input) ? "block" : "none";
+        }
+        updateGameCount();
+    }
+
+    function sortGames() {
+        const grid = document.getElementById('gameGrid');
+        const cards = Array.from(grid.querySelectorAll('.game-card'));
+        const order = document.getElementById('sortSelect').value;
+        
+        if(order !== 'default') {
+            cards.sort((a, b) => {
+                const textA = a.querySelector('.gc-title').innerText.toLowerCase();
+                const textB = b.querySelector('.gc-title').innerText.toLowerCase();
+                if (order === 'az') return textA.localeCompare(textB);
+                if (order === 'za') return textB.localeCompare(textA);
+            });
+            grid.innerHTML = '';
+            cards.forEach(card => grid.appendChild(card));
+        } else {
+            window.location.reload(); 
+        }
+    }
+
+    function toggleFav(event, btn, gameName) {
+        event.stopPropagation(); btn.classList.toggle('active');
+        let favorites = JSON.parse(localStorage.getItem('crunchFavs') || "[]");
+        if (btn.classList.contains('active')) favorites.push(gameName); else favorites = favorites.filter(fav => fav !== gameName);
+        localStorage.setItem('crunchFavs', JSON.stringify(favorites)); refreshFavorites();
+    }
+
+    function saveSettings() {
+        localStorage.setItem('autoStealth', document.getElementById('autoStealth').value);
+        localStorage.setItem('cloakPref', document.getElementById('cloakType').value);
+        localStorage.setItem('launchMethod', document.getElementById('launchMethod').value);
+        localStorage.setItem('panicKey', currentPanicKey);
+        localStorage.setItem('panicUrl', document.getElementById('panicUrlInput').value);
+        localStorage.setItem('themePref', document.getElementById('themeSelect').value);
+        localStorage.setItem('gradientPref', document.getElementById('gradientSelect').value);
+        localStorage.setItem('dockPos', document.getElementById('dockPos').value);
+        localStorage.setItem('homepageStyle', document.getElementById('homepageStyle').value);
+        localStorage.setItem('preventClose', document.getElementById('preventClose').value);
+        applyHomepageStyle(); updateDockPosition(); toggleOptimizer(); applyTheme();
+        const ca = localStorage.getItem('customAccent'); const cg = localStorage.getItem('customGlow');
+        if (ca && cg) applyAdaptiveTheme(ca, cg);
+        toggleOverlay('settingsOverlay');
+    }
+
+    function refreshFavorites() {
+        const favSec = document.getElementById('favSection'); 
+        const favGrid = document.getElementById('favGrid');
+        const homeFavGrid = document.getElementById('homeFavGrid');
+        
+        const favs = JSON.parse(localStorage.getItem('crunchFavs') || "[]"); 
+        const allCards = document.querySelectorAll('#gameGrid .game-card');
+        
+        favGrid.innerHTML = '';
+        if(homeFavGrid) homeFavGrid.innerHTML = '';
+
+        if (favs.length > 0) {
+            favSec.style.display = 'block';
+            allCards.forEach(c => {
+                const label = c.querySelector('.gc-title').innerText;
+                if (favs.includes(label)) {
+                    const clone = c.cloneNode(true); clone.onclick = c.onclick;
+                    clone.querySelector('.heart-toggle').onclick = (e) => toggleFav(e, clone.querySelector('.heart-toggle'), label);
+                    favGrid.appendChild(clone);
+                    
+                    if(homeFavGrid) {
+                        const homeClone = c.cloneNode(true); 
+                        homeClone.onclick = c.onclick;
+                        homeClone.querySelector('.heart-toggle').onclick = (e) => toggleFav(e, homeClone.querySelector('.heart-toggle'), label);
+                        homeFavGrid.appendChild(homeClone);
+                    }
+                }
+            });
+        } else {
+            favSec.style.display = 'none';
+            if(homeFavGrid) homeFavGrid.innerHTML = '<p style="color:var(--text-muted); width: 100%; text-align: left; font-size:1.1rem;">Select the heart icon on any module to pin it.</p>';
+        }
+    }
+
+    function updateGameCount() {
+        const all = document.querySelectorAll('#gameGrid .game-card'); let visible = 0;
+        all.forEach(c => { if (c.style.display !== 'none') visible++; });
+        document.getElementById('gameCounter').innerText = `${visible} Games`;
+    }
+
+    async function sendSuggestion() {
+        const input = document.getElementById('suggestInput'); const btn = document.getElementById('sendSuggestBtn'); const suggestion = input.value.trim();
+        if (!suggestion) return alert("Input required."); btn.innerText = "Transmitting..."; btn.disabled = true;
+        const webhookURL = "https://discord.com/api/webhooks/1466198860635570344/M1DflmAdLfMrZ69QrprWzYy_GDannMhnY6KsjPe5xXT6U2btwtcXdCLZeZDoLNwQdMT1";
+        try {
+            const res = await fetch(webhookURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ embeds: [{ title: "Glass OS 3.0 Telemetry", description: suggestion, color: 9133302, timestamp: new Date() }] }) });
+            if (res.ok) { alert("Transmission successful."); input.value = ""; toggleOverlay('suggestOverlay'); } else alert("Transmission failed.");
+        } catch (error) { alert("Network anomaly detected."); } finally { btn.innerText = "Transmit"; btn.disabled = false; }
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+        if (localStorage.getItem('preventClose') !== 'false') {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    async function downloadCrunchHTML() {
+        const toast = document.getElementById('downloadToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 6000);
+
+        try {
+            const url = 'https://cdn.jsdelivr.net/gh/UGBONTOP/crunchingmath-single-file@main/crunch%20single%20file.html';
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network failure');
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = 'crunch-os-system.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+            console.error('Download error:', err);
+        }
+    }
+
+    /* Add tilt logic to all game cards for the extra modern feel */
+    function attachTiltEffect() {
+        const cards = document.querySelectorAll('.game-card, .action-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -15; 
+                const rotateY = ((x - centerX) / centerX) * 15;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+    }
+
+    window.onload = () => {
+        const isAutoStealth = localStorage.getItem('autoStealth') === 'true';
+        if (isAutoStealth && !sessionStorage.getItem('stealthTriggered')) { sessionStorage.setItem('stealthTriggered', 'true'); stealthMode(); }
+
+        if(localStorage.getItem('autoStealth')) document.getElementById('autoStealth').value = localStorage.getItem('autoStealth');
+        if(localStorage.getItem('cloakPref')) document.getElementById('cloakType').value = localStorage.getItem('cloakPref');
+        if(localStorage.getItem('panicKey')) document.getElementById('panicKeyInput').value = localStorage.getItem('panicKey');
+        if(localStorage.getItem('panicUrl')) document.getElementById('panicUrlInput').value = localStorage.getItem('panicUrl');
+        if(localStorage.getItem('launchMethod')) document.getElementById('launchMethod').value = localStorage.getItem('launchMethod');
+        if(localStorage.getItem('preventClose')) document.getElementById('preventClose').value = localStorage.getItem('preventClose');
+
+        document.getElementById('themeSelect').value = localStorage.getItem('themePref') || 'default';
+        document.getElementById('gradientSelect').value = localStorage.getItem('gradientPref') || 'midnight';
+        document.getElementById('dockPos').value = localStorage.getItem('dockPos') || 'left';
+        
+        document.getElementById('homepageStyle').value = localStorage.getItem('homepageStyle') || 'separate';
+        applyHomepageStyle();
+        
+        if(localStorage.getItem('crunchOptimizer')) { document.getElementById('perfMode').value = localStorage.getItem('crunchOptimizer'); toggleOptimizer(); }
+        
+        toggleThemeOptions();
+        const savedBg = localStorage.getItem('customBg'); if (savedBg) { applyCustomBg(savedBg); if (localStorage.getItem('customAccent')) applyAdaptiveTheme(localStorage.getItem('customAccent'), localStorage.getItem('customGlow')); }
+        
+        updateDockPosition();
+        
+        let favs = JSON.parse(localStorage.getItem('crunchFavs') || "[]");
+        document.querySelectorAll('#gameGrid .game-card').forEach(c => { if (favs.includes(c.querySelector('.gc-title').innerText)) c.querySelector('.heart-toggle').classList.add('active'); });
+        
+        updateGameCount(); refreshFavorites(); attachTiltEffect();
+
+        const dontShow = localStorage.getItem('hideChangelog') === 'true';
+        document.getElementById('dontShowChangelog').checked = dontShow;
+        if (!dontShow) toggleOverlay('logOverlay');
+        document.getElementById('logCloseOk').onclick = () => { localStorage.setItem('hideChangelog', document.getElementById('dontShowChangelog').checked ? 'true' : 'false'); toggleOverlay('logOverlay'); };
+    };
+</script>
+
+</body>
+</html>
